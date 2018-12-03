@@ -309,8 +309,8 @@ Textures::Textures()
 {
 	field.loadFromFile("resources/textures/field.jpg");
 	night.loadFromFile("resources/textures/night.jpg");
-	//time.loadFromFile("resources/textures/background.jpg");
-	//polluted.loadFromFile("resources/textures/background.jpg");
+	time.loadFromFile("resources/textures/time.jpg");
+	polluted.loadFromFile("resources/textures/field.jpg");
 	title.loadFromFile("resources/textures/title.jpg");
 
 	play.loadFromFile("resources/textures/play_u.jpg");
@@ -319,4 +319,21 @@ Textures::Textures()
 	optionsSelected.loadFromFile("resources/textures/options_s.jpg");
 	exit.loadFromFile("resources/textures/exit_u.jpg");
 	exitSelected.loadFromFile("resources/textures/exit_s.jpg");
+
+	button_A.loadFromFile("resources/textures/controls/button_A.png");
+	button_B.loadFromFile("resources/textures/controls/button_B.png");
+	button_X.loadFromFile("resources/textures/controls/button_X.png");
+	button_Y.loadFromFile("resources/textures/controls/button_Y.png");
+	button_LB.loadFromFile("resources/textures/controls/button_LB.png");
+	button_RB.loadFromFile("resources/textures/controls/button_RB.png");
+	button_LS.loadFromFile("resources/textures/controls/button_LS.png");
+	button_RS.loadFromFile("resources/textures/controls/button_RS.png");
+	button_LT.loadFromFile("resources/textures/controls/button_LT.png");
+	button_RT.loadFromFile("resources/textures/controls/button_RT.png");
+	button_Back.loadFromFile("resources/textures/controls/button_Back.png");
+	button_Start.loadFromFile("resources/textures/controls/button_Start.png");
+	button_Left.loadFromFile("resources/textures/controls/button_Left.png");
+	button_Right.loadFromFile("resources/textures/controls/button_Right.png");
+	button_Down.loadFromFile("resources/textures/controls/button_Down.png");
+	button_Up.loadFromFile("resources/textures/controls/button_Up.png");
 }

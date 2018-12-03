@@ -6,47 +6,89 @@
 #include "levels.h"
 #include "controller.h"
 
-#define MOVE_PARAM_X 15.0f
-#define MOVE_PARAM_Y 5.0f
-#define JUMP_PARAM 25.0f
+constexpr auto MOVE_PARAM_X = 15.0f;
+constexpr auto MOVE_PARAM_Y = 5.0f;
+constexpr auto JUMP_PARAM = 25.0f;
 
 class Level;
+class Field_Level;
+class Night_Level;
+class Time_Level;
+class Camera;
 
 enum PlayerState { ALIVE, DEAD, ELIMINATED };
 enum SelectColor{NEXT, PREV, RANDOM};
 class buttonMapping;
+class Camera;
 
 class Attributes {
-public:
+private:
 	float health;
 	int lifeCount;
 	PlayerState lifeState;
+
+	//My Friends
+	friend class Player;
+	friend class Ball;
+	friend class Boxy;
+	friend class Level;
+	friend class Field_Level;
+	friend class Night_Level;
+	friend class Time_Level;
+	friend class Camera;
+	friend class CharacterSelect;
+public:
 	Attributes();
 };
 
 class Toggle {
-public:
+private:
 	bool initDeath;
 	bool attacking;
 	bool walk_toggle;
 	bool on_ground;
-
 	sf::Clock deathTimer;
 	sf::Clock attackTimer;
+
+	//My friends
+	friend class Player;
+public:
 	Toggle();
+	void xor_attack();
+	void set_attack_toggle(bool);
+	void set_walk_toggle(bool);
+	void set_ground(bool);
+	void set_initdeath(bool);
+	void reset_attack_timer();
+	void reset_death_timer();
+	float get_death_time();
+	int get_attack_time();
+	bool get_initdeath();
+	bool is_attacking();
+	bool is_walking();
+	bool is_on_ground();
 };
 
 class Player {
 private:
 	static unsigned int count;
 	static vector<int> availableIDs;
+	unsigned int myID;
+	Toggle toggle;
+	Attributes stats;
+
+	//My friends
+	friend class Level;
+	friend class Field_Level;
+	friend class Time_Level;
+	friend class Night_Level;
+	friend class CharacterSelect;
+	friend class Boxy;
+	friend class Ball;
+	friend class Camera;
+	friend class Game;
 public:
 	unsigned int get_count();
-	unsigned int myID;
-
-	Toggle toggle;
-
-	Attributes stats;
 	Vec	velocity;
 	bool created;
 
@@ -59,12 +101,12 @@ public:
 
 	CharColorOptions myColor;
 
-	Shape_ *body;
-	Shape_ *outline;
-	Shape_ *reflection;
-	Quad_ arm;
-	Quad_ armOutline;
-	Circle_ eye;
+	medmelt::Shape *body;
+	medmelt::Shape *outline;
+	medmelt::Shape *reflection;
+	medmelt::Quad arm;
+	medmelt::Quad armOutline;
+	medmelt::Circle eye;
 
 	void change_color(SelectColor option);
 
@@ -104,6 +146,15 @@ public:
 };
 
 class Ball : public Player {
+private:
+	//My friends
+	friend class Toggle;
+	friend class Attributes;
+	friend class Field_Level;
+	friend class Time_Level;
+	friend class Night_Level;
+	friend class Camera;
+	friend class Game;
 public:
 	void render();
 	void update_position(vector<Platform> plat);
@@ -117,10 +168,18 @@ public:
 	explicit Ball(Assets assets);
 	Ball(const Ball&) = delete;
 	Ball& operator=(const Ball&) = delete;
-	~Ball() {}
 };
 
 class Boxy : public Player {
+private:
+	//My friends
+	friend class Toggle;
+	friend class Attributes;
+	friend class Field_Level;
+	friend class Time_Level;
+	friend class Night_Level;
+	friend class Camera;
+	friend class Game;
 public:
 	void render();
 	void update_position(vector<Platform> plat);
@@ -133,5 +192,4 @@ public:
 	explicit Boxy(Assets assets);
 	Boxy(const Boxy&) = delete;
 	Boxy& operator=(const Boxy&) = delete;
-	~Boxy() {}
 };

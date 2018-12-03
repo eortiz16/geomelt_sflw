@@ -95,14 +95,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>\\195.67.74.123\data\2. BACK UP\2. Projects\libraries\SFML32\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>\\195.67.74.119\data\2. BACK UP\2. Projects\libraries\SFML32\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>\\195.67.74.123\data\2. BACK UP\2. Projects\libraries\SFML32\lib;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>\\195.67.74.119\data\2. BACK UP\2. Projects\libraries\SFML32\lib;</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-main.lib;sfml-network.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;opengl32.lib;glu32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>
+      </SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

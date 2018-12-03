@@ -6,16 +6,15 @@ void Level::add_player(unsigned int joyID, Assets assets)
 {
 	bool is_created_already = false;
 
-	if (playerMap.size() >= 0 && playerMap.size() < 8)
-	{
-		for (map<unsigned int, unique_ptr<Player>>::iterator it = playerMap.begin(); it != playerMap.end(); ++it)
-		{
+	if (playerMap.size() >= 0 && playerMap.size() < 8) {
+		map<unsigned int, unique_ptr<Player>>::iterator it;
+
+		for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 			if (it->first == joyID) // If map exists
 				is_created_already = true; //Don't create
 		}
 
-		if (is_created_already == false)
-		{
+		if (is_created_already == false) {
 			playerMap[joyID] = unique_ptr<Player>(new Ball(assets));
 
 			Player *plyr = playerMap[joyID].get();
@@ -26,10 +25,10 @@ void Level::add_player(unsigned int joyID, Assets assets)
 
 void Level::purge_players()
 {
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = playerMap.begin(); it != playerMap.end(); ++it)
-	{
-		if (it->second->stats.lifeState == ELIMINATED) //Erase if eliminated
-		{
+	map<unsigned int, unique_ptr<Player>>::iterator it;
+
+	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
+		if (it->second->stats.lifeState == ELIMINATED) { //Erase if eliminated
 			it->second.reset();
 			playerMap.erase(it);
 			break;
@@ -37,27 +36,23 @@ void Level::purge_players()
 	}
 }
 
-void Level::reset()
+void Level::reset_level()
 {
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = playerMap.begin(); it != playerMap.end(); ++it)
-	{
+	map<unsigned int, unique_ptr<Player>>::iterator it;
+
+	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		it->second->body->height = 100;
 		it->second->body->width = 100;
 		it->second->body->radius = 50;
 		it->second->body->boundary_assignment();
-		it->second->toggle.on_ground = true;
-		it->second->simple_update();
-
+		it->second->toggle.set_ground(true);
 		it->second->update_reflection_x();
 		it->second->simple_update();
 
-		if (it->second->myID % 2 == 0)
-		{
+		if (it->second->myID % 2 == 0) {
 			it->second->body->center.x = 500.0f;
 			it->second->body->center.y = 500.0f;
-		}
-		else
-		{
+		} else {
 			it->second->body->center.x = -500.0f;
 			it->second->body->center.y = 500.0f;
 		}
@@ -119,7 +114,6 @@ Level::~Level()
 Field_Level::Field_Level(Assets assets) : Level(assets)
 {
 	srand((unsigned int)time(NULL));
-
 	//Background Color Assignment
 	background.body.center.x = 0;
 	background.body.center.y = 0;
@@ -185,6 +179,51 @@ Field_Level::Field_Level(Assets assets) : Level(assets)
 
 	//Floor Stroke Assignment
 	platform.at(0).body.boundary_assignment();
+
+	//Wind
+	(rand() % 2 == 0) ? windDirection = RIGHT : windDirection = LEFT;
+
+	for (int i = 0; i < MAX_CLOUDS; ++i)
+		clouds.push_back(make_shared<Cloud>(Cloud().make_cloud(windDirection)));
+
+	// Initially only - Assign random X coordinate
+	for (auto element : clouds) {
+		element->get_body()[1].get()->center.x = rand() % (4 * HDX) - 2 * HDX;
+		element->get_body()[0].get()->center.x = element->get_body()[1].get()->center.x - element->get_body()[1].get()->radius;
+		element->get_body()[2].get()->center.x = element->get_body()[1].get()->center.x + element->get_body()[1].get()->radius;
+	}
+}
+
+void Field_Level::update_clouds()
+{
+	GLfloat arg1, arg2;
+	int i = 0;
+
+	for (auto cloud : clouds) {
+		// Parameters to determine when a cloud is off screen : 
+		// Direction: Left, Anlyze position of Right subcloud
+		arg1 = cloud->get_body()[2].get()->center.x + (cloud->get_body()[2].get()->radius);
+		arg2 = cloud->get_body()[0].get()->center.x - (cloud->get_body()[0].get()->radius);
+
+		//Reset if Last Cloud Offscreen
+		if ((arg1 < -2.0f * HDX && windDirection == LEFT) 
+			|| (arg2 > 2.0f * HDX && windDirection == RIGHT)) 
+			cloud->is_offScreen();
+
+		cloud->update(windDirection);
+
+		++i;
+	}
+}
+
+void Field_Level::purge_clouds()
+{
+	for (unsigned int i = 0; i < clouds.size(); ++i) {
+		if (clouds[i].get()->get_offScreen()) {
+			clouds.erase(clouds.begin() + i);
+			clouds.push_back(make_shared<Cloud>(Cloud().make_cloud(windDirection)));
+		}
+	}
 }
 
 void Field_Level::gfx_handler(Camera camera)
@@ -194,19 +233,22 @@ void Field_Level::gfx_handler(Camera camera)
 
 	render();
 
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = playerMap.begin(); it != playerMap.end(); ++it)
-	{		
+	map<unsigned int, unique_ptr<Player>>::iterator it;
+
+	for (it = playerMap.begin(); it != playerMap.end(); ++it) {		
 		if (it->second->stats.lifeState == ALIVE)
 			it->second->render();
 	}
 }
 
 void Field_Level::phys_handler(Assets assets, Camera *camera)
-{	 
-	clouds.update();
+{
+	update_clouds();
+	purge_clouds();
 
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = playerMap.begin(); it != playerMap.end(); ++it)
-	{
+	map<unsigned int, unique_ptr<Player>>::iterator it;
+
+	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState != ELIMINATED)
 			it->second->update_position(platform);
 
@@ -225,7 +267,9 @@ void Field_Level::render()
 	//gradientBG.render();
 
 	sun.render();
-	clouds.render();
+
+	for (auto cloud : clouds)
+		cloud->render();
 	
 	platform.at(0).outline.render();
 	platform.at(0).body.render();
@@ -265,8 +309,7 @@ Night_Level::Night_Level(Assets assets) : Level(assets)
 	platform.at(0).body.height = HDY / 20.0f;
 	platform.at(0).body.center.y = HDY / -3.0f;
 
-	for (unsigned int i = 1; i < platform.size(); i++)
-	{
+	for (unsigned int i = 1; i < platform.size(); i++) {
 		platform.at(i).body.width = HDX / 4.0f;
 		platform.at(i).body.height = HDY / 20.0f;
 		platform.at(i).body.center.y = 100.0f;
@@ -274,8 +317,7 @@ Night_Level::Night_Level(Assets assets) : Level(assets)
 
 	platform.at(2).body.center.y = HDY / 4.0f;
 
-	for (unsigned int i = 0; i < platform.size(); i++)
-	{
+	for (unsigned int i = 0; i < platform.size(); i++) {
 		//Floor Boundaries - For Physics
 		platform.at(i).body.boundary_assignment();
 
@@ -302,8 +344,9 @@ void Night_Level::gfx_handler(Camera camera)
 
 	render();
 
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = playerMap.begin(); it != playerMap.end(); ++it)
-	{
+	map<unsigned int, unique_ptr<Player>>::iterator it;
+
+	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState == ALIVE)
 			it->second->render();
 	}
@@ -311,8 +354,9 @@ void Night_Level::gfx_handler(Camera camera)
 
 void Night_Level::phys_handler(Assets assets, Camera *camera)
 {
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = playerMap.begin(); it != playerMap.end(); ++it)
-	{
+	map<unsigned int, unique_ptr<Player>>::iterator it;
+
+	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState != ELIMINATED)
 			it->second->update_position(platform);
 
@@ -329,8 +373,7 @@ void Night_Level::render()
 	stars.render();
 	moon.render();
 
-	for (unsigned int i = 0; i < platform.size(); i++)
-	{
+	for (unsigned int i = 0; i < platform.size(); i++) {
 		platform.at(i).outline.render();
 		platform.at(i).body.render();
 	}
@@ -341,7 +384,7 @@ Time_Level::Time_Level(Assets assets) : Level(assets)
 	srand((unsigned int)time(NULL));
 
 	//Background Attribute Assignment
-	time_of_day = EVENING;
+	timeOfDay = EVENING;
 	background.body.center.x = 0;
 	background.body.center.y = 0;
 	background.body.width = 4.0f * HDX;
@@ -382,12 +425,62 @@ Time_Level::Time_Level(Assets assets) : Level(assets)
 
 	//Floor Stroke Assignment
 	platform.at(0).body.boundary_assignment();
+
+	//Wind
+	(rand() % 2 == 0) ? windDirection = RIGHT : windDirection = LEFT;
+
+	for (int i = 0; i < MAX_CLOUDS; ++i)
+		clouds.push_back(make_shared<Cloud>(Cloud().make_cloud(windDirection)));
+
+	// Initially only Assign random X coordinate
+	for (auto element : clouds) {
+		int randX = rand() % (4 * HDX) - 2 * HDX; // get random position for cloud
+		element->get_body()[1].get()->center.x = randX;
+		element->get_body()[0].get()->center.x = randX - element->get_body()[1].get()->radius;
+		element->get_body()[2].get()->center.x = randX + element->get_body()[1].get()->radius;
+	}
+}
+
+void Time_Level::update_clouds()
+{
+	GLfloat arg1, arg2;
+	int i = 0;
+
+	for (auto cloud : clouds) {
+		// Parameters to determine when a cloud is off screen
+		arg1 = cloud->get_body()[1].get()->center.x + (cloud->get_body()[1].get()->radius * 3);
+		arg2 = cloud->get_body()[1].get()->center.x - (cloud->get_body()[1].get()->radius * 3);
+
+		//Reset if Last Cloud Offscreen
+		if (arg1 < (-1.0f * HDX) && windDirection == LEFT) {
+			clouds.erase(clouds.begin() + i);
+			clouds.push_back(make_shared<Cloud>(Cloud().make_cloud(windDirection)));
+		}
+		else if (arg2 > HDX && windDirection == RIGHT) {
+			clouds.erase(clouds.begin() + i);
+			clouds.push_back(make_shared<Cloud>(Cloud().make_cloud(windDirection)));
+		}
+
+		cloud->update(windDirection);
+
+		++i;
+	}
+}
+
+void Time_Level::purge_clouds()
+{
+	for (unsigned int i = 0; i < clouds.size(); ++i) {
+		if (clouds[i].get()->get_offScreen()) {
+			clouds.erase(clouds.begin() + i);
+			clouds.push_back(make_shared<Cloud>(Cloud().make_cloud(windDirection)));
+		}
+	}
 }
 
 void Time_Level::transition_handler(Palette_BG pal)
 {
 	if (transition == true)
-		switch (time_of_day)
+		switch (timeOfDay)
 		{
 			case DAY:
 				transition_to(pal.afternoon); 
@@ -417,8 +510,9 @@ void Time_Level::gfx_handler(Camera camera)
 
 	render();
 
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = playerMap.begin(); it != playerMap.end(); ++it)
-	{
+	map<unsigned int, unique_ptr<Player>>::iterator it;
+	
+	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState == ALIVE)
 			it->second->render();
 	}
@@ -428,10 +522,12 @@ void Time_Level::phys_handler(Assets assets, Camera *camera)
 {
 	transition_handler(assets.backgroundPalette);
 	
-	clouds.update();
+	update_clouds();
+	purge_clouds();
 	
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = playerMap.begin(); it != playerMap.end(); ++it)
-	{
+	map<unsigned int, unique_ptr<Player>>::iterator it;
+
+	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState != ELIMINATED)
 			it->second->update_position(platform);
 		it->second->death_handler();
@@ -445,30 +541,33 @@ void Time_Level::render()
 {
 	background.render();
 
-	if (time_of_day == DAY || time_of_day == AFTERNOON)
-		sun.render();
-
-	else if (time_of_day != DAY && time_of_day != AFTERNOON)
+	switch (timeOfDay)
 	{
+	case DAY:
+	case AFTERNOON:
+		sun.render();
+		break;
+	default:
 		stars.render();
 		moon.render();
+		break;
 	}
 	
-	clouds.render();
+	for (auto cloud : clouds)
+		cloud->render();
 
 	platform.at(0).body.render();
 	platform.at(0).outline.render();
 }
 
 //changes color of background by factor of 1 each frame
-void Time_Level::transition_to(Color_ *clr)
+void Time_Level::transition_to(medmelt::Color *clr)
 {
 	//Transition from bg to clr
-	Color_ *bg;
+	medmelt::Color *bg;
 
 	//Adjust Color of Corners
-	for (int i = 0; i < 4; i++)
-	{
+	for (int i = 0; i < 4; i++)	{
 		bg = &background.color[i];
 
 		//Update RED
@@ -495,13 +594,12 @@ void Time_Level::transition_to(Color_ *clr)
 	}
 
 	if (background.transition_done[0] == true && background.transition_done[1] == true
-		&& background.transition_done[2] == true && background.transition_done[3] == true)
-	{
+		&& background.transition_done[2] == true && background.transition_done[3] == true) {
 		//Transition is Done, Reset Attributes
 		for (int i = 0; i < CORNERS; i++)
 			background.transition_done[i] = false;
 
 		transition = false;
-		time_of_day++;
+		timeOfDay++;
 	}
 }

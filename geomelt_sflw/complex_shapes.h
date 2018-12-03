@@ -1,39 +1,39 @@
 #include "headers.h"
 #include "assets.h"
 
-#define MAX_STAR 40 
-#define MAX_SPEED 2
 #define rnd() (float)rand() / (float)RAND_MAX
-#define MAX_CLOUD 10
-#define CLOUD_GROUP 3
-#define CLOUD_START 50
-#define CLOUD_RANGE 200
+constexpr auto MAX_STAR = 40 ;
+constexpr auto MAX_SPEED = 5;
+constexpr auto MAX_CLOUDS = 100;
+constexpr auto SUBCLOUD_SIZE = 3;
+constexpr auto CLOUD_START = 50;
+constexpr auto CLOUD_RANGE = 200;
 
 #pragma once
 class Cloud {
-public:
-	Circle_ body[3];
+private:
+	vector<shared_ptr<medmelt::Circle>> body;
 	int speed;
+	bool offScreen;
+public:
+	vector<shared_ptr<medmelt::Circle>> get_body();
+	void is_offScreen();
+	bool get_offScreen();
 	void update(Direction dir);
 	void render();
-	void reset_cloud(Direction dir);
-};
-
-class CloudGroup {
-public:
-	Direction direction;
-	Cloud cloud[MAX_CLOUD];
-	void render();
-	void update();
-	CloudGroup();
+	static Cloud make_cloud(Direction dir); //Factory Method
 };
 
 class Star {
-public:
-	Circle_ body;
+private:
+	shared_ptr<medmelt::Shape> body;
 	float offset;
+public:
 	void compute_coordinates(int count);
+	void set_offset(float val);
 	void change_color();
+	shared_ptr<medmelt::Shape> get_body();
+	Star();
 };
 
 class StarGroup {
@@ -46,51 +46,57 @@ public:
 
 class Particles {
 public:
-	Quad_ s;
+	medmelt::Quad s;
 	Vec velocity;
+};
+
+class TexturedQuad {
+public:
+	sf::Texture myTexture;
+	medmelt::Quad body;
+	void set_texture_attributes(sf::Texture asset);
+	void render();
 };
 
 class RoundCornerBox {
 public:
 	GLfloat width, height;
 	Vec center;
-	Circle_ corner[CORNERS];
-	Quad_ vRectangle; //vertical
-	Quad_ hRectangle; //horizontal
-	void set_color(Color_ clr);
+	medmelt::Circle corner[CORNERS];
+	medmelt::Quad vRectangle; //vertical
+	medmelt::Quad hRectangle; //horizontal
+	void set_color(medmelt::Color clr);
 	void build();
 	void render();
-	RoundCornerBox();
+
+	RoundCornerBox() {}
+	RoundCornerBox(Assets assets);
 };
 
 class CharSelBox {
 public:
+	bool occupied;
+	TexturedQuad start_icon;
 	RoundCornerBox box;
 	RoundCornerBox outline;
 	GLfloat stroke;
+	CharSelBox() { occupied = false; }
 };
 
 class Background {
 public:
-	Quad_ body;
-	Color_ color[4];
+	medmelt::Quad body;
+	medmelt::Color color[4];
 	bool transition_done[4];
 	void render();
-	void set_color(Color_ *clr);
+	void set_color(medmelt::Color *clr);
 	Background() {}
 };
 
 class Platform {
 public:
-	Quad_ body;
-	Quad_ outline;
+	medmelt::Quad body;
+	medmelt::Quad outline;
 	Color_Set my_color;
 };
 
-class TexturedQuad {
-public:
-	sf::Texture myTexture;
-	Quad_ body;
-	void set_texture_attributes(sf::Texture asset);
-	void render();
-};

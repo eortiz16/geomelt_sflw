@@ -5,8 +5,8 @@
 #include "primitives.h"
 #include "player.h"
 
-#define FAC1 1.0000001f
-#define FAC2 0.9999999f
+constexpr auto FAC1 = 1.0000001f;
+constexpr auto FAC2 = 0.9999999f;
 
 class Player;
 
@@ -23,8 +23,8 @@ public:
 	float competitionXRight;
 	// void update_value();
 
-	Boundary_ edges;
-	Boundary_ ortho;
+	medmelt::Boundary edges;
+	medmelt::Boundary ortho;
 	Vec center;
 	void set_center(map<unsigned int, unique_ptr<Player>>& playerMap);
 	void set_edges();

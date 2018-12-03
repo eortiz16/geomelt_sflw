@@ -1,6 +1,6 @@
 #include "primitives.h"
 
-Line::Line()
+medmelt::Line::Line()
 {
 	width = 2.0;
 	color.r = 0;
@@ -8,7 +8,7 @@ Line::Line()
 	color.b = 0;
 }
 
-void Line::render()
+void medmelt::Line::render()
 {
 	glLineWidth(width);
 	glColor3i((GLubyte)color.r, (GLubyte)color.g, (GLubyte)color.b);
@@ -18,7 +18,7 @@ void Line::render()
 	glEnd();
 }
 
-void Shape_::boundary_assignment()
+void medmelt::Shape::boundary_assignment()
 {
 	boundary.top = center.y + height / 2;
 	boundary.bottom = center.y - height / 2;
@@ -26,10 +26,9 @@ void Shape_::boundary_assignment()
 	boundary.right = center.x + width / 2;
 }
 
-void Circle_::render()
+void medmelt::Circle::render()
 {
 	GLfloat arg1, arg2;
-
 	glColor4ub((GLubyte)color.r, (GLubyte)color.g, (GLubyte)color.b, (GLubyte)color.alpha);
 	glBegin(GL_TRIANGLE_FAN);
 	glVertex2f(center.x, center.y);
@@ -42,7 +41,7 @@ void Circle_::render()
 	glEnd();
 }
 
-void Quad_::render()
+void medmelt::Quad::render()
 {
 	glColor4ub((GLubyte)color.r, (GLubyte)color.g, (GLubyte)color.b, (GLubyte)color.alpha);
 	glBegin(GL_QUADS);

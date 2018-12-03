@@ -23,7 +23,6 @@ MainMenu::MainMenu(Assets assets)
 	exit.body.center.y = -HDY / 2;
 
 	selected = PLAY;
-	cout << "initial = " << selected << endl;
 	selectedIcon.set_texture_attributes(assets.textures.playSelected);
 	selectedIcon.body.center.y = play.body.center.y;
 }
@@ -37,7 +36,7 @@ void MainMenu::handler()
 {
 	//Fixed Camera
 	glOrtho(-HDX, HDX, -HDY, HDY, -1, 1);
-
+	glClear(1);
 	title.render();
 
 	play.render();
@@ -68,7 +67,6 @@ void MainMenu::read_axis(unsigned int joyID, Assets assets)
 
 	if (modified)
 	{
-		//cout << selected << "#\n";
 		switch (selected)
 		{
 		case PLAY:
@@ -88,7 +86,7 @@ void MainMenu::read_axis(unsigned int joyID, Assets assets)
 	modified = false;
 }
 
-void MainMenu::read_buttons(unsigned int button, Assets assets, CurrentMenu *currentMenu, bool *menuChange)
+void MainMenu::read_buttons(unsigned int button, Assets assets, CurrentGameState *currentState, unique_ptr<RenderWindow> &window)
 {
 	switch (button)
 	{
@@ -96,14 +94,14 @@ void MainMenu::read_buttons(unsigned int button, Assets assets, CurrentMenu *cur
 		switch (selected)
 		{
 		case PLAY:	
-			*currentMenu = CHARSEL;	
-			*menuChange = true;
+			currentState->menu = CHARSEL;	
+			currentState->menuChange = true;
 			break;
 		case OPTIONS:
 
 			break;
 		case EXIT:
-
+			window->close();
 			break;
 		}
 		break;
@@ -148,6 +146,12 @@ CharacterSelect::CharacterSelect(Assets assets)
 		selectBox[i].outline.build();
 		selectBox[i].outline.set_color(assets.palette.black);
 
+		selectBox[i].start_icon.set_texture_attributes(assets.textures.button_Start);
+		selectBox[i].start_icon.body.width = 100;
+		selectBox[i].start_icon.body.height = 100;
+		selectBox[i].start_icon.body.center.x = selectBox[i].box.center.x - (1.5f / 4.0f  * selectBox[i].box.width);
+		selectBox[i].start_icon.body.center.y = selectBox[i].box.center.y;
+
 		wSpace += HDX / 2.0f;
 	}
 }
@@ -163,6 +167,9 @@ void CharacterSelect::handler(Camera camera, Assets assets, map<unsigned int, un
 	{
 		selectBox[i].outline.render();
 		selectBox[i].box.render();
+
+		if (selectBox[i].occupied == false)
+			selectBox[i].start_icon.render();
 	}
 
 	while (it != fin)
@@ -172,34 +179,131 @@ void CharacterSelect::handler(Camera camera, Assets assets, map<unsigned int, un
 		it->second->body->center.y = selectBox[it->second->myID].box.center.y;
 		it->second->simple_update_menu();
 		it->second->render();
+
 		it++;
 	}
 }
 
 LevelSelect::LevelSelect(Assets assets)
 {
+	position = 0;
 
+	background.body.center.x = 0;
+	background.body.center.y = 0;
+	background.body.width = 2.0f * HDX;
+	background.body.height = 2.0f * HDY;
+
+	for (int i = 0; i < CORNERS; i++)
+	{
+		background.color[i].r = assets.palette.lightGrey.r;
+		background.color[i].g = assets.palette.lightGrey.g;
+		background.color[i].b = assets.palette.lightGrey.b;
+	}
+
+	level1.set_texture_attributes(assets.textures.field);
+	level1.body.center.y = 0;
+	level1.body.center.x = -HDY;
+	level1.body.width = 600;
+	level1.body.height = 400;
+
+	level2.set_texture_attributes(assets.textures.night);
+	level2.body.center.y = 0;
+	level2.body.center.x = 0;
+	level2.body.width = 600;
+	level2.body.height = 400;
+
+	level3.set_texture_attributes(assets.textures.time); 
+	level3.body.center.y = 0;
+	level3.body.center.x = HDY;
+	level3.body.width = 600;
+	level3.body.height = 400;
+
+	selector.width = level1.body.width + 16;
+	selector.height = level1.body.height + 16;
+	selector.center.x = level1.body.center.x;
+	selector.center.y = level1.body.center.y;
+	selector.color = assets.palette.green;
 }
 
 void LevelSelect::handler() 
 {
+	glOrtho(-HDX, HDX, -HDY, HDY, -1, 1);
 
+	background.render();
+	selector.render();
+	level1.render();
+	level2.render();
+	level3.render();
 }
 
-void LevelSelect::read_buttons(unsigned int button, Render_State *render, CurrentMenu *currentMenu, bool *menuChange, unique_ptr<Level> &level, Assets assets)
+void LevelSelect::read_buttons(unsigned int button, CurrentGameState *currentState, unique_ptr<Level> &level, Assets assets)
 {
 	switch (button)
 	{
 	case A:
 	{
-		*currentMenu = NONE;
-		*menuChange = true;
-		*render = LEVEL;
-		level = unique_ptr<Level>(new Field_Level(assets));
-		level->reset(); //Change name of function
+		currentState->menu = NONE;
+		currentState->menuChange = true;
+		currentState->render = LEVEL;
+		
+		switch (position)
+		{
+		case 0:
+			level = unique_ptr<Level>(new Field_Level(assets));
+			break;
+		case 1:
+			level = unique_ptr<Level>(new Night_Level(assets));
+			break;
+		case 2:
+			level = unique_ptr<Level>(new Time_Level(assets));
+			break;
+		}
+
+		level->reset_level();
+	}
+		break;
+	case B:
+	{
+		//if level selected, the deselect
+
+		//else go back to prev menu
+		currentState->menu = CHARSEL;
+		currentState->menuChange = true;
 	}
 		break;
 	default:
+		break;
+	}
+}
+
+void LevelSelect::read_axis(unsigned int joyID, Assets assets)
+{
+	float axis_position1 = Joystick::getAxisPosition(joyID, Joystick::PovX); //DPAD
+	float axis_position2 = Joystick::getAxisPosition(joyID, Joystick::X); //LEFT ANALOG
+
+	if (axis_position1 == 100 || axis_position2 == 100) 
+		position++;
+	else if (axis_position1 == -100 || axis_position2 == -100) 
+		position--;
+
+	if (position == UINT_MAX)
+		position = 2;
+
+	position = position % 3;
+
+	switch (position)
+	{
+	case 0:
+		selector.center.x = level1.body.center.x;
+		selector.center.y = level1.body.center.y;
+		break;
+	case 1:
+		selector.center.x = level2.body.center.x;
+		selector.center.y = level2.body.center.y;
+		break;
+	case 2:
+		selector.center.x = level3.body.center.x;
+		selector.center.y = level3.body.center.y;
 		break;
 	}
 }

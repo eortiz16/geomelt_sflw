@@ -5,7 +5,7 @@
 #include "complex_shapes.h"
 #include "controller.h"
 
-#define SELECTED_CARDINALITY 3
+constexpr auto SELECTED_CARDINALITY = 3;
 
 class Camera;
 class Game;
@@ -29,12 +29,26 @@ inline void operator--(Selected &sel, int)
 		sel = static_cast<Selected> (SELECTED_CARDINALITY - 1);
 }
 
+class CurrentGameState
+{
+private:
+	friend class Game;
+	friend class Input;
+public:
+	Render_State render;
+	CurrentMenu menu;
+	bool menuChange;
+};
+
+
+class Level;
+
 class Menu {
 public:
 	//BUTTONS
-	virtual void read_buttons(unsigned int joyID, unsigned int button, Game *game) = 0;
-	virtual void read_buttons(unsigned int button, Assets assets, CurrentMenu *currentMenu, bool *menuChange) = 0;
-	virtual void read_buttons(unsigned int button, Render_State *render, CurrentMenu *currentMenu, bool *menuChange, unique_ptr<Level> &level, Assets assets) = 0;
+	virtual void read_buttons(unsigned int joyID, unsigned int button, CurrentGameState &current, Assets assets, unique_ptr<Level> &level) = 0;
+	virtual void read_buttons(unsigned int button, Assets assets, CurrentGameState *currentState, unique_ptr<RenderWindow> &window) = 0;
+	virtual void read_buttons(unsigned int button, CurrentGameState *currentState, unique_ptr<Level> &level, Assets assets) = 0;
 
 	virtual void read_axis(unsigned int joyID, Assets assets) = 0;
 	virtual void handler(Camera camera, Assets assets, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) = 0;
@@ -44,9 +58,9 @@ public:
 
 class MainMenu : public Menu {
 public:
-	void read_buttons(unsigned int joyID, unsigned int button, Game *game) {}
-	void read_buttons(unsigned int button, Assets assets, CurrentMenu *currentMenu, bool *menuChange);
-	void read_buttons(unsigned int button, Render_State *render, CurrentMenu *currentMenu, bool *menuChange, unique_ptr<Level> &level, Assets assets) {}
+	void read_buttons(unsigned int joyID, unsigned int button, CurrentGameState &current, Assets assets, unique_ptr<Level> &level) {}
+	void read_buttons(unsigned int button, Assets assets, CurrentGameState *currentState, unique_ptr<RenderWindow> &window);
+	void read_buttons(unsigned int button, CurrentGameState *currentState, unique_ptr<Level> &level, Assets assets) {}
 
 	void read_axis(unsigned int joyID, Assets assets);
 
@@ -69,9 +83,9 @@ public:
 
 class Pause : public Menu {
 public:
-	void read_buttons(unsigned int joyID, unsigned int button, Game *game) {}
-	void read_buttons(unsigned int button, Assets assets, CurrentMenu *currentMenu, bool *menuChange) {}
-	void read_buttons(unsigned int button, Render_State *render, CurrentMenu *currentMenu, bool *menuChange, unique_ptr<Level> &level, Assets assets) {}
+	void read_buttons(unsigned int joyID, unsigned int button, CurrentGameState &current, Assets assets, unique_ptr<Level> &level) {}
+	void read_buttons(unsigned int button, Assets assets, CurrentGameState *currentState, unique_ptr<RenderWindow> &window) {}
+	void read_buttons(unsigned int button, CurrentGameState *currentState, unique_ptr<Level> &level, Assets assets) {}
 
 	void read_axis(unsigned int joyID, Assets assets) {}
 
@@ -81,9 +95,9 @@ public:
 
 class CharacterSelect : public Menu {
 public:
-	void read_buttons(unsigned int joyID, unsigned int button, Game *game);
-	void read_buttons(unsigned int button, Assets assets, CurrentMenu *currentMenu, bool *menuChange) {}
-	void read_buttons(unsigned int button, Render_State *render, CurrentMenu *currentMenu, bool *menuChange, unique_ptr<Level> &level, Assets assets) {}
+	void read_buttons(unsigned int joyID, unsigned int button, CurrentGameState &current, Assets assets, unique_ptr<Level> &level);
+	void read_buttons(unsigned int button, Assets assets, CurrentGameState *currentState, unique_ptr<RenderWindow> &window) {}
+	void read_buttons(unsigned int button, CurrentGameState *currentState, unique_ptr<Level> &level, Assets assets) {}
 
 	void read_axis(unsigned int joyID, Assets assets) {}
 
@@ -99,11 +113,19 @@ public:
 
 class LevelSelect : public Menu {
 public:
-	void read_buttons(unsigned int joyID, unsigned int button, Game *game) {}
-	void read_buttons(unsigned int button, Assets assets, CurrentMenu *currentMenu, bool *menuChange) {}
-	void read_buttons(unsigned int button, Render_State *render, CurrentMenu *currentMenu, bool *menuChange, unique_ptr<Level> &level, Assets assets);
+	unsigned int position;
+	medmelt::Quad selector;
 
-	void read_axis(unsigned int joyID, Assets assets) {}
+	Background background;
+	TexturedQuad level1;
+	TexturedQuad level2;
+	TexturedQuad level3;
+
+	void read_buttons(unsigned int joyID, unsigned int button, CurrentGameState &current, Assets assets, unique_ptr<Level> &level) {}
+	void read_buttons(unsigned int button, Assets assets, CurrentGameState *currentState, unique_ptr<RenderWindow> &window) {}
+	void read_buttons(unsigned int button, CurrentGameState *currentState, unique_ptr<Level> &level, Assets assets);
+
+	void read_axis(unsigned int joyID, Assets assets);
 
 	void handler();
 	void handler(Camera camera, Assets assets, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) {}

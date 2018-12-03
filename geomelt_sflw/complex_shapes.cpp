@@ -14,7 +14,7 @@ void Background::render()
 	glEnd();
 }
 
-void Background::set_color(Color_ *clr)
+void Background::set_color(medmelt::Color *clr)
 {
 	for (int i = 0; i < CORNERS; i++)
 		color[i] = clr[i];
@@ -29,7 +29,7 @@ void RoundCornerBox::render()
 		corner[j].render();
 }
 
-RoundCornerBox::RoundCornerBox()
+RoundCornerBox::RoundCornerBox(Assets assets)
 {
 	int size = 250; // diameter of circle
 
@@ -68,7 +68,7 @@ RoundCornerBox::RoundCornerBox()
 	corner[3].center.y = hRectangle.boundary.bottom;
 }
 
-void RoundCornerBox::set_color(Color_ clr)
+void RoundCornerBox::set_color(medmelt::Color clr)
 {
 	vRectangle.color = clr;
 	hRectangle.color = clr;
@@ -116,106 +116,80 @@ void RoundCornerBox::build()
 	corner[3].center.y = hRectangle.boundary.bottom;
 }
 
-CloudGroup::CloudGroup()
+vector<shared_ptr<medmelt::Circle>> Cloud::get_body() 
 {
-	srand((unsigned int)time(NULL));
-
-	//Set Wind Direction for All Clouds
-	(rand() % 2 == 0) ?
-		direction = RIGHT :
-		direction = LEFT;
-
-	for (int i = 0; i < MAX_CLOUD; i++)
-	{
-		//Assign Uniform Cloud Groups
-		cloud[i].reset_cloud(direction);
-	}
+	return body;
 }
 
-void CloudGroup::render()
+void Cloud::is_offScreen()
 {
-	for (int i = 0; i < MAX_CLOUD; i++)
-		cloud[i].render();
+	offScreen ^= 1;
 }
 
-void CloudGroup::update()
+bool Cloud::get_offScreen() 
 {
-	GLfloat arg1;
-	GLfloat arg2;
-
-	for (int i = 0; i < MAX_CLOUD; i++)
-	{
-		//Use Data from Center Cloud
-		arg1 = cloud[i].body[1].center.x + (cloud[i].body[1].radius * 3);
-		arg2 = cloud[i].body[1].center.x - (cloud[i].body[1].radius * 3);
-
-		//Reset if Last Cloud Offscreen
-		if (arg1 < (-1.0f * HDX) && direction == LEFT)
-			cloud[i].reset_cloud(direction);
-		else if (arg2 > HDX && direction == RIGHT)
-			cloud[i].reset_cloud(direction);
-
-		//Change Position Based on Established Speed
-		for (int i = 0; i < MAX_CLOUD; i++)
-			cloud[i].update(direction);
-	}
+	return offScreen;
 }
 
-void Cloud::update(Direction dir)
-{
-	if (dir == LEFT)
-	{
-		for (int j = 0; j < CLOUD_GROUP; j++)
-			body[j].center.x -= speed;
-	}
-	else
-	{
-		for (int j = 0; j < CLOUD_GROUP; j++)
-			body[j].center.x += speed;
-	}
-}
-
-void Cloud::reset_cloud(Direction dir)
+Cloud Cloud::make_cloud(Direction dir)
 {
 	// clr represents the color of cloud object
 	// size assigns a uniform size to cloud object
 	// level assigns a Y coor for the cloud object to travel
 
-	float clr = (float)(rand() % 55 + 200);
+	Cloud cloud;
+	float color = (float)(rand() % 55 + 200);
 	GLfloat size = (GLfloat)(rand() % CLOUD_RANGE) + CLOUD_START;
-	GLfloat level = (GLfloat)(rand() % (2 * HDY)) - HDY;
 
-	cout << "clr = " << clr << ", size = " << size << ", level = " << level << endl;
+	// Define one uniform cloud subshape
+	medmelt::Circle circle;
+	circle.color.r = color;
+	circle.color.g = color;
+	circle.color.b = color;
+	circle.color.alpha = 255;
+	circle.radius = size;
+	circle.center.y = (GLfloat)(rand() % (4 * HDY)) - (2 * HDY);
 
 	//Assign computed attributes to object
-	for (int i = 0; i < CLOUD_GROUP; i++)
-	{
-		body[i].color.r = clr;
-		body[i].color.g = clr;
-		body[i].color.b = clr;
-		body[i].color.alpha = 255;
-		body[i].radius = size;
-		body[i].center.y = level;
-	}
+	for (int i = 0; i < SUBCLOUD_SIZE; i++)
+		cloud.body.push_back(make_shared<medmelt::Circle>(circle));
 
-	// Assign x of middle circle
-	if (dir == LEFT) //Starting on Right
-		body[1].center.x = 2.0f * HDX + body[0].radius;
-	else //Starting on Left
-		body[1].center.x = -2.0f * HDX - body[0].radius;
+	// Assign x of middle circle // Start ar right or left
+	cloud.body[1].get()->center.x = (dir == LEFT) ? 2.0f * HDX + size : -2.0f * HDX - size;
 
-	// Assign center of first and last circles, bassed on middle
-	body[0].center.x = body[1].center.x - body[1].radius;
-	body[2].center.x = body[1].center.x + body[1].radius;
+	// Assign center of first and last circle, bassed on middle
+	cloud.body[0].get()->center.x = cloud.body[1].get()->center.x - cloud.body[1].get()->radius;
+	cloud.body[2].get()->center.x = cloud.body[1].get()->center.x + cloud.body[1].get()->radius;
 
 	//Set Speed - Based on Size (Kind of)
-	speed = (int)body[0].radius % MAX_SPEED + 1;
+	cloud.speed = rand() % MAX_SPEED + (int)size % MAX_SPEED + 1;
+	
+	//for erasing cloud when off screen
+	cloud.offScreen = false;
+
+	return cloud;
+}
+
+void Cloud::update(Direction dir)
+{
+	for (auto shape : body) 
+		shape.get()->center.x += (dir == LEFT) ? -speed : speed;
 }
 
 void Cloud::render()
 {
-	for (int i = 0; i < CLOUD_GROUP; i++)
-		body[i].render();
+	for (auto shape : body)
+		shape.get()->render();
+}
+
+Star::Star() 
+{
+	body = make_shared<medmelt::Circle>();
+	body->radius = 3;
+	body->color.r = 255;
+	body->color.g = 255;
+	body->color.b = 255;
+	body->color.alpha = 255;
 }
 
 void Star::compute_coordinates(int count)
@@ -229,9 +203,9 @@ void Star::compute_coordinates(int count)
 	//Produces Randomly arranged stars
 	do {
 		int r1 = rand() % 800;
-		body.center.x = ((count % 8 + 1) * horizonalPartition) - w / 2 - horizonalPartition / 2 + r1;
-		body.center.y = ((count % 5 + 1) * verticalPartition) - h / 2 - verticalPartition / 2 + r1;
-	} while (body.center.x < -w / 2 || body.center.x > w / 2 || body.center.y < -h / 2 || body.center.y > h / 2);
+		body->center.x = ((count % 8 + 1) * horizonalPartition) - w / 2 - horizonalPartition / 2 + r1;
+		body->center.y = ((count % 5 + 1) * verticalPartition) - h / 2 - verticalPartition / 2 + r1;
+	} while (body->center.x < -w / 2 || body->center.x > w / 2 || body->center.y < -h / 2 || body->center.y > h / 2);
 
 	//Produces Uniform Stars
 	//body.center.x = ((count % 8 + 1) * horizonalPartition) - w / 2 - horizonalPartition / 2;
@@ -243,39 +217,42 @@ void Star::change_color()
 	//Stars Flicker in the Night Sky
 	if (rand() % 2 == 0)
 	{
-		body.color.r = 255;
-		body.color.g = (float)(rand() % (255 - 0));
-		body.color.b = 215;
+		body->color.r = 255;
+		body->color.g = (float)(rand() % (255 - 0));
+		body->color.b = 215;
 	}
 	else
 	{
-		body.color.r = (float)(rand() % (255 - 0));
-		body.color.g = 215;
-		body.color.b = 255;
+		body->color.r = (float)(rand() % (255 - 0));
+		body->color.g = 215;
+		body->color.b = 255;
 	}
+}
+
+void Star::set_offset(float val)
+{
+	offset = val;
+}
+
+shared_ptr<medmelt::Shape> Star::get_body()
+{
+	return body;
 }
 
 StarGroup::StarGroup() 
 {
 	//Star Attributes
-	for (int i = 0; i < MAX_STAR; i++)
-	{
-		star[i].offset = rnd();
-		star[i].body.radius = 3;
-		star[i].body.color.r = 255;
-		star[i].body.color.g = 255;
-		star[i].body.color.b = 255;
-		star[i].body.color.alpha = 255;
+	for (int i = 0; i < MAX_STAR; i++) {
+		star[i].set_offset(rnd());
 		star[i].compute_coordinates(i);
 	}
 }
 
 void StarGroup::render()
 {
-	for (int i = 0; i < MAX_STAR; i++)
-	{
+	for (int i = 0; i < MAX_STAR; i++) {
 		star[i].change_color();
-		star[i].body.render();
+		star[i].get_body()->render();
 	}
 }
 

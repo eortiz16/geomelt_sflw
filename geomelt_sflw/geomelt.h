@@ -6,10 +6,12 @@
 #include "camera.h"
 #include "controller.h"
 
-#define FPS 60
-#define MS_PER_UPDATE 1000.0f / (float) FPS
+constexpr auto FPS = 60;
+constexpr auto MS_PER_UPDATE() { return 1000.0f / (float) FPS; }
 
 class Sync {
+private:
+	friend class Game;
 public:
 	sf::Clock game_clock;
 	double previous;
@@ -20,28 +22,29 @@ public:
 };
 
 class Input {
+private:
+	friend class Game;
 public:
 	void process(Game *game);
 };
 
 class Game {
+private:
+
 public:	
 	Sync sync;
 	ContextSettings contextSettings;
 	unique_ptr<RenderWindow> window;
-
-	//ENUMERATIONS
-	Render_State render;
-	CurrentMenu currentMenu;
-	bool menuChange;
-
+	CurrentGameState current;
 	Assets assets;
-	
 	unique_ptr<Level> level;
 	unique_ptr<Menu> menu;
-
 	Camera camera;
 	Input input;
+
+	void loop();
+
+	unique_ptr<RenderWindow> &get_window() { return window; }
 
 	Game();
 	~Game();

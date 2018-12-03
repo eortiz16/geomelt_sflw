@@ -4,12 +4,12 @@
 #include "generic.h"
 #include "primitives.h"
 
-#define CLR_OPT_CARDINALITY 8
+constexpr auto CLR_OPT_CARDINALITY = 8;
 
 class Color_Set {
 public:
-	Color_ body;
-	Color_ outline;
+	medmelt::Color body;
+	medmelt::Color outline;
 
 	Color_Set& operator = (const Color_Set &clr)
 	{
@@ -21,7 +21,7 @@ public:
 
 class Char_Color_Set : public Color_Set {
 public:
-	Color_ reflection;
+	medmelt::Color reflection;
 
 	Char_Color_Set& operator = (const Char_Color_Set &clr)
 	{
@@ -34,32 +34,32 @@ public:
 
 class Palette {
 public:
-	Color_ sun;
-	Color_ moon;
-	Color_ platform;
-	Color_ black;
-	Color_ grey;
-	Color_ darkGrey;
-	Color_ lightGrey;
-	Color_ white;
-	Color_ red;
-	Color_ darkRed;
-	Color_ green;
-	Color_ darkGreen;
-	Color_ blue;
-	Color_ darkBlue;
+	medmelt::Color sun;
+	medmelt::Color moon;
+	medmelt::Color platform;
+	medmelt::Color black;
+	medmelt::Color grey;
+	medmelt::Color darkGrey;
+	medmelt::Color lightGrey;
+	medmelt::Color white;
+	medmelt::Color red;
+	medmelt::Color darkRed;
+	medmelt::Color green;
+	medmelt::Color darkGreen;
+	medmelt::Color blue;
+	medmelt::Color darkBlue;
 	Palette();
 };
 
 class Palette_BG {
 public:
-	Color_ day[CORNERS];
-	Color_ afternoon[CORNERS];
-	Color_ evening[CORNERS];
-	Color_ night[CORNERS];
-	Color_ dark_night[CORNERS];
-	Color_ morning[CORNERS];
-	Color_ overcast[CORNERS];
+	medmelt::Color day[CORNERS];
+	medmelt::Color afternoon[CORNERS];
+	medmelt::Color evening[CORNERS];
+	medmelt::Color night[CORNERS];
+	medmelt::Color dark_night[CORNERS];
+	medmelt::Color morning[CORNERS];
+	medmelt::Color overcast[CORNERS];
 	Palette_BG();
 };
 
@@ -116,6 +116,23 @@ public:
 	sf::Texture optionsSelected;
 	sf::Texture exit;
 	sf::Texture exitSelected;
+
+	sf::Texture button_A;
+	sf::Texture button_B;
+	sf::Texture button_X;
+	sf::Texture button_Y;
+	sf::Texture button_LB;
+	sf::Texture button_RB;
+	sf::Texture button_LS;
+	sf::Texture button_RS;
+	sf::Texture button_LT;
+	sf::Texture button_RT;
+	sf::Texture button_Back;
+	sf::Texture button_Start;
+	sf::Texture button_Left;
+	sf::Texture button_Right;
+	sf::Texture button_Down;
+	sf::Texture button_Up;
 
 	Textures();
 };
