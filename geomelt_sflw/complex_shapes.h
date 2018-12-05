@@ -12,11 +12,13 @@ constexpr auto CLOUD_RANGE = 200;
 #pragma once
 class Cloud {
 private:
-	vector<shared_ptr<medmelt::Circle>> body;
+	vector<unique_ptr<medmelt::Circle>> body;
 	int speed;
 	bool offScreen;
+
+	friend class Field_Level;
+	friend class Time_Level;
 public:
-	vector<shared_ptr<medmelt::Circle>> get_body();
 	void is_offScreen();
 	bool get_offScreen();
 	void update(Direction dir);
@@ -26,13 +28,14 @@ public:
 
 class Star {
 private:
-	shared_ptr<medmelt::Shape> body;
+	unique_ptr<medmelt::Shape> body;
 	float offset;
+
+	friend class StarGroup;
 public:
 	void compute_coordinates(int count);
 	void set_offset(float val);
 	void change_color();
-	shared_ptr<medmelt::Shape> get_body();
 	Star();
 };
 

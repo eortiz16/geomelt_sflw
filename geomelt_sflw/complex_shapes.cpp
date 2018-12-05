@@ -116,11 +116,6 @@ void RoundCornerBox::build()
 	corner[3].center.y = hRectangle.boundary.bottom;
 }
 
-vector<shared_ptr<medmelt::Circle>> Cloud::get_body() 
-{
-	return body;
-}
-
 void Cloud::is_offScreen()
 {
 	offScreen ^= 1;
@@ -152,7 +147,7 @@ Cloud Cloud::make_cloud(Direction dir)
 
 	//Assign computed attributes to object
 	for (int i = 0; i < SUBCLOUD_SIZE; i++)
-		cloud.body.push_back(make_shared<medmelt::Circle>(circle));
+		cloud.body.push_back(make_unique<medmelt::Circle>(circle));
 
 	// Assign x of middle circle // Start ar right or left
 	cloud.body[1].get()->center.x = (dir == LEFT) ? 2.0f * HDX + size : -2.0f * HDX - size;
@@ -172,19 +167,23 @@ Cloud Cloud::make_cloud(Direction dir)
 
 void Cloud::update(Direction dir)
 {
-	for (auto shape : body) 
-		shape.get()->center.x += (dir == LEFT) ? -speed : speed;
+	vector<unique_ptr<medmelt::Circle>>::iterator it;
+
+	for (it = body.begin(); it != body.end(); ++it) 
+		it->get()->center.x += (dir == LEFT) ? -speed : speed;
 }
 
 void Cloud::render()
 {
-	for (auto shape : body)
-		shape.get()->render();
+	vector<unique_ptr<medmelt::Circle>>::iterator it;
+
+	for (it = body.begin(); it != body.end(); ++it)
+		it->get()->render();
 }
 
 Star::Star() 
 {
-	body = make_shared<medmelt::Circle>();
+	body = make_unique<medmelt::Circle>();
 	body->radius = 3;
 	body->color.r = 255;
 	body->color.g = 255;
@@ -234,11 +233,6 @@ void Star::set_offset(float val)
 	offset = val;
 }
 
-shared_ptr<medmelt::Shape> Star::get_body()
-{
-	return body;
-}
-
 StarGroup::StarGroup() 
 {
 	//Star Attributes
@@ -252,7 +246,7 @@ void StarGroup::render()
 {
 	for (int i = 0; i < MAX_STAR; i++) {
 		star[i].change_color();
-		star[i].get_body()->render();
+		star[i].body->render();
 	}
 }
 

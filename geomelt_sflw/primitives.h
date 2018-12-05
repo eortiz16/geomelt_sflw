@@ -55,11 +55,13 @@ namespace medmelt
 	public:
 		void render();
 		Circle() {}
+		~Circle() {}
 	};
 
 	class Quad : public Shape {
 	public:
 		void render();
 		Quad() {}
+		~Quad() {}
 	};
 }

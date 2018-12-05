@@ -184,13 +184,15 @@ Field_Level::Field_Level(Assets assets) : Level(assets)
 	(rand() % 2 == 0) ? windDirection = RIGHT : windDirection = LEFT;
 
 	for (int i = 0; i < MAX_CLOUDS; ++i)
-		clouds.push_back(make_shared<Cloud>(Cloud().make_cloud(windDirection)));
+		clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
 
 	// Initially only - Assign random X coordinate
-	for (auto element : clouds) {
-		element->get_body()[1].get()->center.x = rand() % (4 * HDX) - 2 * HDX;
-		element->get_body()[0].get()->center.x = element->get_body()[1].get()->center.x - element->get_body()[1].get()->radius;
-		element->get_body()[2].get()->center.x = element->get_body()[1].get()->center.x + element->get_body()[1].get()->radius;
+	vector<unique_ptr<Cloud>>::iterator it;
+
+	for (it = clouds.begin(); it != clouds.end(); ++it) {
+		it->get()->body[1].get()->center.x = rand() % (4 * HDX) - 2 * HDX;
+		it->get()->body[0].get()->center.x = it->get()->body[1].get()->center.x - it->get()->body[1].get()->radius;
+		it->get()->body[2].get()->center.x = it->get()->body[1].get()->center.x + it->get()->body[1].get()->radius;
 	}
 }
 
@@ -199,18 +201,20 @@ void Field_Level::update_clouds()
 	GLfloat arg1, arg2;
 	int i = 0;
 
-	for (auto cloud : clouds) {
+	vector<unique_ptr<Cloud>>::iterator it;
+
+	for (it = clouds.begin(); it != clouds.end(); ++it) {
 		// Parameters to determine when a cloud is off screen : 
 		// Direction: Left, Anlyze position of Right subcloud
-		arg1 = cloud->get_body()[2].get()->center.x + (cloud->get_body()[2].get()->radius);
-		arg2 = cloud->get_body()[0].get()->center.x - (cloud->get_body()[0].get()->radius);
+		arg1 = it->get()->body[2].get()->center.x + (it->get()->body[2].get()->radius);
+		arg2 = it->get()->body[0].get()->center.x - (it->get()->body[0].get()->radius);
 
 		//Reset if Last Cloud Offscreen
 		if ((arg1 < -2.0f * HDX && windDirection == LEFT) 
 			|| (arg2 > 2.0f * HDX && windDirection == RIGHT)) 
-			cloud->is_offScreen();
+			it->get()->is_offScreen();
 
-		cloud->update(windDirection);
+		it->get()->update(windDirection);
 
 		++i;
 	}
@@ -221,7 +225,7 @@ void Field_Level::purge_clouds()
 	for (unsigned int i = 0; i < clouds.size(); ++i) {
 		if (clouds[i].get()->get_offScreen()) {
 			clouds.erase(clouds.begin() + i);
-			clouds.push_back(make_shared<Cloud>(Cloud().make_cloud(windDirection)));
+			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
 		}
 	}
 }
@@ -268,8 +272,10 @@ void Field_Level::render()
 
 	sun.render();
 
-	for (auto cloud : clouds)
-		cloud->render();
+	vector<unique_ptr<Cloud>>::iterator it;
+
+	for (it = clouds.begin(); it != clouds.end(); ++it) 
+		it->get()->render();
 	
 	platform.at(0).outline.render();
 	platform.at(0).body.render();
@@ -430,14 +436,16 @@ Time_Level::Time_Level(Assets assets) : Level(assets)
 	(rand() % 2 == 0) ? windDirection = RIGHT : windDirection = LEFT;
 
 	for (int i = 0; i < MAX_CLOUDS; ++i)
-		clouds.push_back(make_shared<Cloud>(Cloud().make_cloud(windDirection)));
+		clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
 
 	// Initially only Assign random X coordinate
-	for (auto element : clouds) {
+	vector<unique_ptr<Cloud>>::iterator it;
+
+	for (it = clouds.begin(); it != clouds.end(); ++it) {
 		int randX = rand() % (4 * HDX) - 2 * HDX; // get random position for cloud
-		element->get_body()[1].get()->center.x = randX;
-		element->get_body()[0].get()->center.x = randX - element->get_body()[1].get()->radius;
-		element->get_body()[2].get()->center.x = randX + element->get_body()[1].get()->radius;
+		it->get()->body[1].get()->center.x = randX;
+		it->get()->body[0].get()->center.x = randX - it->get()->body[1].get()->radius;
+		it->get()->body[2].get()->center.x = randX + it->get()->body[1].get()->radius;
 	}
 }
 
@@ -446,22 +454,24 @@ void Time_Level::update_clouds()
 	GLfloat arg1, arg2;
 	int i = 0;
 
-	for (auto cloud : clouds) {
+	vector<unique_ptr<Cloud>>::iterator it;
+
+	for (it = clouds.begin(); it != clouds.end(); ++it) {
 		// Parameters to determine when a cloud is off screen
-		arg1 = cloud->get_body()[1].get()->center.x + (cloud->get_body()[1].get()->radius * 3);
-		arg2 = cloud->get_body()[1].get()->center.x - (cloud->get_body()[1].get()->radius * 3);
+		arg1 = it->get()->body[1].get()->center.x + (it->get()->body[1].get()->radius * 3);
+		arg2 = it->get()->body[1].get()->center.x - (it->get()->body[1].get()->radius * 3);
 
 		//Reset if Last Cloud Offscreen
 		if (arg1 < (-1.0f * HDX) && windDirection == LEFT) {
 			clouds.erase(clouds.begin() + i);
-			clouds.push_back(make_shared<Cloud>(Cloud().make_cloud(windDirection)));
+			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
 		}
 		else if (arg2 > HDX && windDirection == RIGHT) {
 			clouds.erase(clouds.begin() + i);
-			clouds.push_back(make_shared<Cloud>(Cloud().make_cloud(windDirection)));
+			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
 		}
 
-		cloud->update(windDirection);
+		it->get()->update(windDirection);
 
 		++i;
 	}
@@ -472,7 +482,7 @@ void Time_Level::purge_clouds()
 	for (unsigned int i = 0; i < clouds.size(); ++i) {
 		if (clouds[i].get()->get_offScreen()) {
 			clouds.erase(clouds.begin() + i);
-			clouds.push_back(make_shared<Cloud>(Cloud().make_cloud(windDirection)));
+			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
 		}
 	}
 }
@@ -553,8 +563,10 @@ void Time_Level::render()
 		break;
 	}
 	
-	for (auto cloud : clouds)
-		cloud->render();
+	vector<unique_ptr<Cloud>>::iterator it;
+
+	for (it = clouds.begin(); it != clouds.end(); ++it)
+		it->get()->render();
 
 	platform.at(0).body.render();
 	platform.at(0).outline.render();

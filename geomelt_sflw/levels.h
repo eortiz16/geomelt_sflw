@@ -63,7 +63,7 @@ public:
 
 class Field_Level : public Level {
 private:
-	vector<shared_ptr<Cloud>> clouds;
+	vector<unique_ptr<Cloud>> clouds;
 	Direction windDirection;
 	medmelt::Circle sun;
 
@@ -103,7 +103,7 @@ public:
 
 class Time_Level : public Level {
 private:
-	vector<shared_ptr<Cloud>> clouds;
+	vector<unique_ptr<Cloud>> clouds;
 	TOD timeOfDay;
 	bool transition;
 	medmelt::Circle sun;
