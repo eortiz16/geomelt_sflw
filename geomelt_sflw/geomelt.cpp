@@ -128,8 +128,7 @@ void CharacterSelect::read_buttons(unsigned int joyID, unsigned int button, Curr
 	case A:
 		break;
 	case B:
-		if (level->playerMap.find(joyID) != level->playerMap.end()) //if exists
-		{
+		if (level->playerMap.find(joyID) != level->playerMap.end()) { //if exists
 			plyr = level->playerMap[joyID].get();
 			selectBox[plyr->myID].occupied = false;
 			plyr->stats.lifeState = ELIMINATED;
@@ -137,8 +136,7 @@ void CharacterSelect::read_buttons(unsigned int joyID, unsigned int button, Curr
 		break;
 	case X:
 	{
-		if (level->playerMap.find(joyID) != level->playerMap.end()) //if exists
-		{
+		if (level->playerMap.find(joyID) != level->playerMap.end()) { //if exists
 			level->playerMap[joyID].reset();
 			Sleep(1);
 			level->playerMap[joyID] = unique_ptr<Player>(new Boxy(assets));

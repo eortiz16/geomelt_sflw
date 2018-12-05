@@ -44,6 +44,11 @@ protected:
 	medmelt::Quad filterBG;
 	vector<Platform> platform;
 	static map<unsigned int, unique_ptr<Player>> playerMap;
+
+	//My friends
+	friend class Game;
+	friend class Input;
+	friend class CharacterSelect;
 public:
 	virtual void render() = 0;
 	virtual void gfx_handler(Camera camera) = 0;
@@ -51,11 +56,6 @@ public:
 	void reset_level();
 	void purge_players();
 	void add_player(unsigned int joyID, Assets assets);
-
-	//My friends
-	friend class Game;
-	friend class Input;
-	friend class CharacterSelect;
 
 	Level() {}
 	Level(Assets assets);

@@ -7,10 +7,21 @@
 constexpr auto CLR_OPT_CARDINALITY = 8;
 
 class Color_Set {
-public:
+private:
 	medmelt::Color body;
 	medmelt::Color outline;
 
+	friend class Level;
+	friend class Field_Level;
+	friend class Night_Level;
+	friend class Time_Level;
+	friend class Char_Color_Set;
+	friend class Palette_PLAT;
+	friend class Palette_CHAR;
+	friend class Player;
+	friend class Ball;
+	friend class Boxy;
+public:
 	Color_Set& operator = (const Color_Set &clr)
 	{
 		body = clr.body;
@@ -20,9 +31,14 @@ public:
 };
 
 class Char_Color_Set : public Color_Set {
-public:
+private:
 	medmelt::Color reflection;
-
+	
+	friend class Palette_CHAR;
+	friend class Player;
+	friend class Ball;
+	friend class Boxy;
+public:
 	Char_Color_Set& operator = (const Char_Color_Set &clr)
 	{
 		body = clr.body;
@@ -33,7 +49,7 @@ public:
 };
 
 class Palette {
-public:
+private:
 	medmelt::Color sun;
 	medmelt::Color moon;
 	medmelt::Color platform;
@@ -48,11 +64,23 @@ public:
 	medmelt::Color darkGreen;
 	medmelt::Color blue;
 	medmelt::Color darkBlue;
+
+	friend class Level;
+	friend class Field_Level;
+	friend class Night_Level;
+	friend class Time_Level;
+	friend class Palette_PLAT;
+	friend class Palette_CHAR;
+	friend class Ball;
+	friend class Boxy;
+	friend class CharacterSelect;
+	friend class LevelSelect;
+public:
 	Palette();
 };
 
 class Palette_BG {
-public:
+private:
 	medmelt::Color day[CORNERS];
 	medmelt::Color afternoon[CORNERS];
 	medmelt::Color evening[CORNERS];
@@ -61,12 +89,24 @@ public:
 	medmelt::Color morning[CORNERS];
 	medmelt::Color overcast[CORNERS];
 	medmelt::Color black[CORNERS];
+
+	friend class Level;
+	friend class Field_Level;
+	friend class Night_Level;
+	friend class Time_Level;
+public:
 	Palette_BG();
 };
 
 class Palette_PLAT {
-public:
+private:
 	Color_Set grass;
+
+	friend class Level;
+	friend class Field_Level;
+	friend class Night_Level;
+	friend class Time_Level;
+public:
 	Palette_PLAT(Palette pal);
 };
 
@@ -87,7 +127,7 @@ inline void operator--(CharColorOptions &ti, int)
 }
 
 class Palette_CHAR {
-public:
+private:
 	//IF add color, change cardinality of this set
 	Char_Color_Set red;
 	Char_Color_Set green;
@@ -100,11 +140,15 @@ public:
 
 	map <CharColorOptions, Char_Color_Set> traverse_colors;
 
+	friend class Player;
+	friend class CharacterSelect;
+	friend class Level;
+public:
 	Palette_CHAR();
 };
 
 class Textures {
-public:
+private:
 	sf::Texture field;
 	sf::Texture night;
 	sf::Texture time;
@@ -135,26 +179,35 @@ public:
 	sf::Texture button_Down;
 	sf::Texture button_Up;
 
+	friend class MainMenu;
+	friend class CharacterSelect;
+	friend class LevelSelect;
+public:
 	Textures();
 };
 
 class Assets {
 private:
-
-public:
 	sf::Font font;
-	
 	sf::Texture backgroundTexture;
 	sf::Texture texture;
-
 	Textures textures;
 	Sprite background;
-
 	Palette palette;
 	Palette_BG backgroundPalette;
 	Palette_CHAR characterPalette;
 	Palette_PLAT platformPalette = Palette_PLAT(palette);
 
+	friend class MainMenu;
+	friend class CharacterSelect;
+	friend class LevelSelect;
+	friend class Level;
+	friend class Field_Level;
+	friend class Night_Level;
+	friend class Time_Level;
+	friend class Ball;
+	friend class Boxy;
+public:
 	Assets();
 	~Assets();
 };
