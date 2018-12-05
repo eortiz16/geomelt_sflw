@@ -138,6 +138,8 @@ public:
 };
 
 class Assets {
+private:
+
 public:
 	sf::Font font;
 	

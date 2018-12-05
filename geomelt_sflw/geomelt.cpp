@@ -63,13 +63,13 @@ Sync::Sync()
 	previous = 0.0;
 }
 
-void Input::process(Game *game)
+void Game::process_input()
 {
 	Player *plyr = NULL;
 
 	Event event;
 
-	while (game->get_window()->pollEvent(event))
+	while (window->pollEvent(event))
 	{
 		switch (event.type)
 		{
@@ -78,45 +78,41 @@ void Input::process(Game *game)
 			{
 			case Keyboard::Escape:
 			{
-				game->get_window()->close();
+				window->close();
 			}
 				break;
 			}
 			break;
 		case Event::JoystickMoved:
-			if (game->current.render == LEVEL)
-			{
-				if (game->level->playerMap.find(event.joystickMove.joystickId) != game->level->playerMap.end())
-				{
-					plyr = game->level->playerMap[event.joystickConnect.joystickId].get();
+			if (current.render == LEVEL) {
+				if (level->playerMap.find(event.joystickMove.joystickId) != level->playerMap.end()) {
+					plyr = level->playerMap[event.joystickConnect.joystickId].get();
 					plyr->read_axes(event.joystickConnect.joystickId);
 				}
 			}
-			else if (game->current.render == MENU)
-			{
-				game->menu->read_axis(event.joystickButton.joystickId, game->assets);
+			else if (current.render == MENU) {
+				menu->read_axis(event.joystickButton.joystickId, assets);
 			}
 			break;
 		case Event::JoystickButtonPressed:
-			if (game->current.render == LEVEL)
+			if (current.render == LEVEL)
 			{
-				if (game->level->playerMap.find(event.joystickButton.joystickId) != game->level->playerMap.end())
-				{
-					plyr = game->level->playerMap[event.joystickButton.joystickId].get();
+				if (level->playerMap.find(event.joystickButton.joystickId) != level->playerMap.end()) {
+					plyr = level->playerMap[event.joystickButton.joystickId].get();
 					plyr->read_buttons(event.joystickButton.button);
 				}
 			}
-			else if (game->current.render == MENU)
-				switch (game->current.menu)
+			else if (current.render == MENU)
+				switch (current.menu)
 				{
 				case MAINMENU:
-					game->menu->read_buttons(event.joystickButton.button, game->assets, &game->current, game->get_window());
+					menu->read_buttons(event.joystickButton.button, assets, &current, window);
 					break;
 				case CHARSEL:
-					game->menu->read_buttons(event.joystickButton.joystickId, event.joystickButton.button, game->current, game->assets, game->level);
+					menu->read_buttons(event.joystickButton.joystickId, event.joystickButton.button, current, assets, level);
 					break;
 				case LEVELSEL:
-					game->menu->read_buttons(event.joystickButton.button, &game->current, game->level, game->assets);
+					menu->read_buttons(event.joystickButton.button, &current, level, assets);
 					break;
 				}
 			break;
@@ -195,7 +191,7 @@ void Game::loop()
 		sync.previous = sync.current;
 		sync.lag += sync.elapsed;
 
-		input.process(this);
+		process_input();
 
 		while (sync.lag >= MS_PER_UPDATE())
 		{

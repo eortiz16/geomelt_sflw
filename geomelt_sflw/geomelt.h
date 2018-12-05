@@ -9,29 +9,22 @@
 constexpr auto FPS = 60;
 constexpr auto MS_PER_UPDATE() { return 1000.0f / (float) FPS; }
 
+/*** Sync is a class to help synchronize the game loop ***/
 class Sync {
 private:
-	friend class Game;
-public:
 	sf::Clock game_clock;
 	double previous;
 	double current;
 	double elapsed;
 	double lag;
-	Sync();
-};
 
-class Input {
-private:
 	friend class Game;
 public:
-	void process(Game *game);
+	Sync();
 };
 
 class Game {
 private:
-
-public:	
 	Sync sync;
 	ContextSettings contextSettings;
 	unique_ptr<RenderWindow> window;
@@ -40,12 +33,11 @@ public:
 	unique_ptr<Level> level;
 	unique_ptr<Menu> menu;
 	Camera camera;
-	Input input;
 
+	friend class Input;
+public:
+	void process_input();
 	void loop();
-
-	unique_ptr<RenderWindow> &get_window() { return window; }
-
 	Game();
 	~Game();
 };
