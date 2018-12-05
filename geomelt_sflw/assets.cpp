@@ -302,6 +302,10 @@ Palette_BG::Palette_BG()
 			overcast[i].g = 215;
 			overcast[i].b = 215;
 		}
+
+		black[i].r = 0;
+		black[i].g = 0;
+		black[i].b = 0;
 	}
 }
 

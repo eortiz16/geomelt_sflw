@@ -4,7 +4,7 @@
 #define rnd() (float)rand() / (float)RAND_MAX
 constexpr auto MAX_STAR = 40 ;
 constexpr auto MAX_SPEED = 5;
-constexpr auto MAX_CLOUDS = 10;
+constexpr auto MAX_CLOUDS = 75;
 constexpr auto SUBCLOUD_SIZE = 3;
 constexpr auto CLOUD_START = 50;
 constexpr auto CLOUD_RANGE = 200;
@@ -102,6 +102,7 @@ private:
 	bool transition_done[4];
 
 	friend class GradientBG;
+	friend class Level;
 	friend class Field_Level;
 	friend class Night_Level;
 	friend class Time_Level;

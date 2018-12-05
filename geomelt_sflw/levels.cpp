@@ -102,7 +102,11 @@ void GradientBG::render()
 
 Level::Level(Assets assets)
 {
-
+	blackVoid.set_color(assets.backgroundPalette.black);
+	blackVoid.body.center.x = 0;
+	blackVoid.body.center.y = 0;
+	blackVoid.body.width = 10.0f * HDX;
+	blackVoid.body.height = 10.0f * HDY;
 }
 
 Level::~Level()
@@ -265,9 +269,9 @@ void Field_Level::phys_handler(Assets assets, Camera *camera)
 
 void Field_Level::render()
 {
+	blackVoid.render();
 	filterBG.render();
 	background.render();
-	
 	//gradientBG.render();
 
 	sun.render();
@@ -375,6 +379,7 @@ void Night_Level::phys_handler(Assets assets, Camera *camera)
 
 void Night_Level::render()
 {
+	blackVoid.render();
 	background.render();
 	stars.render();
 	moon.render();
@@ -549,6 +554,7 @@ void Time_Level::phys_handler(Assets assets, Camera *camera)
 
 void Time_Level::render()
 {
+	blackVoid.render();
 	background.render();
 
 	switch (timeOfDay)

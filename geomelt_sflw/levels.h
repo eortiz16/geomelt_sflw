@@ -38,6 +38,7 @@ public:
 
 class Level {
 protected:
+	Background blackVoid;
 	Background background;
 	GradientBG gradientBG;
 	medmelt::Quad filterBG;

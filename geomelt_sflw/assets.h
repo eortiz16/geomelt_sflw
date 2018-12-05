@@ -60,6 +60,7 @@ public:
 	medmelt::Color dark_night[CORNERS];
 	medmelt::Color morning[CORNERS];
 	medmelt::Color overcast[CORNERS];
+	medmelt::Color black[CORNERS];
 	Palette_BG();
 };
 
