@@ -116,16 +116,6 @@ void RoundCornerBox::build()
 	corner[3].center.y = hRectangle.boundary.bottom;
 }
 
-void Cloud::is_offScreen()
-{
-	offScreen ^= 1;
-}
-
-bool Cloud::get_offScreen() 
-{
-	return offScreen;
-}
-
 Cloud Cloud::make_cloud(Direction dir)
 {
 	// clr represents the color of cloud object

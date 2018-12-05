@@ -45,7 +45,7 @@ void Level::reset_level()
 		it->second->body->width = 100;
 		it->second->body->radius = 50;
 		it->second->body->boundary_assignment();
-		it->second->toggle.set_ground(true);
+		it->second->toggle.on_ground = true;
 		it->second->update_reflection_x();
 		it->second->simple_update();
 
@@ -212,7 +212,7 @@ void Field_Level::update_clouds()
 		//Reset if Last Cloud Offscreen
 		if ((arg1 < -2.0f * HDX && windDirection == LEFT) 
 			|| (arg2 > 2.0f * HDX && windDirection == RIGHT)) 
-			it->get()->is_offScreen();
+			it->get()->offScreen ^= 1;;
 
 		it->get()->update(windDirection);
 
@@ -223,7 +223,7 @@ void Field_Level::update_clouds()
 void Field_Level::purge_clouds()
 {
 	for (unsigned int i = 0; i < clouds.size(); ++i) {
-		if (clouds[i].get()->get_offScreen()) {
+		if (clouds[i].get()->offScreen) {
 			clouds.erase(clouds.begin() + i);
 			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
 		}
@@ -480,7 +480,7 @@ void Time_Level::update_clouds()
 void Time_Level::purge_clouds()
 {
 	for (unsigned int i = 0; i < clouds.size(); ++i) {
-		if (clouds[i].get()->get_offScreen()) {
+		if (clouds[i].get()->offScreen) {
 			clouds.erase(clouds.begin() + i);
 			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
 		}

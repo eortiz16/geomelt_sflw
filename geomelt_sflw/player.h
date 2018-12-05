@@ -6,8 +6,6 @@
 #include "levels.h"
 #include "controller.h"
 
-constexpr auto MOVE_PARAM_X = 15.0f;
-constexpr auto MOVE_PARAM_Y = 5.0f;
 constexpr auto JUMP_PARAM = 25.0f;
 
 class Level;
@@ -27,7 +25,6 @@ private:
 	int lifeCount;
 	PlayerState lifeState;
 
-	//My Friends
 	friend class Player;
 	friend class Ball;
 	friend class Boxy;
@@ -45,32 +42,23 @@ class Toggle {
 private:
 	bool initDeath;
 	bool attacking;
-	bool walk_toggle;
+	bool walking;
 	bool on_ground;
 	sf::Clock deathTimer;
 	sf::Clock attackTimer;
 
-	//My friends
 	friend class Player;
+	friend class Ball;
+	friend class Boxy;
+	friend class Level;
 public:
 	Toggle();
-	void xor_attack();
-	void set_attack_toggle(bool);
-	void set_walk_toggle(bool);
-	void set_ground(bool);
-	void set_initdeath(bool);
-	void reset_attack_timer();
-	void reset_death_timer();
-	float get_death_time();
-	int get_attack_time();
-	bool get_initdeath();
-	bool is_attacking();
-	bool is_walking();
-	bool is_on_ground();
 };
 
 class Player {
 private:
+	float move_param_x;
+	float move_param_y;
 	static unsigned int count;
 	static vector<int> availableIDs;
 	unsigned int myID;
@@ -88,7 +76,6 @@ private:
 	friend class Camera;
 	friend class Game;
 public:
-	unsigned int get_count();
 	Vec	velocity;
 	bool created;
 
@@ -101,9 +88,9 @@ public:
 
 	CharColorOptions myColor;
 
-	medmelt::Shape *body;
-	medmelt::Shape *outline;
-	medmelt::Shape *reflection;
+	unique_ptr<medmelt::Shape> body;
+	unique_ptr<medmelt::Shape> outline;
+	unique_ptr<medmelt::Shape> reflection;
 	medmelt::Quad arm;
 	medmelt::Quad armOutline;
 	medmelt::Circle eye;
@@ -123,9 +110,9 @@ public:
 
 	virtual void jump() = 0;
 	virtual void special() = 0;
-	virtual void move(Direction dir) = 0;
+	void move(Direction dir);
 
-	virtual void reset_attributes() = 0;
+	void reset_attributes();
 	virtual void render(void) = 0;
 	virtual void update_position(vector<Platform> plat) = 0;
 	virtual void physics(vector<Platform> plat) = 0;
@@ -159,11 +146,9 @@ public:
 	void render();
 	void update_position(vector<Platform> plat);
 	void physics(vector<Platform> plat);
-	void move(Direction dir);
 	void jump();
 	void exhale();
 	void special() {}
-	void reset_attributes();
 
 	explicit Ball(Assets assets);
 	Ball(const Ball&) = delete;
@@ -184,10 +169,8 @@ public:
 	void render();
 	void update_position(vector<Platform> plat);
 	void physics(vector<Platform> plat);
-	void move(Direction dir);
 	void jump();
 	void special() {}
-	void reset_attributes();
 	
 	explicit Boxy(Assets assets);
 	Boxy(const Boxy&) = delete;
