@@ -9,7 +9,7 @@
 constexpr auto FPS = 60;
 constexpr auto MS_PER_UPDATE() { return 1000.0f / (float) FPS; }
 
-/*** Sync is a class to help synchronize the game loop ***/
+/*** Helper class to  synchronize the game loop and unbinds physics() and draw() from CPU speed ***/
 class Sync {
 private:
 	sf::Clock game_clock;
@@ -26,8 +26,8 @@ public:
 class Game {
 private:
 	Sync sync;
-	ContextSettings contextSettings;
-	unique_ptr<RenderWindow> window;
+	sf::ContextSettings contextSettings;
+	unique_ptr<sf::RenderWindow> window;
 	CurrentGameState current;
 	Assets assets;
 	unique_ptr<Level> level;

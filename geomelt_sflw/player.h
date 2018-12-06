@@ -7,17 +7,8 @@
 #include "controller.h"
 
 constexpr auto JUMP_PARAM = 25.0f;
-
-class Level;
-class Field_Level;
-class Night_Level;
-class Time_Level;
-class Camera;
-
 enum PlayerState { ALIVE, DEAD, ELIMINATED };
 enum SelectColor{NEXT, PREV, RANDOM};
-class buttonMapping;
-class Camera;
 
 class Attributes {
 private:
@@ -57,13 +48,27 @@ public:
 
 class Player {
 private:
-	float move_param_x;
-	float move_param_y;
-	static unsigned int count;
+	static unsigned int count; // num of players
 	static vector<int> availableIDs;
+
+	float move_param_x; // speed
+	float move_param_y; // jump
+	int JUMP_MAX;
+	int jumpCount;
+	Direction direction;
+
 	unsigned int myID;
 	Toggle toggle;
 	Attributes stats;
+	Vec	velocity;
+
+	unique_ptr<medmelt::Shape> body;
+	unique_ptr<medmelt::Shape> outline;
+	unique_ptr<medmelt::Shape> reflection;
+	medmelt::Quad arm;
+	medmelt::Quad armOutline;
+	medmelt::Circle eye;
+	CharColorOptions myColor;
 
 	//My friends
 	friend class Level;
@@ -76,42 +81,20 @@ private:
 	friend class Camera;
 	friend class Game;
 public:
-	Vec	velocity;
-	bool created;
-
 	//ButtonMapping buttonMapping;
 	void read_buttons(unsigned int button);
 	void read_axes(unsigned int joyID);
-	
 	void simple_update();
 	void simple_update_menu();
-
-	CharColorOptions myColor;
-
-	unique_ptr<medmelt::Shape> body;
-	unique_ptr<medmelt::Shape> outline;
-	unique_ptr<medmelt::Shape> reflection;
-	medmelt::Quad arm;
-	medmelt::Quad armOutline;
-	medmelt::Circle eye;
-
 	void change_color(SelectColor option);
-
-	int JUMP_MAX;
-	int jumpCount;
-	Direction direction;
-
 	void respawn();
 	void death_handler();
 	void update_reflection_x();
-
 	unsigned int extract_lowest_ID();
 	void attack();
-
 	virtual void jump() = 0;
 	virtual void special() = 0;
 	void move(Direction dir);
-
 	void reset_attributes();
 	virtual void render(void) = 0;
 	virtual void update_position(vector<Platform> plat) = 0;
@@ -133,15 +116,6 @@ public:
 };
 
 class Ball : public Player {
-private:
-	//My friends
-	friend class Toggle;
-	friend class Attributes;
-	friend class Field_Level;
-	friend class Time_Level;
-	friend class Night_Level;
-	friend class Camera;
-	friend class Game;
 public:
 	void render();
 	void update_position(vector<Platform> plat);
@@ -156,15 +130,6 @@ public:
 };
 
 class Boxy : public Player {
-private:
-	//My friends
-	friend class Toggle;
-	friend class Attributes;
-	friend class Field_Level;
-	friend class Time_Level;
-	friend class Night_Level;
-	friend class Camera;
-	friend class Game;
 public:
 	void render();
 	void update_position(vector<Platform> plat);

@@ -15,8 +15,8 @@ Game::Game()
 	contextSettings.depthBits = 24;
 	contextSettings.sRgbCapable = false;
 
-	window = unique_ptr<RenderWindow> (new RenderWindow(VideoMode(HDX, HDY), "Geometric Meltdown", Style::Default, contextSettings));
-	//window = unique_ptr<RenderWindow> (new RenderWindow(VideoMode(HDX, HDY), "Geometric Meltdown", Style::Fullscreen, contextSettings));
+	window = unique_ptr<sf::RenderWindow> (new sf::RenderWindow(sf::VideoMode(HDX, HDY), "Geometric Meltdown", sf::Style::Default, contextSettings));
+	//window = unique_ptr<RenderWindow> (new sf::RenderWindow(sf::VideoMode(HDX, HDY), "Geometric Meltdown", sf::Style::Fullscreen, contextSettings));
 
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FPS);
@@ -65,23 +65,23 @@ void Game::process_input()
 {
 	Player *plyr = NULL;
 
-	Event event;
+	sf::Event event;
 
 	while (window->pollEvent(event))
 	{
 		switch (event.type)
 		{
-		case Event::KeyPressed:
+		case sf::Event::KeyPressed:
 			switch (event.key.code)
 			{
-			case Keyboard::Escape:
+			case sf::Keyboard::Escape:
 			{
 				window->close();
 			}
 				break;
 			}
 			break;
-		case Event::JoystickMoved:
+		case sf::Event::JoystickMoved:
 			if (current.render == LEVEL) {
 				if (level->playerMap.find(event.joystickMove.joystickId) != level->playerMap.end()) {
 					plyr = level->playerMap[event.joystickConnect.joystickId].get();
@@ -92,7 +92,7 @@ void Game::process_input()
 				menu->read_axis(event.joystickButton.joystickId, assets);
 			}
 			break;
-		case Event::JoystickButtonPressed:
+		case sf::Event::JoystickButtonPressed:
 			if (current.render == LEVEL)
 			{
 				if (level->playerMap.find(event.joystickButton.joystickId) != level->playerMap.end()) {
@@ -104,13 +104,13 @@ void Game::process_input()
 				switch (current.menu)
 				{
 				case MAINMENU:
-					menu->read_buttons(event.joystickButton.button, assets, &current, window);
+					menu->read_buttons(event, assets, current, window);
 					break;
 				case CHARSEL:
-					menu->read_buttons(event.joystickButton.joystickId, event.joystickButton.button, current, assets, level);
+					menu->read_buttons(event, assets, current, level);
 					break;
 				case LEVELSEL:
-					menu->read_buttons(event.joystickButton.button, &current, level, assets);
+					menu->read_buttons(event, assets, current, level);
 					break;
 				}
 			break;
@@ -118,28 +118,28 @@ void Game::process_input()
 	}
 }
 
-void CharacterSelect::read_buttons(unsigned int joyID, unsigned int button, CurrentGameState &current, Assets assets, unique_ptr<Level> &level)
+void CharacterSelect::read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<Level> &level)
 {
 	Player *plyr = NULL;
 	map<unsigned int, unsigned int>::iterator it;
 
-	switch (button)
+	switch (event.joystickButton.button)
 	{
 	case A:
 		break;
 	case B:
-		if (level->playerMap.find(joyID) != level->playerMap.end()) { //if exists
-			plyr = level->playerMap[joyID].get();
+		if (level->playerMap.find(event.joystickButton.joystickId) != level->playerMap.end()) { //if exists
+			plyr = level->playerMap[event.joystickButton.joystickId].get();
 			selectBox[plyr->myID].occupied = false;
 			plyr->stats.lifeState = ELIMINATED;
 		}
 		break;
 	case X:
 	{
-		if (level->playerMap.find(joyID) != level->playerMap.end()) { //if exists
-			level->playerMap[joyID].reset();
+		if (level->playerMap.find(event.joystickButton.joystickId) != level->playerMap.end()) { //if exists
+			level->playerMap[event.joystickButton.joystickId].reset();
 			Sleep(1);
-			level->playerMap[joyID] = unique_ptr<Player>(new Boxy(assets));
+			level->playerMap[event.joystickButton.joystickId] = unique_ptr<Player>(new Boxy(assets));
 		}
 	}
 		break;
@@ -150,20 +150,20 @@ void CharacterSelect::read_buttons(unsigned int joyID, unsigned int button, Curr
 		break;
 	case LB:
 	{
-		if (level->playerMap.find(joyID) != level->playerMap.end())
-			level->playerMap[joyID].get()->change_color(PREV);
+		if (level->playerMap.find(event.joystickButton.joystickId) != level->playerMap.end())
+			level->playerMap[event.joystickButton.joystickId].get()->change_color(PREV);
 	}
 		break;
 	case RB:
 	{
-		if (level->playerMap.find(joyID) != level->playerMap.end())
-			level->playerMap[joyID].get()->change_color(NEXT);
+		if (level->playerMap.find(event.joystickButton.joystickId) != level->playerMap.end())
+			level->playerMap[event.joystickButton.joystickId].get()->change_color(NEXT);
 	}
 		break;
 	case START:
 	{
-		level->add_player(joyID, assets);
-		selectBox[level->playerMap[joyID].get()->myID].occupied = true;
+		level->add_player(event.joystickButton.joystickId, assets);
+		selectBox[level->playerMap[event.joystickButton.joystickId].get()->myID].occupied = true;
 	}
 		break;
 	case SELECT:

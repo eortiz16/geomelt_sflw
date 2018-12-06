@@ -9,15 +9,19 @@ enum PS4Button { SQUARE, CROSS, CIRCLE, TRIANGLE, LEFT1, RIGHT1, LEFT2, RIGHT2, 
 enum ActionType { JUMP, ATTACK, SPECIAL };
 
 class MyButton {
-public:
-	Event::EventType myEventType;
-	Joystick::Axis myAxes;
+private:
+	sf::Event::EventType myEventType;
+	sf::Joystick::Axis myAxes;
 	unsigned int myID1;
 	unsigned int myID2;
+
+	friend class ButtonMapping;
+
 };
 
 class ButtonMapping {
-public:
+private:
 	map<ActionType, MyButton> buttons;
+public:
 	ButtonMapping();
 };

@@ -50,8 +50,8 @@ void MainMenu::read_axis(unsigned int joyID, Assets assets)
 	//Add a disclaimer message which forces players to use dpad to register
 	bool modified = false;
 
-	float axis_position1 = Joystick::getAxisPosition(joyID, Joystick::PovY); //DPAD
-	float axis_position2 = Joystick::getAxisPosition(joyID, Joystick::Y); //LEFT ANALOG
+	float axis_position1 = sf::Joystick::getAxisPosition(joyID, sf::Joystick::PovY); //DPAD
+	float axis_position2 = sf::Joystick::getAxisPosition(joyID, sf::Joystick::Y); //LEFT ANALOG
 
 	//toggle moving condition
 	if (axis_position1 == 100 || axis_position2 == -100) //up
@@ -86,16 +86,16 @@ void MainMenu::read_axis(unsigned int joyID, Assets assets)
 	modified = false;
 }
 
-void MainMenu::read_buttons(unsigned int button, Assets assets, CurrentGameState *currentState, unique_ptr<RenderWindow> &window)
+void MainMenu::read_buttons(sf::Event event, Assets assets, CurrentGameState &currentState, unique_ptr<sf::RenderWindow> &window)
 {
-	switch (button)
+	switch (event.joystickButton.button)
 	{
 	case A:
 		switch (selected)
 		{
 		case PLAY:	
-			currentState->menu = CHARSEL;	
-			currentState->menuChange = true;
+			currentState.menu = CHARSEL;	
+			currentState.menuChange = true;
 			break;
 		case OPTIONS:
 
@@ -236,15 +236,15 @@ void LevelSelect::handler()
 	level3.render();
 }
 
-void LevelSelect::read_buttons(unsigned int button, CurrentGameState *currentState, unique_ptr<Level> &level, Assets assets)
+void LevelSelect::read_buttons(sf::Event event, Assets assets, CurrentGameState &currentState, unique_ptr<Level> &level)
 {
-	switch (button)
+	switch (event.joystickButton.button)
 	{
 	case A:
 	{
-		currentState->menu = NONE;
-		currentState->menuChange = true;
-		currentState->render = LEVEL;
+		currentState.menu = NONE;
+		currentState.menuChange = true;
+		currentState.render = LEVEL;
 		
 		switch (position)
 		{
@@ -267,8 +267,8 @@ void LevelSelect::read_buttons(unsigned int button, CurrentGameState *currentSta
 		//if level selected, the deselect
 
 		//else go back to prev menu
-		currentState->menu = CHARSEL;
-		currentState->menuChange = true;
+		currentState.menu = CHARSEL;
+		currentState.menuChange = true;
 	}
 		break;
 	default:
@@ -278,8 +278,8 @@ void LevelSelect::read_buttons(unsigned int button, CurrentGameState *currentSta
 
 void LevelSelect::read_axis(unsigned int joyID, Assets assets)
 {
-	float axis_position1 = Joystick::getAxisPosition(joyID, Joystick::PovX); //DPAD
-	float axis_position2 = Joystick::getAxisPosition(joyID, Joystick::X); //LEFT ANALOG
+	float axis_position1 = sf::Joystick::getAxisPosition(joyID, sf::Joystick::PovX); //DPAD
+	float axis_position2 = sf::Joystick::getAxisPosition(joyID, sf::Joystick::X); //LEFT ANALOG
 
 	if (axis_position1 == 100 || axis_position2 == 100) 
 		position++;

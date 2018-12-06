@@ -192,7 +192,7 @@ private:
 	sf::Texture backgroundTexture;
 	sf::Texture texture;
 	Textures textures;
-	Sprite background;
+	sf::Sprite background;
 	Palette palette;
 	Palette_BG backgroundPalette;
 	Palette_CHAR characterPalette;

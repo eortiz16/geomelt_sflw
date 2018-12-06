@@ -81,8 +81,8 @@ void Player::read_buttons(unsigned int button)
 
 void Player::read_axes(unsigned int joyID)
 {
-	float axis_position1 = Joystick::getAxisPosition(joyID, Joystick::PovX);
-	float axis_position2 = Joystick::getAxisPosition(joyID, Joystick::X);
+	float axis_position1 = sf::Joystick::getAxisPosition(joyID, sf::Joystick::PovX);
+	float axis_position2 = sf::Joystick::getAxisPosition(joyID, sf::Joystick::X);
 
 	//toggle move 
 	if (axis_position1 == 100 || axis_position2 == 100)	{
@@ -97,10 +97,9 @@ void Player::read_axes(unsigned int joyID)
 		toggle.walking = false;
 }
 
+/*Takes the width resolution and scales down to a factor controls reflection of character*/
 void Player::update_reflection_x()
 {
-	//Takes the width resolution and scales down to a factor
-	//controls reflection of character
 	GLfloat OldMax, OldMin, OldValue;
 	GLfloat NewMax, NewMin;
 	GLfloat offset = 0.0f;

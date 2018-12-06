@@ -9,7 +9,7 @@ Assets::Assets()
 	backgroundTexture.loadFromFile("resources/background.jpg");
 	texture.loadFromFile("resources/texture.jpg");
 
-	Sprite temp(backgroundTexture);
+	sf::Sprite temp(backgroundTexture);
 	background = temp;
 }
 

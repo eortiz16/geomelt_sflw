@@ -14,6 +14,9 @@ constexpr auto TRANSITION_RATE_TOD = 0.25f;
 constexpr auto MAX_STROKE = 4;
 constexpr auto THICKNESS = 8;
 
+class Game;
+class Camera;
+
 enum TOD { DAY, AFTERNOON, EVENING, NITE, DNITE, MORNING };
 
 inline void operator++(TOD &ti, int)
@@ -22,17 +25,18 @@ inline void operator++(TOD &ti, int)
 	ti = static_cast<TOD>((i + 1) % TOD_CARDINALITY);
 }
 
-class Camera;
-class Level;
-class Player;
-
 class GradientBG {
-public:
+private:
 	Background TLBG;
 	Background TRBG;
 	Background LLBG;
 	Background LRBG;
 
+	friend class Level;
+	friend class Field_Level;
+	friend class Night_Level;
+	friend class Time_Level;
+public:
 	void render();
 };
 
@@ -47,6 +51,8 @@ protected:
 
 	//My friends
 	friend class Game;
+	
+	//friend void Game::process_input();
 	friend class Input;
 	friend class CharacterSelect;
 public:
