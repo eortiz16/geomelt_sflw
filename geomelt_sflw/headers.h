@@ -4,9 +4,11 @@
 #include <iostream>
 #include <cmath>
 #include <ctime>
+#include <climits>
 #include <string>
 #include <memory>
 #include <vector>
+#include <map>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 

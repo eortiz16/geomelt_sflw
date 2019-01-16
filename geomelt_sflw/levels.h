@@ -16,6 +16,7 @@ constexpr auto THICKNESS = 8;
 
 class Game;
 class Camera;
+class Player;
 
 enum TOD { DAY, AFTERNOON, EVENING, NITE, DNITE, MORNING };
 
