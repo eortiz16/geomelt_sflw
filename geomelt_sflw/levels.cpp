@@ -249,7 +249,7 @@ void Field_Level::gfx_handler(Camera camera)
 	}
 }
 
-void Field_Level::phys_handler(Assets assets, Camera *camera)
+void Field_Level::phys_handler(Camera *camera)
 {
 	update_clouds();
 	purge_clouds();
@@ -362,7 +362,7 @@ void Night_Level::gfx_handler(Camera camera)
 	}
 }
 
-void Night_Level::phys_handler(Assets assets, Camera *camera)
+void Night_Level::phys_handler(Camera *camera)
 {
 	map<unsigned int, unique_ptr<Player>>::iterator it;
 
@@ -400,6 +400,8 @@ Time_Level::Time_Level(Assets assets) : Level(assets)
 	background.body.center.y = 0;
 	background.body.width = 4.0f * HDX;
 	background.body.height = 5.0f * HDY;
+
+	bg_pal = assets.backgroundPalette;
 
 	transition = false;
 
@@ -533,9 +535,9 @@ void Time_Level::gfx_handler(Camera camera)
 	}
 }
 
-void Time_Level::phys_handler(Assets assets, Camera *camera)
+void Time_Level::phys_handler(Camera *camera)
 {
-	transition_handler(assets.backgroundPalette);
+	transition_handler(bg_pal);
 	
 	update_clouds();
 	purge_clouds();

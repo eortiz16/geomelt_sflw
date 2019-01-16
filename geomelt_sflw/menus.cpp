@@ -9,9 +9,15 @@ MainMenu::MainMenu(Assets assets)
 	text.setFillColor(sf::Color::White);
 	text.setPosition(0.0f, 0.0f);
 	*/
+	srand((unsigned int)time(NULL));
+
+	level = (rand()%2 == 0) ? unique_ptr<Level>(new Field_Level(assets)) 
+		: unique_ptr<Level>(new Night_Level(assets));
 
 	title.set_texture_attributes(assets.textures.title);
 	title.body.center.y = HDY / 2;
+	title.body.width *= 2;
+	title.body.height *= 2;
 
 	play.set_texture_attributes(assets.textures.play);
 	play.body.center.y = -HDY / 6;
@@ -29,14 +35,16 @@ MainMenu::MainMenu(Assets assets)
 
 MainMenu::~MainMenu()
 {
-
 }
 
-void MainMenu::handler()
+void MainMenu::handler(Camera camera)
 {
 	//Fixed Camera
 	glOrtho(-HDX, HDX, -HDY, HDY, -1, 1);
 	glClear(1);
+
+	level->phys_handler(&camera);
+	level->render();
 	title.render();
 
 	play.render();
@@ -162,7 +170,7 @@ void CharacterSelect::handler(Camera camera, Assets assets, map<unsigned int, un
 
 	background.render();
 
-	for (int i = 0; i < 4; i++)	{
+	for (int i = 0; i < CORNERS; i++)	{
 		selectBox[i].outline.render();
 		selectBox[i].box.render();
 
@@ -199,19 +207,19 @@ LevelSelect::LevelSelect(Assets assets)
 	level1.set_texture_attributes(assets.textures.field);
 	level1.body.center.y = 0;
 	level1.body.center.x = -HDY;
-	level1.body.width = 600;
+	level1.body.width = 640;
 	level1.body.height = 400;
 
 	level2.set_texture_attributes(assets.textures.night);
 	level2.body.center.y = 0;
 	level2.body.center.x = 0;
-	level2.body.width = 600;
+	level2.body.width = 640;
 	level2.body.height = 400;
 
 	level3.set_texture_attributes(assets.textures.time); 
 	level3.body.center.y = 0;
 	level3.body.center.x = HDY;
-	level3.body.width = 600;
+	level3.body.width = 640;
 	level3.body.height = 400;
 
 	selector.width = level1.body.width + 16;
@@ -221,7 +229,7 @@ LevelSelect::LevelSelect(Assets assets)
 	selector.color = assets.palette.green;
 }
 
-void LevelSelect::handler() 
+void LevelSelect::handler(Camera) 
 {
 	glOrtho(-HDX, HDX, -HDY, HDY, -1, 1);
 

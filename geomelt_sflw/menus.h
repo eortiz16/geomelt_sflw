@@ -46,7 +46,7 @@ public:
 
 	virtual void read_axis(unsigned int joyID, Assets assets) = 0;
 	virtual void handler(Camera camera, Assets assets, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) = 0;
-	virtual void handler() = 0;
+	virtual void handler(Camera) = 0;
 };
 
 class MainMenu : public Menu {
@@ -57,12 +57,13 @@ private:
 	TexturedQuad options;
 	TexturedQuad exit;
 	TexturedQuad selectedIcon;
+	unique_ptr<Level> level;
 	sf::Text text;
 public:
 	void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window);
 	void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<Level> &window) {}
 	void read_axis(unsigned int joyID, Assets assets);
-	void handler();
+	void handler(Camera);
 	void handler(Camera camera, Assets assets, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) {}
 
 	MainMenu(Assets assets);
@@ -84,7 +85,7 @@ public:
 	void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window) {}
 	void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<Level> &level);
 	void read_axis(unsigned int joyID, Assets assets) {}	
-	void handler() {}
+	void handler(Camera) {}
 	void handler(Camera camera, Assets assets, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin);
 
 	CharacterSelect(Assets assets);
@@ -102,7 +103,7 @@ public:
 	void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window) {}
 	void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<Level> &level);
 	void read_axis(unsigned int joyID, Assets assets);
-	void handler();
+	void handler(Camera);
 	void handler(Camera camera, Assets assets, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) {}
 
 	LevelSelect(Assets assets);

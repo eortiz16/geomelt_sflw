@@ -311,18 +311,17 @@ Palette_BG::Palette_BG()
 
 Textures::Textures()
 {
-	field.loadFromFile("resources/textures/field.jpg");
-	night.loadFromFile("resources/textures/night.jpg");
-	time.loadFromFile("resources/textures/time.jpg");
-	polluted.loadFromFile("resources/textures/field.jpg");
-	title.loadFromFile("resources/textures/title.jpg");
+	field.loadFromFile("resources/textures/field.png");
+	night.loadFromFile("resources/textures/night.png");
+	time.loadFromFile("resources/textures/time.png");
+	title.loadFromFile("resources/textures/title.png");
 
-	play.loadFromFile("resources/textures/play_u.jpg");
-	playSelected.loadFromFile("resources/textures/play_s.jpg");
-	options.loadFromFile("resources/textures/options_u.jpg");
-	optionsSelected.loadFromFile("resources/textures/options_s.jpg");
-	exit.loadFromFile("resources/textures/exit_u.jpg");
-	exitSelected.loadFromFile("resources/textures/exit_s.jpg");
+	play.loadFromFile("resources/textures/play_u.png");
+	playSelected.loadFromFile("resources/textures/play_s.png");
+	options.loadFromFile("resources/textures/options_u.png");
+	optionsSelected.loadFromFile("resources/textures/options_s.png");
+	exit.loadFromFile("resources/textures/exit_u.png");
+	exitSelected.loadFromFile("resources/textures/exit_s.png");
 
 	button_A.loadFromFile("resources/textures/controls/button_A.png");
 	button_B.loadFromFile("resources/textures/controls/button_B.png");

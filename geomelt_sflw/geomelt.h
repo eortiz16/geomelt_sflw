@@ -23,7 +23,6 @@ public:
 	Sync();
 };
 
-
 class Game {
 private:
 	Sync sync;

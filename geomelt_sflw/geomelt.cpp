@@ -144,7 +144,7 @@ void CharacterSelect::read_buttons(sf::Event event, Assets assets, CurrentGameSt
 	{
 		if (level->playerMap.find(event.joystickButton.joystickId) != level->playerMap.end()) { //if exists
 			level->playerMap[event.joystickButton.joystickId].reset();
-			//Sleep(1);
+			Sleep(1);
 			level->playerMap[event.joystickButton.joystickId] = unique_ptr<Player>(new Boxy(assets));
 		}
 	}
@@ -198,7 +198,7 @@ void Game::loop()
 		while (sync.lag >= MS_PER_UPDATE())
 		{
 			if (current.render == LEVEL)
-				level->phys_handler(assets, &camera);
+				level->phys_handler(&camera);
 			sync.lag -= MS_PER_UPDATE();
 		}
 
@@ -214,7 +214,7 @@ void Game::loop()
 				case MAINMENU:
 				case LEVELSEL:
 				{
-					menu->handler();
+					menu->handler(camera);
 				}
 				break;
 				case CHARSEL:

@@ -57,7 +57,7 @@ protected:
 public:
 	virtual void render() = 0;
 	virtual void gfx_handler(Camera camera) = 0;
-	virtual void phys_handler(Assets assets, Camera *camera) = 0;
+	virtual void phys_handler(Camera *camera) = 0;
 	void reset_level();
 	void purge_players();
 	void add_player(unsigned int joyID, Assets assets);
@@ -82,7 +82,7 @@ public:
 	
 	void render();
 	void gfx_handler(Camera camera);
-	void phys_handler(Assets assets, Camera *camera);
+	void phys_handler(Camera *camera);
 
 	Field_Level() {}
 	Field_Level(Assets assets);
@@ -100,7 +100,7 @@ private:
 public:
 	void render();
 	void gfx_handler(Camera camera);
-	void phys_handler(Assets assets, Camera *camera);
+	void phys_handler(Camera *camera);
 
 	Night_Level() {}
 	Night_Level(Assets assets);
@@ -116,6 +116,7 @@ private:
 	medmelt::Circle moon;
 	StarGroup stars; //change opacity during day
 	Direction windDirection;
+	Palette_BG bg_pal;
 
 	// My Friends
 	friend class Player;
@@ -126,7 +127,7 @@ public:
 
 	void render();
 	void gfx_handler(Camera camera);
-	void phys_handler(Assets assets, Camera *camera);
+	void phys_handler(Camera *camera);
 
 	void transition_handler(Palette_BG pal);
 	void transition_to(medmelt::Color *clr);
