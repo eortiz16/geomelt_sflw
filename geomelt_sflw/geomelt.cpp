@@ -79,6 +79,8 @@ void Game::process_input()
 				window->close();
 			}
 				break;
+			default:
+				break;
 			}
 			break;
 		case sf::Event::JoystickMoved:
@@ -112,7 +114,11 @@ void Game::process_input()
 				case LEVELSEL:
 					menu->read_buttons(event, assets, current, level);
 					break;
+				default:
+					break;
 				}
+			break;
+		default:
 			break;
 		}
 	}
@@ -138,7 +144,7 @@ void CharacterSelect::read_buttons(sf::Event event, Assets assets, CurrentGameSt
 	{
 		if (level->playerMap.find(event.joystickButton.joystickId) != level->playerMap.end()) { //if exists
 			level->playerMap[event.joystickButton.joystickId].reset();
-			Sleep(1);
+			//Sleep(1);
 			level->playerMap[event.joystickButton.joystickId] = unique_ptr<Player>(new Boxy(assets));
 		}
 	}
@@ -223,6 +229,8 @@ void Game::loop()
 			break;
 		case LEVEL:
 			level->gfx_handler(camera);
+			break;
+		default:
 			break;
 		}
 
