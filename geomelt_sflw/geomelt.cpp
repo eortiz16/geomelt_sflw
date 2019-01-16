@@ -206,6 +206,7 @@ void Game::loop()
 				switch (current.menu)
 				{
 				case MAINMENU:
+				case LEVELSEL:
 				{
 					menu->handler();
 				}
@@ -213,11 +214,6 @@ void Game::loop()
 				case CHARSEL:
 				{
 					menu->handler(camera, assets, level->playerMap.begin(), level->playerMap.end());
-				}
-				break;
-				case LEVELSEL:
-				{
-					menu->handler();
 				}
 				break;
 				default:

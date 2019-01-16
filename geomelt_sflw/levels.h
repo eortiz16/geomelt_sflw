@@ -51,8 +51,6 @@ protected:
 
 	//My friends
 	friend class Game;
-	
-	//friend void Game::process_input();
 	friend class Input;
 	friend class CharacterSelect;
 public:

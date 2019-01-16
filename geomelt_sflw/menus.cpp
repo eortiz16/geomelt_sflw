@@ -86,7 +86,7 @@ void MainMenu::read_axis(unsigned int joyID, Assets assets)
 	modified = false;
 }
 
-void MainMenu::read_buttons(sf::Event event, Assets assets, CurrentGameState &currentState, unique_ptr<sf::RenderWindow> &window)
+void MainMenu::read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window)
 {
 	switch (event.joystickButton.button)
 	{
@@ -94,8 +94,8 @@ void MainMenu::read_buttons(sf::Event event, Assets assets, CurrentGameState &cu
 		switch (selected)
 		{
 		case PLAY:	
-			currentState.menu = CHARSEL;	
-			currentState.menuChange = true;
+			current.menu = CHARSEL;	
+			current.menuChange = true;
 			break;
 		case OPTIONS:
 
@@ -128,29 +128,28 @@ CharacterSelect::CharacterSelect(Assets assets)
 	//assign center of each char select box
 	float wSpace = -3.0f * HDX / 4.0f;
 
-	for (int i = 0; i < 4; i++)
-	{
-		selectBox[i].stroke = 30.0f;
+	for (int i = 0; i < 4; i++)	{
+		CharSelBox sb;
 
-		selectBox[i].box.center.x = wSpace;
-		selectBox[i].box.center.y = -HDY / 2.5f;
-		selectBox[i].box.width = HDX / 3.0f;
-		selectBox[i].box.height = 3.0f * HDY / 4.0f;
-		selectBox[i].box.build();
-		selectBox[i].box.set_color(assets.palette.white);
-
-		selectBox[i].outline.center.x = selectBox[i].box.center.x;
-		selectBox[i].outline.center.y = selectBox[i].box.center.y;
-		selectBox[i].outline.width = selectBox[i].box.width + selectBox[i].stroke;
-		selectBox[i].outline.height = selectBox[i].box.height + selectBox[i].stroke;
-		selectBox[i].outline.build();
-		selectBox[i].outline.set_color(assets.palette.black);
-
-		selectBox[i].start_icon.set_texture_attributes(assets.textures.button_Start);
-		selectBox[i].start_icon.body.width = 100;
-		selectBox[i].start_icon.body.height = 100;
-		selectBox[i].start_icon.body.center.x = selectBox[i].box.center.x - (1.5f / 4.0f  * selectBox[i].box.width);
-		selectBox[i].start_icon.body.center.y = selectBox[i].box.center.y;
+		sb.stroke = 30.0f;
+		sb.box.center.x = wSpace;
+		sb.box.center.y = -HDY / 2.5f;
+		sb.box.width = HDX / 3.0f;
+		sb.box.height = 3.0f * HDY / 4.0f;
+		sb.box.build();
+		sb.box.set_color(assets.palette.white);
+		sb.outline.center.x = sb.box.center.x;
+		sb.outline.center.y = sb.box.center.y;
+		sb.outline.width = sb.box.width + sb.stroke;
+		sb.outline.height = sb.box.height + sb.stroke;
+		sb.outline.build();
+		sb.outline.set_color(assets.palette.black);
+		sb.start_icon.set_texture_attributes(assets.textures.button_Start);
+		sb.start_icon.body.width = 100;
+		sb.start_icon.body.height = 100;
+		sb.start_icon.body.center.x = sb.box.center.x - (1.5f / 4.0f  * sb.box.width);
+		sb.start_icon.body.center.y = sb.box.center.y;
+		selectBox.push_back(sb);
 
 		wSpace += HDX / 2.0f;
 	}
@@ -163,8 +162,7 @@ void CharacterSelect::handler(Camera camera, Assets assets, map<unsigned int, un
 
 	background.render();
 
-	for (int i = 0; i < 4; i++)
-	{
+	for (int i = 0; i < 4; i++)	{
 		selectBox[i].outline.render();
 		selectBox[i].box.render();
 
@@ -172,8 +170,7 @@ void CharacterSelect::handler(Camera camera, Assets assets, map<unsigned int, un
 			selectBox[i].start_icon.render();
 	}
 
-	while (it != fin)
-	{
+	while (it != fin) {
 		*it->second = assets.characterPalette.traverse_colors[it->second->myColor];
 		it->second->body->center.x = selectBox[it->second->myID].box.center.x;
 		it->second->body->center.y = selectBox[it->second->myID].box.center.y;
@@ -193,8 +190,7 @@ LevelSelect::LevelSelect(Assets assets)
 	background.body.width = 2.0f * HDX;
 	background.body.height = 2.0f * HDY;
 
-	for (int i = 0; i < CORNERS; i++)
-	{
+	for (int i = 0; i < CORNERS; i++) {
 		background.color[i].r = assets.palette.lightGrey.r;
 		background.color[i].g = assets.palette.lightGrey.g;
 		background.color[i].b = assets.palette.lightGrey.b;
@@ -236,15 +232,15 @@ void LevelSelect::handler()
 	level3.render();
 }
 
-void LevelSelect::read_buttons(sf::Event event, Assets assets, CurrentGameState &currentState, unique_ptr<Level> &level)
+void LevelSelect::read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<Level> &level)
 {
 	switch (event.joystickButton.button)
 	{
 	case A:
 	{
-		currentState.menu = NONE;
-		currentState.menuChange = true;
-		currentState.render = LEVEL;
+		current.menu = NONE;
+		current.menuChange = true;
+		current.render = LEVEL;
 		
 		switch (position)
 		{
@@ -264,11 +260,9 @@ void LevelSelect::read_buttons(sf::Event event, Assets assets, CurrentGameState 
 		break;
 	case B:
 	{
-		//if level selected, the deselect
-
-		//else go back to prev menu
-		currentState.menu = CHARSEL;
-		currentState.menuChange = true;
+		//go back to prev menu
+		current.menu = CHARSEL;
+		current.menuChange = true;
 	}
 		break;
 	default:
@@ -286,6 +280,7 @@ void LevelSelect::read_axis(unsigned int joyID, Assets assets)
 	else if (axis_position1 == -100 || axis_position2 == -100) 
 		position--;
 
+	//Prevent underflow
 	if (position == UINT_MAX)
 		position = 2;
 
