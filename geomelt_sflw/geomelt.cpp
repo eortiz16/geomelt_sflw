@@ -144,7 +144,6 @@ void CharacterSelect::read_buttons(sf::Event event, Assets assets, CurrentGameSt
 	{
 		if (level->playerMap.find(event.joystickButton.joystickId) != level->playerMap.end()) { //if exists
 			level->playerMap[event.joystickButton.joystickId].reset();
-			Sleep(1);
 			level->playerMap[event.joystickButton.joystickId] = unique_ptr<Player>(new Boxy(assets));
 		}
 	}
