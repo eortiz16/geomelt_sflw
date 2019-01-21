@@ -8,8 +8,8 @@ constexpr auto CLR_OPT_CARDINALITY = 8;
 
 class Color_Set {
 private:
-	medmelt::Color body;
-	medmelt::Color outline;
+	geomelt::Color body;
+	geomelt::Color outline;
 
 	friend class Level;
 	friend class Field_Level;
@@ -32,7 +32,7 @@ public:
 
 class Char_Color_Set : public Color_Set {
 private:
-	medmelt::Color reflection;
+	geomelt::Color reflection;
 	
 	friend class Palette_CHAR;
 	friend class Player;
@@ -50,20 +50,20 @@ public:
 
 class Palette {
 private:
-	medmelt::Color sun;
-	medmelt::Color moon;
-	medmelt::Color platform;
-	medmelt::Color black;
-	medmelt::Color grey;
-	medmelt::Color darkGrey;
-	medmelt::Color lightGrey;
-	medmelt::Color white;
-	medmelt::Color red;
-	medmelt::Color darkRed;
-	medmelt::Color green;
-	medmelt::Color darkGreen;
-	medmelt::Color blue;
-	medmelt::Color darkBlue;
+	geomelt::Color sun;
+	geomelt::Color moon;
+	geomelt::Color platform;
+	geomelt::Color black;
+	geomelt::Color grey;
+	geomelt::Color darkGrey;
+	geomelt::Color lightGrey;
+	geomelt::Color white;
+	geomelt::Color red;
+	geomelt::Color darkRed;
+	geomelt::Color green;
+	geomelt::Color darkGreen;
+	geomelt::Color blue;
+	geomelt::Color darkBlue;
 
 	friend class Level;
 	friend class Field_Level;
@@ -81,14 +81,14 @@ public:
 
 class Palette_BG {
 private:
-	medmelt::Color day[CORNERS];
-	medmelt::Color afternoon[CORNERS];
-	medmelt::Color evening[CORNERS];
-	medmelt::Color night[CORNERS];
-	medmelt::Color dark_night[CORNERS];
-	medmelt::Color morning[CORNERS];
-	medmelt::Color overcast[CORNERS];
-	medmelt::Color black[CORNERS];
+	geomelt::Color day[CORNERS];
+	geomelt::Color afternoon[CORNERS];
+	geomelt::Color evening[CORNERS];
+	geomelt::Color night[CORNERS];
+	geomelt::Color dark_night[CORNERS];
+	geomelt::Color morning[CORNERS];
+	geomelt::Color overcast[CORNERS];
+	geomelt::Color black[CORNERS];
 
 	friend class Level;
 	friend class Field_Level;

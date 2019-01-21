@@ -8,8 +8,8 @@ float Camera::yMin = (float)INT_MAX;
 float Camera::yMax = (float)INT_MIN;
 float Camera::competitionXLeft = -400.0f;
 float Camera::competitionXRight = 400.0f;
-medmelt::Boundary Camera::ortho = medmelt::Boundary::setBounds(HDY, -HDY, -HDX, HDX);
-medmelt::Boundary Camera::edges = medmelt::Boundary::setBounds(HDY, -HDY, -HDX, HDX);
+geomelt::Boundary Camera::ortho = geomelt::Boundary::setBounds(HDY, -HDY, -HDX, HDX);
+geomelt::Boundary Camera::edges = geomelt::Boundary::setBounds(HDY, -HDY, -HDX, HDX);
 Vec Camera::center = Vec::set_Vec(0, 0, 0);
 
 //Default, need to add level camera

@@ -1,6 +1,6 @@
 #include "primitives.h"
 
-medmelt::Line::Line()
+geomelt::Line::Line()
 {
 	width = 2.0;
 	color.r = 0;
@@ -8,7 +8,7 @@ medmelt::Line::Line()
 	color.b = 0;
 }
 
-void medmelt::Line::render()
+void geomelt::Line::render()
 {
 	glLineWidth(width);
 	glColor3i((GLubyte)color.r, (GLubyte)color.g, (GLubyte)color.b);
@@ -18,7 +18,7 @@ void medmelt::Line::render()
 	glEnd();
 }
 
-void medmelt::Shape::boundary_assignment()
+void geomelt::Shape::boundary_assignment()
 {
 	boundary.top = center.y + height / 2;
 	boundary.bottom = center.y - height / 2;
@@ -26,7 +26,7 @@ void medmelt::Shape::boundary_assignment()
 	boundary.right = center.x + width / 2;
 }
 
-void medmelt::Circle::render()
+void geomelt::Circle::render()
 {
 	GLfloat arg1, arg2;
 	glColor4ub((GLubyte)color.r, (GLubyte)color.g, (GLubyte)color.b, (GLubyte)color.alpha);
@@ -41,7 +41,7 @@ void medmelt::Circle::render()
 	glEnd();
 }
 
-void medmelt::Quad::render()
+void geomelt::Quad::render()
 {
 	glColor4ub((GLubyte)color.r, (GLubyte)color.g, (GLubyte)color.b, (GLubyte)color.alpha);
 	glBegin(GL_QUADS);
@@ -52,9 +52,9 @@ void medmelt::Quad::render()
 	glEnd();
 }
 
-medmelt::Boundary medmelt::Boundary::setBounds(float t, float b, float l, float r)
+geomelt::Boundary geomelt::Boundary::setBounds(float t, float b, float l, float r)
 {
-	medmelt::Boundary bnd;
+	geomelt::Boundary bnd;
 	bnd.top = t;
 	bnd.bottom = b;
 	bnd.left = l;

@@ -269,9 +269,9 @@ Ball::Ball() : Player()
 	JUMP_MAX = 4;
 
 	//Polymorphism
-	body = unique_ptr<medmelt::Circle>(new medmelt::Circle);
-	outline = unique_ptr<medmelt::Circle>(new medmelt::Circle);
-	reflection = unique_ptr<medmelt::Circle>(new medmelt::Circle);
+	body = unique_ptr<geomelt::Circle>(new geomelt::Circle);
+	outline = unique_ptr<geomelt::Circle>(new geomelt::Circle);
+	reflection = unique_ptr<geomelt::Circle>(new geomelt::Circle);
 
 	//Default Player Dimensions
 	body->width = 100;
@@ -421,9 +421,9 @@ Boxy::Boxy() : Player()
 	//Default Character Values
 	JUMP_MAX = 2;
 
-	body = unique_ptr<medmelt::Quad>(new medmelt::Quad);
-	outline = unique_ptr<medmelt::Quad>(new medmelt::Quad);
-	reflection = unique_ptr<medmelt::Quad>(new medmelt::Quad);
+	body = unique_ptr<geomelt::Quad>(new geomelt::Quad);
+	outline = unique_ptr<geomelt::Quad>(new geomelt::Quad);
+	reflection = unique_ptr<geomelt::Quad>(new geomelt::Quad);
 
 	//Default Player Dimensions
 	body->width = 100;

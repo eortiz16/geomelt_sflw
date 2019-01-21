@@ -46,7 +46,7 @@ protected:
 	Background blackVoid;
 	Background background;
 	GradientBG gradientBG;
-	medmelt::Quad filterBG;
+	geomelt::Quad filterBG;
 	vector<Platform> platform;
 	static map<unsigned int, unique_ptr<Player>> playerMap;
 
@@ -70,7 +70,7 @@ class Field_Level : public Level {
 private:
 	vector<unique_ptr<Cloud>> clouds;
 	Direction windDirection;
-	medmelt::Circle sun;
+	geomelt::Circle sun;
 
 	// My Friends
 	friend class Player;
@@ -90,7 +90,7 @@ public:
 class Night_Level : public Level {
 private:
 	StarGroup stars;
-	medmelt::Circle moon;
+	geomelt::Circle moon;
 
 	// My Friends
 	friend class Player;
@@ -109,8 +109,8 @@ private:
 	vector<unique_ptr<Cloud>> clouds;
 	TOD timeOfDay;
 	bool transition;
-	medmelt::Circle sun;
-	medmelt::Circle moon;
+	geomelt::Circle sun;
+	geomelt::Circle moon;
 	StarGroup stars; //change opacity during day
 	Direction windDirection;
 	Palette_BG bg_pal;
@@ -127,7 +127,7 @@ public:
 	void phys_handler();
 
 	void transition_handler();
-	void transition_to(medmelt::Color *clr);
+	void transition_to(geomelt::Color *clr);
 
 	Time_Level();
 	~Time_Level() {}

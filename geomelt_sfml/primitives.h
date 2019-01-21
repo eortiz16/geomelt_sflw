@@ -12,7 +12,7 @@ public:
 	static Vec set_Vec(float xx, float yy, float zz);
 };
 
-namespace medmelt
+namespace geomelt
 {
 	class Color {
 	public:

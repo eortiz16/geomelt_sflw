@@ -582,10 +582,10 @@ void Time_Level::render()
 }
 
 //changes color of background by factor of 1 each frame
-void Time_Level::transition_to(medmelt::Color *clr)
+void Time_Level::transition_to(geomelt::Color *clr)
 {
 	//Transition from bg to clr
-	medmelt::Color *bg;
+	geomelt::Color *bg;
 
 	//Adjust Color of Corners
 	for (int i = 0; i < 4; i++)	{

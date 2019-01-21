@@ -14,7 +14,7 @@ void Background::render()
 	glEnd();
 }
 
-void Background::set_color(medmelt::Color *clr)
+void Background::set_color(geomelt::Color *clr)
 {
 	for (int i = 0; i < CORNERS; i++)
 		color[i] = clr[i];
@@ -68,7 +68,7 @@ RoundCornerBox::RoundCornerBox()
 	corner[3].center.y = hRectangle.boundary.bottom;
 }
 
-void RoundCornerBox::set_color(medmelt::Color clr)
+void RoundCornerBox::set_color(geomelt::Color clr)
 {
 	vRectangle.color = clr;
 	hRectangle.color = clr;
@@ -127,7 +127,7 @@ Cloud Cloud::make_cloud(Direction dir)
 	GLfloat size = (GLfloat)(rand() % CLOUD_RANGE) + CLOUD_START;
 
 	// Define one uniform cloud subshape
-	medmelt::Circle circle;
+	geomelt::Circle circle;
 	circle.color.r = color;
 	circle.color.g = color;
 	circle.color.b = color;
@@ -137,7 +137,7 @@ Cloud Cloud::make_cloud(Direction dir)
 
 	//Assign computed attributes to object
 	for (int i = 0; i < SUBCLOUD_SIZE; i++)
-		cloud.body.push_back(make_unique<medmelt::Circle>(circle));
+		cloud.body.push_back(make_unique<geomelt::Circle>(circle));
 
 	// Assign x of middle circle // Start ar right or left
 	cloud.body[1].get()->center.x = (dir == LEFT) ? 2.0f * HDX + size : -2.0f * HDX - size;
@@ -157,7 +157,7 @@ Cloud Cloud::make_cloud(Direction dir)
 
 void Cloud::update(Direction dir)
 {
-	vector<unique_ptr<medmelt::Circle>>::iterator it;
+	vector<unique_ptr<geomelt::Circle>>::iterator it;
 
 	for (it = body.begin(); it != body.end(); ++it) 
 		it->get()->center.x += (dir == LEFT) ? -speed : speed;
@@ -165,7 +165,7 @@ void Cloud::update(Direction dir)
 
 void Cloud::render()
 {
-	vector<unique_ptr<medmelt::Circle>>::iterator it;
+	vector<unique_ptr<geomelt::Circle>>::iterator it;
 
 	for (it = body.begin(); it != body.end(); ++it)
 		it->get()->render();
@@ -173,7 +173,7 @@ void Cloud::render()
 
 Star::Star() 
 {
-	body = make_unique<medmelt::Circle>();
+	body = make_unique<geomelt::Circle>();
 	body->radius = 3;
 	body->color.r = 255;
 	body->color.g = 255;

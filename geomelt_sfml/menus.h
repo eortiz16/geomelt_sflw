@@ -94,7 +94,7 @@ public:
 class LevelSelect : public Menu {
 private:
 	unsigned int position;
-	medmelt::Quad selector;
+	geomelt::Quad selector;
 	Background background;
 	TexturedQuad level1;
 	TexturedQuad level2;

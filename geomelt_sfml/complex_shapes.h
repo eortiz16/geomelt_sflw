@@ -12,7 +12,7 @@ constexpr auto CLOUD_RANGE = 200;
 #pragma once
 class Cloud {
 private:
-	vector<unique_ptr<medmelt::Circle>> body;
+	vector<unique_ptr<geomelt::Circle>> body;
 	int speed;
 	bool offScreen;
 	friend class Field_Level;
@@ -25,7 +25,7 @@ public:
 
 class Star {
 private:
-	unique_ptr<medmelt::Shape> body;
+	unique_ptr<geomelt::Shape> body;
 	float offset;
 	friend class StarGroup;
 public:
@@ -48,14 +48,14 @@ public:
 
 class Particles {
 private:
-	medmelt::Quad s;
+	geomelt::Quad s;
 	Vec velocity;
 };
 
 class TexturedQuad {
 private:
 	sf::Texture myTexture;
-	medmelt::Quad body;
+	geomelt::Quad body;
 
 	friend class MainMenu;
 	friend class CharacterSelect;
@@ -69,12 +69,12 @@ class RoundCornerBox {
 private:
 	GLfloat width, height;
 	Vec center;
-	medmelt::Circle corner[CORNERS];
-	medmelt::Quad vRectangle, hRectangle; //vertical, horizontal
+	geomelt::Circle corner[CORNERS];
+	geomelt::Quad vRectangle, hRectangle; //vertical, horizontal
 
 	friend class CharacterSelect;
 public:
-	void set_color(medmelt::Color clr);
+	void set_color(geomelt::Color clr);
 	void build();
 	void render();
 
@@ -96,8 +96,8 @@ public:
 
 class Background {
 private:
-	medmelt::Quad body;
-	medmelt::Color color[4];
+	geomelt::Quad body;
+	geomelt::Color color[4];
 	bool transition_done[4];
 
 	friend class GradientBG;
@@ -109,14 +109,14 @@ private:
 	friend class CharacterSelect;
 public:
 	void render();
-	void set_color(medmelt::Color *clr);
+	void set_color(geomelt::Color *clr);
 	Background() {}
 };
 
 class Platform {
 private:
-	medmelt::Quad body;
-	medmelt::Quad outline;
+	geomelt::Quad body;
+	geomelt::Quad outline;
 	Color_Set my_color;
 	friend class Player;
 	friend class Ball;

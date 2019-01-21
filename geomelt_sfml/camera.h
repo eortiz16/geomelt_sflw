@@ -26,8 +26,8 @@ private:
 	static float competitionXLeft;
 	static float competitionXRight;
 
-	static medmelt::Boundary edges;
-	static medmelt::Boundary ortho;
+	static geomelt::Boundary edges;
+	static geomelt::Boundary ortho;
 	static Vec center;
 
 	friend class Level;

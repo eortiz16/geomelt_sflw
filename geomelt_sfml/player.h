@@ -62,12 +62,12 @@ private:
 	Attributes stats;
 	Vec	velocity;
 
-	unique_ptr<medmelt::Shape> body;
-	unique_ptr<medmelt::Shape> outline;
-	unique_ptr<medmelt::Shape> reflection;
-	medmelt::Quad arm;
-	medmelt::Quad armOutline;
-	medmelt::Circle eye;
+	unique_ptr<geomelt::Shape> body;
+	unique_ptr<geomelt::Shape> outline;
+	unique_ptr<geomelt::Shape> reflection;
+	geomelt::Quad arm;
+	geomelt::Quad armOutline;
+	geomelt::Circle eye;
 	CharColorOptions myColor;
 
 	//My friends
