@@ -32,7 +32,6 @@ private:
 
 	unique_ptr<Level> level;
 	unique_ptr<Menu> menu;
-	Camera camera;
 
 	friend class Input;
 public:

@@ -16,19 +16,19 @@ class Player;
 
 class Camera {
 private:
-	float ZOOM;
-	float aspect_ratio;
-	float xMin;
-	float xMax;
-	float yMin;
-	float yMax;
+	static float ZOOM;
+	static float aspect_ratio;
+	static float xMin;
+	static float xMax;
+	static float yMin;
+	static float yMax;
 
-	float competitionXLeft;
-	float competitionXRight;
+	static float competitionXLeft;
+	static float competitionXRight;
 
-	medmelt::Boundary edges;
-	medmelt::Boundary ortho;
-	Vec center;
+	static medmelt::Boundary edges;
+	static medmelt::Boundary ortho;
+	static Vec center;
 
 	friend class Level;
 	friend class Field_Level;
@@ -37,8 +37,9 @@ private:
 	friend class CharacterSelect;
 public:
 	// void update_value();
-	void set_center(map<unsigned int, unique_ptr<Player>>& playerMap);
-	void set_edges();
-	void transition();
-	Camera();
+	static void set_center(map<unsigned int, unique_ptr<Player>>& playerMap);
+	static void set_edges();
+	static void transition();
+
+	Camera() {}
 };

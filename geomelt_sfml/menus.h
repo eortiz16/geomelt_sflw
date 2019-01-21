@@ -45,8 +45,8 @@ public:
 	virtual void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &level) = 0;
 
 	virtual void read_axis(unsigned int joyID) = 0;
-	virtual void handler(Camera camera, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) = 0;
-	virtual void handler(Camera) = 0;
+	virtual void handler(map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) = 0;
+	virtual void handler() = 0;
 };
 
 class MainMenu : public Menu {
@@ -63,8 +63,8 @@ public:
 	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window);
 	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &window) {}
 	void read_axis(unsigned int joyID);
-	void handler(Camera);
-	void handler(Camera camera, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) {}
+	void handler();
+	void handler(map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) {}
 
 	MainMenu();
 	~MainMenu();
@@ -85,8 +85,8 @@ public:
 	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window) {}
 	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &level);
 	void read_axis(unsigned int joyID) {}	
-	void handler(Camera) {}
-	void handler(Camera camera, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin);
+	void handler() {}
+	void handler(map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin);
 
 	CharacterSelect();
 };
@@ -103,8 +103,8 @@ public:
 	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window) {}
 	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &level);
 	void read_axis(unsigned int joyID);
-	void handler(Camera);
-	void handler(Camera camera, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) {}
+	void handler();
+	void handler(map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) {}
 
 	LevelSelect();
 };

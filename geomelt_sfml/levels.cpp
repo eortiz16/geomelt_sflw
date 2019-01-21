@@ -234,10 +234,10 @@ void Field_Level::purge_clouds()
 	}
 }
 
-void Field_Level::gfx_handler(Camera camera)
+void Field_Level::gfx_handler()
 {
 	//Dynamic Camera
-	glOrtho(camera.edges.left, camera.edges.right, camera.edges.bottom, camera.edges.top, -1, 1);
+	glOrtho(Camera::edges.left, Camera::edges.right, Camera::edges.bottom, Camera::edges.top, -1, 1);
 
 	render();
 
@@ -249,7 +249,7 @@ void Field_Level::gfx_handler(Camera camera)
 	}
 }
 
-void Field_Level::phys_handler(Camera *camera)
+void Field_Level::phys_handler()
 {
 	update_clouds();
 	purge_clouds();
@@ -263,8 +263,8 @@ void Field_Level::phys_handler(Camera *camera)
 		it->second->death_handler();
 	}
 
-	camera->set_center(playerMap);
-	camera->set_edges();
+	Camera::set_center(playerMap);
+	Camera::set_edges();
 }
 
 void Field_Level::render()
@@ -347,10 +347,10 @@ Night_Level::Night_Level() : Level()
 	}
 }
 
-void Night_Level::gfx_handler(Camera camera)
+void Night_Level::gfx_handler()
 {
 	//Dynamic Camera
-	glOrtho(camera.edges.left, camera.edges.right, camera.edges.bottom, camera.edges.top, -1, 1);
+	glOrtho(Camera::edges.left, Camera::edges.right, Camera::edges.bottom, Camera::edges.top, -1, 1);
 
 	render();
 
@@ -362,7 +362,7 @@ void Night_Level::gfx_handler(Camera camera)
 	}
 }
 
-void Night_Level::phys_handler(Camera *camera)
+void Night_Level::phys_handler()
 {
 	map<unsigned int, unique_ptr<Player>>::iterator it;
 
@@ -373,8 +373,8 @@ void Night_Level::phys_handler(Camera *camera)
 		it->second->death_handler();
 	}
 
-	camera->set_center(playerMap);
-	camera->set_edges();
+	Camera::set_center(playerMap);
+	Camera::set_edges();
 }
 
 void Night_Level::render()
@@ -494,36 +494,37 @@ void Time_Level::purge_clouds()
 	}
 }
 
-void Time_Level::transition_handler(Palette_BG pal)
+void Time_Level::transition_handler()
 {
+	
 	if (transition == true)
 		switch (timeOfDay)
 		{
 			case DAY:
-				transition_to(pal.afternoon); 
+				transition_to(Assets::backgroundPalette.afternoon);
 				break;
 			case AFTERNOON:
-				transition_to(pal.evening);
+				transition_to(Assets::backgroundPalette.evening);
 				break;
 			case EVENING:
-				transition_to(pal.night);
+				transition_to(Assets::backgroundPalette.night);
 				break;
 			case NITE:
-				transition_to(pal.dark_night);
+				transition_to(Assets::backgroundPalette.dark_night);
 				break;
 			case DNITE:
-				transition_to(pal.morning);
+				transition_to(Assets::backgroundPalette.morning);
 				break;
 			case MORNING:
-				transition_to(pal.day);
+				transition_to(Assets::backgroundPalette.day);
 				break;
 		}
 }
 
-void Time_Level::gfx_handler(Camera camera)
+void Time_Level::gfx_handler()
 {
 	//Dynamic Camera
-	glOrtho(camera.edges.left, camera.edges.right, camera.edges.bottom, camera.edges.top, -1, 1);
+	glOrtho(Camera::edges.left, Camera::edges.right, Camera::edges.bottom, Camera::edges.top, -1, 1);
 
 	render();
 
@@ -535,9 +536,9 @@ void Time_Level::gfx_handler(Camera camera)
 	}
 }
 
-void Time_Level::phys_handler(Camera *camera)
+void Time_Level::phys_handler()
 {
-	transition_handler(bg_pal);
+	transition_handler();
 	
 	update_clouds();
 	purge_clouds();
@@ -550,8 +551,8 @@ void Time_Level::phys_handler(Camera *camera)
 		it->second->death_handler();
 	}
 
-	camera->set_center(playerMap);
-	camera->set_edges();
+	Camera::set_center(playerMap);
+	Camera::set_edges();
 }
 
 void Time_Level::render()

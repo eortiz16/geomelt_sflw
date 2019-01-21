@@ -52,3 +52,23 @@ void medmelt::Quad::render()
 	glEnd();
 }
 
+medmelt::Boundary medmelt::Boundary::setBounds(float t, float b, float l, float r)
+{
+	medmelt::Boundary bnd;
+	bnd.top = t;
+	bnd.bottom = b;
+	bnd.left = l;
+	bnd.right = r;
+
+	return bnd;
+}
+
+Vec Vec::set_Vec(float xx, float yy, float zz)
+{
+	Vec vector;
+	vector.x = xx;
+	vector.y = yy;
+	vector.z = zz;
+
+	return vector;
+}

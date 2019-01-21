@@ -1,17 +1,16 @@
 #include "camera.h"
 
-Camera::Camera()
-{
-	ZOOM = 1.25f;
-	aspect_ratio = (float)HDX / (float)HDY;
-	ortho.left = (int)HDX * -1;
-	ortho.right = HDX;
-	ortho.top = HDY;
-	ortho.bottom = (int)HDY * -1;
-
-	competitionXLeft = -400.0f;
-	competitionXRight = 400.0f;
-}
+float Camera::ZOOM = 1.25f;
+float Camera::aspect_ratio = (float)HDX / (float)HDY;
+float Camera::xMin = (float)INT_MAX;
+float Camera::xMax = (float)INT_MIN;
+float Camera::yMin = (float)INT_MAX;
+float Camera::yMax = (float)INT_MIN;
+float Camera::competitionXLeft = -400.0f;
+float Camera::competitionXRight = 400.0f;
+medmelt::Boundary Camera::ortho = medmelt::Boundary::setBounds(HDY, -HDY, -HDX, HDX);
+medmelt::Boundary Camera::edges = medmelt::Boundary::setBounds(HDY, -HDY, -HDX, HDX);
+Vec Camera::center = Vec::set_Vec(0, 0, 0);
 
 //Default, need to add level camera
 void Camera::set_center(map<unsigned int, unique_ptr<Player>>& player)

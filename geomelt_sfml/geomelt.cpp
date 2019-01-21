@@ -197,7 +197,7 @@ void Game::loop()
 		while (sync.lag >= MS_PER_UPDATE())
 		{
 			if (current.render == LEVEL)
-				level->phys_handler(&camera);
+				level->phys_handler();
 			sync.lag -= MS_PER_UPDATE();
 		}
 
@@ -213,12 +213,12 @@ void Game::loop()
 				case MAINMENU:
 				case LEVELSEL:
 				{
-					menu->handler(camera);
+					menu->handler();
 				}
 				break;
 				case CHARSEL:
 				{
-					menu->handler(camera, level->playerMap.begin(), level->playerMap.end());
+					menu->handler(level->playerMap.begin(), level->playerMap.end());
 				}
 				break;
 				default:
@@ -227,7 +227,7 @@ void Game::loop()
 			}
 			break;
 		case LEVEL:
-			level->gfx_handler(camera);
+			level->gfx_handler();
 			break;
 		default:
 			break;

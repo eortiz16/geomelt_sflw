@@ -37,13 +37,13 @@ MainMenu::~MainMenu()
 {
 }
 
-void MainMenu::handler(Camera camera)
+void MainMenu::handler()
 {
 	//Fixed Camera
 	glOrtho(-HDX, HDX, -HDY, HDY, -1, 1);
 	glClear(1);
 
-	level->phys_handler(&camera);
+	level->phys_handler();
 	level->render();
 	title.render();
 
@@ -163,10 +163,10 @@ CharacterSelect::CharacterSelect()
 	}
 }
 
-void CharacterSelect::handler(Camera camera, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin)
+void CharacterSelect::handler(map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin)
 {
 	//Fixed Camera
-	glOrtho(camera.ortho.left, camera.ortho.right, camera.ortho.bottom, camera.ortho.top, -1, 1);
+	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1);
 
 	background.render();
 
@@ -229,7 +229,7 @@ LevelSelect::LevelSelect()
 	selector.color = Assets::palette.green;
 }
 
-void LevelSelect::handler(Camera) 
+void LevelSelect::handler() 
 {
 	glOrtho(-HDX, HDX, -HDY, HDY, -1, 1);
 

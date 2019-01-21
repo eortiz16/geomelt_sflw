@@ -8,6 +8,8 @@ constexpr auto TRI_NUM = 50;
 class Vec {
 public:
 	float x, y, z;
+
+	static Vec set_Vec(float xx, float yy, float zz);
 };
 
 namespace medmelt
@@ -38,6 +40,8 @@ namespace medmelt
 	class Boundary {
 	public:
 		float top, bottom, left, right;
+
+		static Boundary setBounds(float t, float b, float l, float r);
 	};
 
 	class Shape {

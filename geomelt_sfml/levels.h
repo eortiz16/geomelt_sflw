@@ -56,8 +56,8 @@ protected:
 	friend class CharacterSelect;
 public:
 	virtual void render() = 0;
-	virtual void gfx_handler(Camera camera) = 0;
-	virtual void phys_handler(Camera *camera) = 0;
+	virtual void gfx_handler() = 0;
+	virtual void phys_handler() = 0;
 	void reset_level();
 	void purge_players();
 	void add_player(unsigned int joyID);
@@ -80,8 +80,8 @@ public:
 	void purge_clouds();
 	
 	void render();
-	void gfx_handler(Camera camera);
-	void phys_handler(Camera *camera);
+	void gfx_handler();
+	void phys_handler();
 
 	Field_Level();
 	~Field_Level() {}
@@ -97,8 +97,8 @@ private:
 	friend class Attributes;
 public:
 	void render();
-	void gfx_handler(Camera camera);
-	void phys_handler(Camera *camera);
+	void gfx_handler();
+	void phys_handler();
 
 	Night_Level();
 	~Night_Level() {}
@@ -123,10 +123,10 @@ public:
 	void purge_clouds();
 
 	void render();
-	void gfx_handler(Camera camera);
-	void phys_handler(Camera *camera);
+	void gfx_handler();
+	void phys_handler();
 
-	void transition_handler(Palette_BG pal);
+	void transition_handler();
 	void transition_to(medmelt::Color *clr);
 
 	Time_Level();
