@@ -41,11 +41,11 @@ private:
 class Menu {
 public:
 	//BUTTONS
-	virtual void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window) = 0;
-	virtual void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<Level> &level) = 0;
+	virtual void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window) = 0;
+	virtual void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &level) = 0;
 
-	virtual void read_axis(unsigned int joyID, Assets assets) = 0;
-	virtual void handler(Camera camera, Assets assets, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) = 0;
+	virtual void read_axis(unsigned int joyID) = 0;
+	virtual void handler(Camera camera, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) = 0;
 	virtual void handler(Camera) = 0;
 };
 
@@ -60,19 +60,19 @@ private:
 	unique_ptr<Level> level;
 	sf::Text text;
 public:
-	void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window);
-	void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<Level> &window) {}
-	void read_axis(unsigned int joyID, Assets assets);
+	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window);
+	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &window) {}
+	void read_axis(unsigned int joyID);
 	void handler(Camera);
-	void handler(Camera camera, Assets assets, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) {}
+	void handler(Camera camera, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) {}
 
-	MainMenu(Assets assets);
+	MainMenu();
 	~MainMenu();
 };
 
 class Pause : public Menu {
 public:
-	void read_axis(unsigned int joyID, Assets assets) {}
+	void read_axis(unsigned int joyID) {}
 
 	//void handler(Game *game) {}
 };
@@ -82,13 +82,13 @@ private:
 	Background background;
 	vector<CharSelBox> selectBox;
 public:
-	void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window) {}
-	void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<Level> &level);
-	void read_axis(unsigned int joyID, Assets assets) {}	
+	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window) {}
+	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &level);
+	void read_axis(unsigned int joyID) {}	
 	void handler(Camera) {}
-	void handler(Camera camera, Assets assets, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin);
+	void handler(Camera camera, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin);
 
-	CharacterSelect(Assets assets);
+	CharacterSelect();
 };
 
 class LevelSelect : public Menu {
@@ -100,11 +100,11 @@ private:
 	TexturedQuad level2;
 	TexturedQuad level3;
 public:
-	void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window) {}
-	void read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<Level> &level);
-	void read_axis(unsigned int joyID, Assets assets);
+	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window) {}
+	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &level);
+	void read_axis(unsigned int joyID);
 	void handler(Camera);
-	void handler(Camera camera, Assets assets, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) {}
+	void handler(Camera camera, map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) {}
 
-	LevelSelect(Assets assets);
+	LevelSelect();
 };

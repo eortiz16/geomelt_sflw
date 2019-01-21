@@ -29,7 +29,7 @@ void RoundCornerBox::render()
 		corner[j].render();
 }
 
-RoundCornerBox::RoundCornerBox(Assets assets)
+RoundCornerBox::RoundCornerBox()
 {
 	int size = 250; // diameter of circle
 

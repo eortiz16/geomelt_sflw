@@ -23,7 +23,7 @@ Game::Game()
 
 	current.menuChange = false;
 	current.menu = MAINMENU;
-	menu = unique_ptr<Menu>(new MainMenu(assets));
+	menu = unique_ptr<Menu>(new MainMenu());
 
 	// Active for OPENGL
 	window->setActive(true);
@@ -91,7 +91,7 @@ void Game::process_input()
 				}
 			}
 			else if (current.render == MENU) {
-				menu->read_axis(event.joystickButton.joystickId, assets);
+				menu->read_axis(event.joystickButton.joystickId);
 			}
 			break;
 		case sf::Event::JoystickButtonPressed:
@@ -106,13 +106,13 @@ void Game::process_input()
 				switch (current.menu)
 				{
 				case MAINMENU:
-					menu->read_buttons(event, assets, current, window);
+					menu->read_buttons(event, current, window);
 					break;
 				case CHARSEL:
-					menu->read_buttons(event, assets, current, level);
+					menu->read_buttons(event, current, level);
 					break;
 				case LEVELSEL:
-					menu->read_buttons(event, assets, current, level);
+					menu->read_buttons(event, current, level);
 					break;
 				default:
 					break;
@@ -124,7 +124,7 @@ void Game::process_input()
 	}
 }
 
-void CharacterSelect::read_buttons(sf::Event event, Assets assets, CurrentGameState &current, unique_ptr<Level> &level)
+void CharacterSelect::read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &level)
 {
 	Player *plyr = NULL;
 	map<unsigned int, unsigned int>::iterator it;
@@ -144,7 +144,7 @@ void CharacterSelect::read_buttons(sf::Event event, Assets assets, CurrentGameSt
 	{
 		if (level->playerMap.find(event.joystickButton.joystickId) != level->playerMap.end()) { //if exists
 			level->playerMap[event.joystickButton.joystickId].reset();
-			level->playerMap[event.joystickButton.joystickId] = unique_ptr<Player>(new Boxy(assets));
+			level->playerMap[event.joystickButton.joystickId] = unique_ptr<Player>(new Boxy());
 		}
 	}
 		break;
@@ -167,7 +167,7 @@ void CharacterSelect::read_buttons(sf::Event event, Assets assets, CurrentGameSt
 		break;
 	case START:
 	{
-		level->add_player(event.joystickButton.joystickId, assets);
+		level->add_player(event.joystickButton.joystickId);
 		selectBox[level->playerMap[event.joystickButton.joystickId].get()->myID].occupied = true;
 	}
 		break;
@@ -218,7 +218,7 @@ void Game::loop()
 				break;
 				case CHARSEL:
 				{
-					menu->handler(camera, assets, level->playerMap.begin(), level->playerMap.end());
+					menu->handler(camera, level->playerMap.begin(), level->playerMap.end());
 				}
 				break;
 				default:
@@ -253,13 +253,13 @@ void Game::loop()
 			switch (current.menu)
 			{
 			case MAINMENU:
-				menu = unique_ptr<Menu>(new MainMenu(assets));
+				menu = unique_ptr<Menu>(new MainMenu());
 				break;
 			case CHARSEL:
-				menu = unique_ptr<Menu>(new CharacterSelect(assets));
+				menu = unique_ptr<Menu>(new CharacterSelect());
 				break;
 			case LEVELSEL:
-				menu = unique_ptr<Menu>(new LevelSelect(assets));
+				menu = unique_ptr<Menu>(new LevelSelect());
 				break;
 			case NONE:
 				break;

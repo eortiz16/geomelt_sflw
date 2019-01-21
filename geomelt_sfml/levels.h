@@ -60,10 +60,9 @@ public:
 	virtual void phys_handler(Camera *camera) = 0;
 	void reset_level();
 	void purge_players();
-	void add_player(unsigned int joyID, Assets assets);
+	void add_player(unsigned int joyID);
 
-	Level() {}
-	Level(Assets assets);
+	Level();
 	virtual ~Level();
 };
 
@@ -84,8 +83,7 @@ public:
 	void gfx_handler(Camera camera);
 	void phys_handler(Camera *camera);
 
-	Field_Level() {}
-	Field_Level(Assets assets);
+	Field_Level();
 	~Field_Level() {}
 };
 
@@ -102,8 +100,7 @@ public:
 	void gfx_handler(Camera camera);
 	void phys_handler(Camera *camera);
 
-	Night_Level() {}
-	Night_Level(Assets assets);
+	Night_Level();
 	~Night_Level() {}
 };
 
@@ -132,7 +129,6 @@ public:
 	void transition_handler(Palette_BG pal);
 	void transition_to(medmelt::Color *clr);
 
-	Time_Level() {}
-	Time_Level(Assets assets);
+	Time_Level();
 	~Time_Level() {}
 };

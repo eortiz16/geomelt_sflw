@@ -188,15 +188,15 @@ public:
 
 class Assets {
 private:
-	sf::Font font;
-	sf::Texture backgroundTexture;
-	sf::Texture texture;
-	Textures textures;
-	sf::Sprite background;
-	Palette palette;
-	Palette_BG backgroundPalette;
-	Palette_CHAR characterPalette;
-	Palette_PLAT platformPalette = Palette_PLAT(palette);
+	static sf::Font font;
+	static sf::Texture backgroundTexture;
+	static sf::Texture texture;
+	static Textures textures;
+	static sf::Sprite background;
+	static Palette palette;
+	static Palette_BG backgroundPalette;
+	static Palette_CHAR characterPalette;
+	static Palette_PLAT platformPalette;
 
 	friend class MainMenu;
 	friend class CharacterSelect;
@@ -209,5 +209,5 @@ private:
 	friend class Boxy;
 public:
 	Assets();
-	~Assets();
+	~Assets() {}
 };

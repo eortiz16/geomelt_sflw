@@ -124,7 +124,7 @@ public:
 	void exhale();
 	void special() {}
 
-	explicit Ball(Assets assets);
+	explicit Ball();
 	Ball(const Ball&) = delete;
 	Ball& operator=(const Ball&) = delete;
 };
@@ -137,7 +137,7 @@ public:
 	void jump();
 	void special() {}
 	
-	explicit Boxy(Assets assets);
+	explicit Boxy();
 	Boxy(const Boxy&) = delete;
 	Boxy& operator=(const Boxy&) = delete;
 };

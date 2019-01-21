@@ -1,5 +1,15 @@
 #include "assets.h"
 
+sf::Font Assets::font;
+sf::Texture Assets::backgroundTexture;
+sf::Texture Assets::texture;
+Textures Assets::textures;
+sf::Sprite Assets::background;
+Palette Assets::palette;
+Palette_BG Assets::backgroundPalette;
+Palette_CHAR Assets::characterPalette;
+Palette_PLAT Assets::platformPalette = Palette_PLAT(palette);
+
 Assets::Assets()
 {
 	if (!font.loadFromFile("resources/sansation.ttf"))
@@ -11,10 +21,6 @@ Assets::Assets()
 
 	sf::Sprite temp(backgroundTexture);
 	background = temp;
-}
-
-Assets::~Assets()
-{
 }
 
 Palette::Palette()

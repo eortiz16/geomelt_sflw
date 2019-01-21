@@ -263,7 +263,7 @@ void Player::death_handler()
 	}
 }
 
-Ball::Ball(Assets assets) : Player()
+Ball::Ball() : Player()
 {
 	//Default Character Values
 	JUMP_MAX = 4;
@@ -285,11 +285,11 @@ Ball::Ball(Assets assets) : Player()
 	//Arm
 	arm.width = body->width;
 	arm.height = 25;
-	arm.color = assets.palette.moon;
+	arm.color = Assets::palette.moon;
 	arm.boundary_assignment();
 	armOutline.width = body->width + THICKNESS;
 	armOutline.height = arm.height + THICKNESS / 2.0f;
-	armOutline.color = assets.palette.black;
+	armOutline.color = Assets::palette.black;
 
 	// Movement Parameters
 	move_param_x = 10.0f;
@@ -311,8 +311,8 @@ Ball::Ball(Assets assets) : Player()
 	reflection->center.y = body->center.y + sqrt(body->radius);
 
 	//Color Assignment
-	outline->color = assets.palette.black;
-	eye.color = assets.palette.black;
+	outline->color = Assets::palette.black;
+	eye.color = Assets::palette.black;
 
 	//Default Center
 	body->center.x = 0;
@@ -416,7 +416,7 @@ void Ball::exhale()
 	body->radius *= 0.9f;
 }
 
-Boxy::Boxy(Assets assets) : Player()
+Boxy::Boxy() : Player()
 {
 	//Default Character Values
 	JUMP_MAX = 2;
@@ -436,7 +436,7 @@ Boxy::Boxy(Assets assets) : Player()
 	arm.boundary_assignment();
 	armOutline.width = 108;
 	arm.height = 29;
-	armOutline.color = assets.palette.black;
+	armOutline.color = Assets::palette.black;
 
 	// Movement Parameters
 	move_param_x = 15.0f;
@@ -463,8 +463,8 @@ Boxy::Boxy(Assets assets) : Player()
 	reflection->center.y = body->center.y + sqrt(body->radius) * 2;
 
 	//Color Assignment
-	outline->color = assets.palette.black;
-	eye.color = assets.palette.black;
+	outline->color = Assets::palette.black;
+	eye.color = Assets::palette.black;
 
 	//Default Direction
 	direction = LEFT;

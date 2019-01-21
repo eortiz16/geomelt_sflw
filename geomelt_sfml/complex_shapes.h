@@ -78,8 +78,7 @@ public:
 	void build();
 	void render();
 
-	RoundCornerBox() {}
-	RoundCornerBox(Assets assets);
+	RoundCornerBox();
 };
 
 class CharSelBox {

@@ -29,7 +29,7 @@ private:
 	sf::ContextSettings contextSettings;
 	unique_ptr<sf::RenderWindow> window;
 	CurrentGameState current;
-	Assets assets;
+
 	unique_ptr<Level> level;
 	unique_ptr<Menu> menu;
 	Camera camera;

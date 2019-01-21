@@ -2,7 +2,7 @@
 
 map<unsigned int, unique_ptr<Player>> Level::playerMap;
 
-void Level::add_player(unsigned int joyID, Assets assets)
+void Level::add_player(unsigned int joyID)
 {
 	bool is_created_already = false;
 
@@ -15,10 +15,10 @@ void Level::add_player(unsigned int joyID, Assets assets)
 		}
 
 		if (is_created_already == false) {
-			playerMap[joyID] = unique_ptr<Player>(new Ball(assets));
+			playerMap[joyID] = unique_ptr<Player>(new Ball());
 
 			Player *plyr = playerMap[joyID].get();
-			*plyr = assets.characterPalette.traverse_colors[plyr->myColor];
+			*plyr = Assets::characterPalette.traverse_colors[plyr->myColor];
 		}
 	}
 }
@@ -100,9 +100,9 @@ void GradientBG::render()
 	glEnd();
 }                
 
-Level::Level(Assets assets)
+Level::Level()
 {
-	blackVoid.set_color(assets.backgroundPalette.black);
+	blackVoid.set_color(Assets::backgroundPalette.black);
 	blackVoid.body.center.x = 0;
 	blackVoid.body.center.y = 0;
 	blackVoid.body.width = 10.0f * HDX;
@@ -115,7 +115,7 @@ Level::~Level()
 }
 
 
-Field_Level::Field_Level(Assets assets) : Level(assets)
+Field_Level::Field_Level() : Level()
 {
 	srand((unsigned int)time(NULL));
 	//Background Color Assignment
@@ -123,14 +123,14 @@ Field_Level::Field_Level(Assets assets) : Level(assets)
 	background.body.center.y = 0;
 	background.body.width = 4.0f * HDX;
 	background.body.height = 5.0f * HDY;
-	background.set_color(assets.backgroundPalette.day);
+	background.set_color(Assets::backgroundPalette.day);
 
 	//filter
 	filterBG.center.x = background.body.center.x;
 	filterBG.center.y = background.body.center.y;
 	filterBG.width = background.body.width;
 	filterBG.height = background.body.height;
-	filterBG.color = assets.palette.white;
+	filterBG.color = Assets::palette.white;
 	filterBG.color.alpha = 255;
 
 	gradientBG.LLBG.body.center.x = 0;
@@ -155,7 +155,7 @@ Field_Level::Field_Level(Assets assets) : Level(assets)
 
 	//Sun Attributes
 	sun.radius = (GLfloat)HDY;
-	sun.color = assets.palette.sun;
+	sun.color = Assets::palette.sun;
 	sun.center.x = (GLfloat)HDX;
 	sun.center.y = (GLfloat)HDY;
 
@@ -178,8 +178,8 @@ Field_Level::Field_Level(Assets assets) : Level(assets)
 	platform.at(0).body.boundary_assignment();
 
 	//Assign Color to Floor
-	platform.at(0).body.color = assets.platformPalette.grass.body;
-	platform.at(0).outline.color = assets.platformPalette.grass.outline;
+	platform.at(0).body.color = Assets::platformPalette.grass.body;
+	platform.at(0).outline.color = Assets::platformPalette.grass.outline;
 
 	//Floor Stroke Assignment
 	platform.at(0).body.boundary_assignment();
@@ -285,7 +285,7 @@ void Field_Level::render()
 	platform.at(0).body.render();
 }
 
-Night_Level::Night_Level(Assets assets) : Level(assets)
+Night_Level::Night_Level() : Level()
 {
 	Platform p0, p1, p2, p3;
 	platform.push_back(p0);
@@ -300,10 +300,10 @@ Night_Level::Night_Level(Assets assets) : Level(assets)
 	background.body.height = 5.0f * HDY;
 
 	//Color assignment
-	background.set_color(assets.backgroundPalette.night);
+	background.set_color(Assets::backgroundPalette.night);
 
 	//Moon Attributes
-	moon.color = assets.palette.moon;
+	moon.color = Assets::palette.moon;
 	moon.center.x = HDX / 2.0f;
 	moon.center.y = HDY / 2.0f;
 	moon.radius = HDY / 2.0f;
@@ -339,8 +339,8 @@ Night_Level::Night_Level(Assets assets) : Level(assets)
 		platform.at(i).outline.height = platform.at(i).body.height + THICKNESS;
 
 		//Assign Color to Floor
-		platform.at(i).body.color = assets.platformPalette.grass.body;
-		platform.at(i).outline.color = assets.platformPalette.grass.outline;
+		platform.at(i).body.color = Assets::platformPalette.grass.body;
+		platform.at(i).outline.color = Assets::platformPalette.grass.outline;
 
 		//Assign Floor Outline Attributes
 		platform.at(i).body.boundary_assignment();
@@ -390,7 +390,7 @@ void Night_Level::render()
 	}
 }
 
-Time_Level::Time_Level(Assets assets) : Level(assets)
+Time_Level::Time_Level() : Level()
 {
 	srand((unsigned int)time(NULL));
 
@@ -401,21 +401,21 @@ Time_Level::Time_Level(Assets assets) : Level(assets)
 	background.body.width = 4.0f * HDX;
 	background.body.height = 5.0f * HDY;
 
-	bg_pal = assets.backgroundPalette;
+	bg_pal = Assets::backgroundPalette;
 
 	transition = false;
 
 	//Initialize Background
-	background.set_color(assets.backgroundPalette.evening);
+	background.set_color(Assets::backgroundPalette.evening);
 
 	//Sun Attributes
 	sun.radius = (GLfloat)HDY;
-	sun.color = assets.palette.sun;
+	sun.color = Assets::palette.sun;
 	sun.center.x = (GLfloat)HDX;
 	sun.center.y = (GLfloat)HDY;
 
 	//Moon Attributes
-	moon.color = assets.palette.moon;
+	moon.color = Assets::palette.moon;
 	moon.center.x = HDX / 2.0f;
 	moon.center.y = HDY / 2.0f;
 	moon.radius = HDY / 2.0f;
@@ -433,8 +433,8 @@ Time_Level::Time_Level(Assets assets) : Level(assets)
 	platform.at(0).body.boundary_assignment();
 
 	//Assign Color to Floor
-	platform.at(0).body.color = assets.palette.platform;
-	platform.at(0).outline.color = assets.palette.black;
+	platform.at(0).body.color = Assets::palette.platform;
+	platform.at(0).outline.color = Assets::palette.black;
 
 	//Floor Stroke Assignment
 	platform.at(0).body.boundary_assignment();
