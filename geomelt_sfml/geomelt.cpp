@@ -106,7 +106,8 @@ void Game::process_input()
 				switch (current.menu)
 				{
 				case MAINMENU:
-					menu->read_buttons(event, current, window);
+					if (menu->read_buttons(event, current) == -1)
+						window->close();
 					break;
 				case CHARSEL:
 					menu->read_buttons(event, current, level);

@@ -94,7 +94,7 @@ void MainMenu::read_axis(unsigned int joyID)
 	modified = false;
 }
 
-void MainMenu::read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window)
+int MainMenu::read_buttons(sf::Event event, CurrentGameState &current)
 {
 	switch (event.joystickButton.button)
 	{
@@ -109,13 +109,15 @@ void MainMenu::read_buttons(sf::Event event, CurrentGameState &current, unique_p
 
 			break;
 		case EXIT:
-			window->close();
+			// signal quit
+			return -1;
 			break;
 		}
 		break;
 	default:
 		break;
 	}
+	return 0;
 }
 
 CharacterSelect::CharacterSelect()

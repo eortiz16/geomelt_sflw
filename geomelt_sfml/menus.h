@@ -41,10 +41,11 @@ private:
 class Menu {
 public:
 	//BUTTONS
-	virtual void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window) = 0;
+	virtual int read_buttons(sf::Event event, CurrentGameState &current) = 0;
 	virtual void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &level) = 0;
 
 	virtual void read_axis(unsigned int joyID) = 0;
+
 	virtual void handler(map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin) = 0;
 	virtual void handler() = 0;
 };
@@ -60,7 +61,7 @@ private:
 	unique_ptr<Level> level;
 	sf::Text text;
 public:
-	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window);
+	int read_buttons(sf::Event event, CurrentGameState &current);
 	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &window) {}
 	void read_axis(unsigned int joyID);
 	void handler();
@@ -82,7 +83,7 @@ private:
 	Background background;
 	vector<CharSelBox> selectBox;
 public:
-	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window) {}
+	int read_buttons(sf::Event event, CurrentGameState &current) { return -1;  }
 	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &level);
 	void read_axis(unsigned int joyID) {}	
 	void handler() {}
@@ -100,7 +101,7 @@ private:
 	TexturedQuad level2;
 	TexturedQuad level3;
 public:
-	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<sf::RenderWindow> &window) {}
+	int read_buttons(sf::Event event, CurrentGameState &current) { return -1; }
 	void read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &level);
 	void read_axis(unsigned int joyID);
 	void handler();
