@@ -57,16 +57,12 @@ void Player::read_buttons(unsigned int button)
 	switch (button) {
 	case A:
 	case B:
-	{
 		toggle.attacking ^= 1;
 		toggle.attackTimer.restart();
-	}
 		break;
 	case X:
 	case Y:
-	{
 		jump();
-	}
 		break;
 	case LB:
 		break;
@@ -79,7 +75,48 @@ void Player::read_buttons(unsigned int button)
 	}
 }
 
-void Player::read_axes(unsigned int joyID)
+void Player::read_keys(unsigned int key)
+{
+	switch (key) {
+	case sf::Keyboard::A:
+	case sf::Keyboard::Left:
+		toggle.walking = true;
+		direction = LEFT;
+		break;
+	case sf::Keyboard::D:
+	case sf::Keyboard::Right:
+		toggle.walking = true;
+		direction = RIGHT;
+		break;
+	case sf::Keyboard::Space:
+		jump();
+		break;
+	case sf::Keyboard::E:
+		toggle.attacking ^= 1;
+		toggle.attackTimer.restart();
+		break;
+	default:
+		break;
+	}
+}
+
+void Player::read_released_keys(unsigned int key)
+{
+	switch (key) {
+	case sf::Keyboard::A:
+	case sf::Keyboard::Left:
+		toggle.walking = false;
+		break;
+	case sf::Keyboard::D:
+	case sf::Keyboard::Right:
+		toggle.walking = false;
+		break;
+	default:
+		break;
+	}
+}
+
+void Player::read_axis(unsigned int joyID)
 {
 	float axis_position1 = sf::Joystick::getAxisPosition(joyID, sf::Joystick::PovX);
 	float axis_position2 = sf::Joystick::getAxisPosition(joyID, sf::Joystick::X);

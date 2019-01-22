@@ -53,10 +53,10 @@ void GFXNet::loop()
 
 		_state->read_input();
 
-		while (sync.lag >= MS_PER_UPDATE())
-		{
-			if (typeid(_state) == typeid(LevelState))
-				level->phys_handler();
+		while (sync.lag >= MS_PER_UPDATE()) {
+			//if (typeid(*_state) == typeid(LevelState))
+				//level->phys_handler();
+
 			sync.lag -= MS_PER_UPDATE();
 		}
 
@@ -118,10 +118,8 @@ void MainMenuState::read_input()
 	bool mod = false;
 	sf::Event event;
 	
-	while (_context->window->pollEvent(event))
-	{
-		switch (event.type)
-		{
+	while (_context->window->pollEvent(event)) {
+		switch (event.type)	{
 		case sf::Event::Closed:
 			_context->window->close();
 			break;
@@ -148,10 +146,11 @@ void MainMenuState::read_input()
 				break;
 			}
 			break;
+
 		case sf::Event::JoystickButtonPressed:
 			switch (event.joystickButton.button) {
 			case A:
-			case CROSS:
+			//case CROSS:
 				if (menu.selected == PLAY)
 					next();
 				else if (menu.selected == EXIT)
@@ -161,6 +160,7 @@ void MainMenuState::read_input()
 				break;
 			}
 			break;
+
 		case sf::Event::JoystickMoved:
 		{
 			float axis_position1 = sf::Joystick::getAxisPosition(event.joystickMove.joystickId, sf::Joystick::PovY); //DPAD
@@ -175,11 +175,9 @@ void MainMenuState::read_input()
 				menu.selected++;
 				menu.update_selected();
 			}
-
 		}
 			break;
 		case sf::Event::MouseMoved:
-		{
 			if (menu.play.body.boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y))) {
 				menu.selected = PLAY;
 				menu.update_selected();
@@ -192,8 +190,8 @@ void MainMenuState::read_input()
 				menu.selected = EXIT;
 				menu.update_selected();
 			}
-		}
 			break;
+
 		case sf::Event::MouseButtonPressed:
 			switch (event.mouseButton.button) {
 			case sf::Mouse::Button::Left:
@@ -204,6 +202,7 @@ void MainMenuState::read_input()
 				break;
 			}
 			break;
+
 		default:
 			break;
 		}
@@ -243,11 +242,72 @@ void CharacterSelectState::read_input()
 
 		case sf::Event::KeyPressed:
 			switch (event.key.code) {
+			case sf::Keyboard::E:
+				_context->level->add_player(-1);
+				menu.selectBox[-1].occupied = true;
+				break;
+			case sf::Keyboard::Q:
+				if (_context->level->playerMap.find(-1) != _context->level->playerMap.end()) {
+					if (typeid(*_context->level->playerMap[-1]).name() == typeid(Ball).name()) {
+						_context->level->playerMap[-1].reset();
+						_context->level->playerMap[-1] = unique_ptr<Player>(new Boxy);
+					}
+					else {
+						_context->level->playerMap[-1].reset();
+						_context->level->playerMap[-1] = unique_ptr<Player>(new Ball);
+					}
+				}
+				break;
+			case sf::Keyboard::Left:
+				if (_context->level->playerMap.find(-1) != _context->level->playerMap.end())
+					_context->level->playerMap[-1].get()->change_color(PREV);
+				break;
+			case sf::Keyboard::Right:
+				if (_context->level->playerMap.find(-1) != _context->level->playerMap.end())
+					_context->level->playerMap[-1].get()->change_color(NEXT);
+				break;
 			case sf::Keyboard::Enter:
 				next();
 				break;
 			case sf::Keyboard::Escape:
 				_context->window->close();
+				break;
+			default:
+				break;
+			}
+			break;
+		case sf::Event::JoystickButtonPressed:
+			switch (event.joystickButton.button) {
+			case START:
+				_context->level->add_player(event.joystickButton.joystickId);
+				menu.selectBox[event.joystickButton.joystickId].occupied = true;
+				break;
+			case X:
+				if (_context->level->playerMap.find(event.joystickButton.joystickId) != _context->level->playerMap.end()) {
+					if (typeid(*_context->level->playerMap[event.joystickButton.joystickId]).name() == typeid(Ball).name()) {
+						_context->level->playerMap[event.joystickButton.joystickId].reset();
+						_context->level->playerMap[event.joystickButton.joystickId] = unique_ptr<Player>(new Boxy);
+					}
+					else {
+						_context->level->playerMap[event.joystickButton.joystickId].reset();
+						_context->level->playerMap[event.joystickButton.joystickId] = unique_ptr<Player>(new Ball);
+					}
+				}
+				break;
+			case B:
+				_context->level->playerMap.clear();
+				prev();
+				break;
+			case SELECT:
+				next();
+				break;
+			case LB:
+				if (_context->level->playerMap.find(event.joystickButton.joystickId) != _context->level->playerMap.end())
+					_context->level->playerMap[event.joystickButton.joystickId].get()->change_color(PREV);
+				break;
+			case RB:
+				if (_context->level->playerMap.find(event.joystickButton.joystickId) != _context->level->playerMap.end())
+					_context->level->playerMap[event.joystickButton.joystickId].get()->change_color(NEXT);
 				break;
 			default:
 				break;
@@ -295,11 +355,72 @@ void LvlSelectState::read_input()
 			switch (event.key.code) {
 			case sf::Keyboard::Right:
 			case sf::Keyboard::D:
+				menu.position++;
+
+				//Prevent underflow
+				if (menu.position == UINT_MAX)
+					menu.position = 2;
+
+				menu.position = menu.position % 3;
+
+				switch (menu.position)
+				{
+				case 0:
+					menu.selector.center.x = menu.level1.body.center.x;
+					menu.selector.center.y = menu.level1.body.center.y;
+					break;
+				case 1:
+					menu.selector.center.x = menu.level2.body.center.x;
+					menu.selector.center.y = menu.level2.body.center.y;
+					break;
+				case 2:
+					menu.selector.center.x = menu.level3.body.center.x;
+					menu.selector.center.y = menu.level3.body.center.y;
+					break;
+				}
 				break;
 			case sf::Keyboard::Left:
 			case sf::Keyboard::A:
+				menu.position--;
+
+				//Prevent underflow
+				if (menu.position == UINT_MAX)
+					menu.position = 2;
+
+				menu.position = menu.position % 3;
+
+				switch (menu.position)
+				{
+				case 0:
+					menu.selector.center.x = menu.level1.body.center.x;
+					menu.selector.center.y = menu.level1.body.center.y;
+					break;
+				case 1:
+					menu.selector.center.x = menu.level2.body.center.x;
+					menu.selector.center.y = menu.level2.body.center.y;
+					break;
+				case 2:
+					menu.selector.center.x = menu.level3.body.center.x;
+					menu.selector.center.y = menu.level3.body.center.y;
+					break;
+				}
 				break;
 			case sf::Keyboard::Enter:
+				switch (menu.position)
+				{
+				case 0:
+					_context->level = unique_ptr<Level>(new Field_Level());
+					break;
+				case 1:
+					_context->level = unique_ptr<Level>(new Night_Level());
+					break;
+				case 2:
+					_context->level = unique_ptr<Level>(new Time_Level());
+					break;
+				}
+
+				_context->level->reset_level();
+
 				next();
 				break;
 			case sf::Keyboard::Escape:
@@ -309,6 +430,71 @@ void LvlSelectState::read_input()
 				break;
 			}
 			break;
+
+		case sf::Event::JoystickButtonPressed:
+			switch (event.joystickButton.button) {
+			case A:
+				switch (menu.position)
+				{
+				case 0:
+					_context->level = unique_ptr<Level>(new Field_Level());
+					break;
+				case 1:
+					_context->level = unique_ptr<Level>(new Night_Level());
+					break;
+				case 2:
+					_context->level = unique_ptr<Level>(new Time_Level());
+					break;
+				}
+
+				_context->level->reset_level();
+
+				next();
+				break;
+			case B:
+				prev();
+				break;
+			default:
+				break;
+			}
+			break;
+
+		case sf::Event::JoystickMoved:
+		{
+			float axis_position1 = sf::Joystick::getAxisPosition(event.joystickMove.joystickId, sf::Joystick::PovX); //DPAD
+
+			if (axis_position1 == 100) //RIGHT
+			{
+				menu.position++;
+			}
+			else if (axis_position1 == -100) //LEFT
+			{
+				menu.position--;
+			}
+
+			//Prevent underflow
+			if (menu.position == UINT_MAX)
+				menu.position = 2;
+
+			menu.position = menu.position % 3;
+
+			switch (menu.position)
+			{
+			case 0:
+				menu.selector.center.x = menu.level1.body.center.x;
+				menu.selector.center.y = menu.level1.body.center.y;
+				break;
+			case 1:
+				menu.selector.center.x = menu.level2.body.center.x;
+				menu.selector.center.y = menu.level2.body.center.y;
+				break;
+			case 2:
+				menu.selector.center.x = menu.level3.body.center.x;
+				menu.selector.center.y = menu.level3.body.center.y;
+				break;
+			}
+		}
+		break;
 
 		default:
 			break;
@@ -346,7 +532,14 @@ void LevelState::read_input()
 			break;
 
 		case sf::Event::KeyPressed:
-			cout << "!";
+		{
+			Player *plyr = NULL;
+
+			if (_context->level->playerMap.find(-1) != _context->level->playerMap.end()) {
+				plyr = _context->level->playerMap[-1].get();
+				plyr->read_keys(event.key.code);
+			}
+
 			switch (event.key.code) {
 			case sf::Keyboard::Escape:
 				_context->window->close();
@@ -354,6 +547,40 @@ void LevelState::read_input()
 			default:
 				break;
 			}
+		}
+			break;
+
+		case sf::Event::KeyReleased:
+		{
+			Player *plyr = NULL;
+
+			if (_context->level->playerMap.find(-1) != _context->level->playerMap.end()) {
+				plyr = _context->level->playerMap[-1].get();
+				plyr->read_released_keys(event.key.code);
+			}
+		}
+			break;
+
+		case sf::Event::JoystickButtonPressed:
+		{
+			Player *plyr = NULL;
+
+			if (_context->level->playerMap.find(event.joystickButton.joystickId) != _context->level->playerMap.end()) {
+				plyr = _context->level->playerMap[event.joystickButton.joystickId].get();
+				plyr->read_buttons(event.joystickButton.button);
+			}
+		}
+			break;
+
+		case sf::Event::JoystickMoved:
+		{
+			Player *plyr = NULL;
+
+			if (_context->level->playerMap.find(event.joystickButton.joystickId) != _context->level->playerMap.end()) {
+				plyr = _context->level->playerMap[event.joystickButton.joystickId].get();
+				plyr->read_axis(event.joystickConnect.joystickId);
+			}
+		}
 			break;
 
 		default:

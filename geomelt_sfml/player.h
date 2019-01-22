@@ -79,11 +79,14 @@ private:
 	friend class Boxy;
 	friend class Ball;
 	friend class Camera;
+	friend class LevelState;
 	friend class Game;
 public:
 	//ButtonMapping buttonMapping;
 	void read_buttons(unsigned int button);
-	void read_axes(unsigned int joyID);
+	void read_axis(unsigned int joyID);
+	void read_keys(unsigned int key);
+	void read_released_keys(unsigned int key);
 	void simple_update();
 	void simple_update_menu();
 	void change_color(SelectColor option);
@@ -128,6 +131,8 @@ public:
 	Ball(const Ball&) {}
 	Ball& operator=(const Ball&) {}
 	~Ball() {}
+
+	friend class LevelState;
 };
 
 class Boxy : public Player {
@@ -142,4 +147,6 @@ public:
 	Boxy(const Boxy&) {}
 	Boxy& operator=(const Boxy&) {}
 	~Boxy() {}
+
+	friend class LevelState;
 };

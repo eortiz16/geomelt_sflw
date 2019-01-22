@@ -55,6 +55,7 @@ protected:
 	friend class Input;
 	friend class CharacterSelect;
 	friend class CharacterSelectState;
+	friend class LevelState;
 public:
 	virtual void render() = 0;
 	virtual void gfx_handler() = 0;
@@ -76,6 +77,7 @@ private:
 	// My Friends
 	friend class Player;
 	friend class Attributes;
+	friend class LevelState;
 public:
 	void update_clouds();
 	void purge_clouds();
@@ -96,6 +98,7 @@ private:
 	// My Friends
 	friend class Player;
 	friend class Attributes;
+	friend class LevelState;
 public:
 	void render();
 	void gfx_handler();
@@ -119,6 +122,7 @@ private:
 	// My Friends
 	friend class Player;
 	friend class Attributes;
+	friend class LevelState;
 public:
 	void update_clouds();
 	void purge_clouds();

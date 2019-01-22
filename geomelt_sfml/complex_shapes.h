@@ -93,6 +93,7 @@ private:
 	GLfloat stroke;
 
 	friend class CharacterSelect;
+	friend class CharacterSelectState;
 public:
 	CharSelBox() { occupied = false; }
 };
