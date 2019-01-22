@@ -115,7 +115,6 @@ void MainMenuState::handler()
 
 void MainMenuState::read_input()
 {
-	bool mod = false;
 	sf::Event event;
 	
 	while (_context->window->pollEvent(event)) {
@@ -135,7 +134,7 @@ void MainMenuState::read_input()
 				menu.selected++;
 				menu.update_selected();
 				break;
-			case sf::Keyboard::Enter:
+			case sf::Keyboard::Return:
 				if (menu.selected == PLAY)
 					next();
 				break;
@@ -199,6 +198,8 @@ void MainMenuState::read_input()
 					next();
 				else if (menu.selected == EXIT && menu.exit.body.boundary.isWithin(Input::translateX(sf::Mouse::getPosition(*_context->window).x), Input::translateY(sf::Mouse::getPosition(*_context->window).y)))
 					_context->window->close();
+				break;
+			default:
 				break;
 			}
 			break;
@@ -266,7 +267,7 @@ void CharacterSelectState::read_input()
 				if (_context->level->playerMap.find(-1) != _context->level->playerMap.end())
 					_context->level->playerMap[-1].get()->change_color(NEXT);
 				break;
-			case sf::Keyboard::Enter:
+			case sf::Keyboard::Return:
 				next();
 				break;
 			case sf::Keyboard::Escape:
@@ -405,7 +406,7 @@ void LvlSelectState::read_input()
 					break;
 				}
 				break;
-			case sf::Keyboard::Enter:
+			case sf::Keyboard::Return:
 				switch (menu.position)
 				{
 				case 0:

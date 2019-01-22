@@ -113,8 +113,8 @@ public:
 	}
 
 	explicit Player();
-	Player(const Player&) {}
-	Player& operator=(const Player&) {}
+	Player(const Player&) = delete;
+	Player& operator=(const Player&) = delete;
 	virtual ~Player();
 };
 
@@ -128,8 +128,8 @@ public:
 	void special() {}
 
 	explicit Ball();
-	Ball(const Ball&) {}
-	Ball& operator=(const Ball&) {}
+	Ball(const Ball&) = delete;
+	Ball& operator=(const Ball&) = delete;
 	~Ball() {}
 
 	friend class LevelState;
@@ -144,8 +144,8 @@ public:
 	void special() {}
 	
 	explicit Boxy();
-	Boxy(const Boxy&) {}
-	Boxy& operator=(const Boxy&) {}
+	Boxy(const Boxy&) = delete;
+	Boxy& operator=(const Boxy&) = delete;
 	~Boxy() {}
 
 	friend class LevelState;
