@@ -5,6 +5,7 @@
 #include "levels.h"
 #include "camera.h"
 #include "sync.h"
+#include "input.h"
 
 constexpr auto FPS = 60;
 constexpr auto MS_PER_UPDATE() { return 1000.0f / (float)FPS; }
@@ -44,8 +45,7 @@ public:
 	virtual void next() = 0;
 	virtual void prev() = 0;
 	virtual void handler() = 0;
-	virtual void read_buttons() = 0;
-	virtual void read_axis() = 0;
+	virtual void read_input() = 0;
 
 	RState() {}
 	RState(GFXNet* context) {}
@@ -61,9 +61,7 @@ public:
 	void next();
 	void prev();
 	void handler();
-	
-	void read_buttons();
-	void read_axis();
+	void read_input();
 
 	MainMenuState() {}
 	MainMenuState(GFXNet* context);
@@ -78,9 +76,7 @@ public:
 	void next();
 	void prev();
 	void handler();
-
-	void read_buttons();
-	void read_axis();
+	void read_input();
 
 	CharacterSelectState() {}
 	CharacterSelectState(GFXNet* context);
@@ -95,9 +91,7 @@ public:
 	void next();
 	void prev();
 	void handler();
-
-	void read_buttons();
-	void read_axis();
+	void read_input();
 
 	LvlSelectState() {}
 	LvlSelectState(GFXNet* context);
@@ -111,9 +105,7 @@ public:
 	void next();
 	void prev();
 	void handler();
-
-	void read_buttons();
-	void read_axis();
+	void read_input();
 
 	LevelState() {}
 	LevelState(GFXNet* context);

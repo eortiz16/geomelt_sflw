@@ -41,6 +41,7 @@ namespace geomelt
 	public:
 		float top, bottom, left, right;
 
+		bool isWithin(int x, int y);
 		static Boundary setBounds(float t, float b, float l, float r);
 	};
 

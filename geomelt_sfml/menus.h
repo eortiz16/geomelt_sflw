@@ -22,7 +22,6 @@ inline void operator--(Selected &sel, int)
 		sel = static_cast<Selected> (SELECTED_CARDINALITY - 1);
 }
 
-//*** REDESIGN: FAVOR COMPOSITION OVER INHERITANCE ***/
 class Menu {
 public:
 	Menu() {}
@@ -59,7 +58,7 @@ private:
 	Background background;
 	vector<CharSelBox> selectBox;
 public:
-	void handler(map<unsigned int, shared_ptr<Player>>& players);
+	void handler(map<unsigned int, unique_ptr<Player>>& players);
 
 	CharacterSelect();
 	~CharacterSelect() {}

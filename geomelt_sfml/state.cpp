@@ -7,6 +7,7 @@ GFXNet::GFXNet()
 	// Request a 24-bits depth buffer when creating the window
 	contextSettings.depthBits = 24;
 	contextSettings.sRgbCapable = false;
+	contextSettings.antialiasingLevel = 16; //MAX
 
 	// Default to Main Menu
 	_state = new MainMenuState(this);
@@ -15,8 +16,8 @@ GFXNet::GFXNet()
 	level = (rand() % 2 == 0) ? unique_ptr<Level>(new Field_Level())
 		: unique_ptr<Level>(new Night_Level());
 
-	window = unique_ptr<sf::RenderWindow>(new sf::RenderWindow(sf::VideoMode(HDX, HDY), "Geometric Meltdown", sf::Style::Default, contextSettings));
-	//window = unique_ptr<RenderWindow> (new sf::RenderWindow(sf::VideoMode(HDX, HDY), "Geometric Meltdown", sf::Style::Fullscreen, contextSettings));
+	window = unique_ptr<sf::RenderWindow>(new sf::RenderWindow(sf::VideoMode(SCRN_WD, SCRN_HT), "Geometric Meltdown", sf::Style::Default, contextSettings));
+	//window = unique_ptr<sf::RenderWindow> (new sf::RenderWindow(sf::VideoMode(SCRN_WD, SCRN_HT), "Geometric Meltdown", sf::Style::Fullscreen, contextSettings));
 
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FPS);
@@ -50,8 +51,7 @@ void GFXNet::loop()
 		sync.previous = sync.current;
 		sync.lag += sync.elapsed;
 
-		_state->read_buttons();
-		_state->read_axis();
+		_state->read_input();
 
 		while (sync.lag >= MS_PER_UPDATE())
 		{
@@ -113,7 +113,7 @@ void MainMenuState::handler()
 	menu.handler(_context->level);
 }
 
-void MainMenuState::read_buttons()
+void MainMenuState::read_input()
 {
 	bool mod = false;
 	sf::Event event;
@@ -148,15 +148,66 @@ void MainMenuState::read_buttons()
 				break;
 			}
 			break;
+		case sf::Event::JoystickButtonPressed:
+			switch (event.joystickButton.button) {
+			case A:
+			case CROSS:
+				if (menu.selected == PLAY)
+					next();
+				else if (menu.selected == EXIT)
+					_context->window->close();
+				break;
+			default:
+				break;
+			}
+			break;
+		case sf::Event::JoystickMoved:
+		{
+			float axis_position1 = sf::Joystick::getAxisPosition(event.joystickMove.joystickId, sf::Joystick::PovY); //DPAD
+
+			if (axis_position1 == 100) //up
+			{
+				menu.selected--;
+				menu.update_selected();
+			}
+			else if (axis_position1 == -100) //down
+			{
+				menu.selected++;
+				menu.update_selected();
+			}
+
+		}
+			break;
+		case sf::Event::MouseMoved:
+		{
+			if (menu.play.body.boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y))) {
+				menu.selected = PLAY;
+				menu.update_selected();
+			}
+			else if (menu.options.body.boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y))) {
+				menu.selected = OPTIONS;
+				menu.update_selected();
+			}
+			else if (menu.exit.body.boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y))) {
+				menu.selected = EXIT;
+				menu.update_selected();
+			}
+		}
+			break;
+		case sf::Event::MouseButtonPressed:
+			switch (event.mouseButton.button) {
+			case sf::Mouse::Button::Left:
+				if (menu.selected == PLAY && menu.play.body.boundary.isWithin(Input::translateX(sf::Mouse::getPosition(*_context->window).x), Input::translateY(sf::Mouse::getPosition(*_context->window).y)))
+					next();
+				else if (menu.selected == EXIT && menu.exit.body.boundary.isWithin(Input::translateX(sf::Mouse::getPosition(*_context->window).x), Input::translateY(sf::Mouse::getPosition(*_context->window).y)))
+					_context->window->close();
+				break;
+			}
+			break;
 		default:
 			break;
 		}
 	}
-}
-
-void MainMenuState::read_axis()
-{
-
 }
 
 //==================================================================
@@ -178,7 +229,7 @@ void CharacterSelectState::handler()
 	menu.handler(_context->level->playerMap);
 }
 
-void CharacterSelectState::read_buttons()
+void CharacterSelectState::read_input()
 {
 	sf::Event event;
 
@@ -191,14 +242,7 @@ void CharacterSelectState::read_buttons()
 			break;
 
 		case sf::Event::KeyPressed:
-			cout << "!";
 			switch (event.key.code) {
-			case sf::Keyboard::Up:
-			case sf::Keyboard::W:
-				break;
-			case sf::Keyboard::Down:
-			case sf::Keyboard::S:
-				break;
 			case sf::Keyboard::Enter:
 				next();
 				break;
@@ -214,11 +258,6 @@ void CharacterSelectState::read_buttons()
 			break;
 		}
 	}
-}
-
-void CharacterSelectState::read_axis()
-{
-
 }
 
 //==================================================================
@@ -240,7 +279,7 @@ void LvlSelectState::handler()
 	menu.handler();
 }
 
-void LvlSelectState::read_buttons()
+void LvlSelectState::read_input()
 {
 	sf::Event event;
 
@@ -253,13 +292,12 @@ void LvlSelectState::read_buttons()
 			break;
 
 		case sf::Event::KeyPressed:
-			cout << "!";
 			switch (event.key.code) {
-			case sf::Keyboard::Up:
-			case sf::Keyboard::W:
+			case sf::Keyboard::Right:
+			case sf::Keyboard::D:
 				break;
-			case sf::Keyboard::Down:
-			case sf::Keyboard::S:
+			case sf::Keyboard::Left:
+			case sf::Keyboard::A:
 				break;
 			case sf::Keyboard::Enter:
 				next();
@@ -278,10 +316,6 @@ void LvlSelectState::read_buttons()
 	}
 }
 
-void LvlSelectState::read_axis()
-{
-
-}
 //==================================================================
 
 LevelState::LevelState(GFXNet* context) : _context(context) {};
@@ -299,7 +333,7 @@ void LevelState::handler()
 	_context->level->gfx_handler();
 }
 
-void LevelState::read_buttons()
+void LevelState::read_input()
 {
 	sf::Event event;
 
@@ -314,15 +348,6 @@ void LevelState::read_buttons()
 		case sf::Event::KeyPressed:
 			cout << "!";
 			switch (event.key.code) {
-			case sf::Keyboard::Up:
-			case sf::Keyboard::W:
-				break;
-			case sf::Keyboard::Down:
-			case sf::Keyboard::S:
-				break;
-			case sf::Keyboard::Enter:
-				next();
-				break;
 			case sf::Keyboard::Escape:
 				_context->window->close();
 				break;
@@ -335,9 +360,4 @@ void LevelState::read_buttons()
 			break;
 		}
 	}
-}
-
-void LevelState::read_axis()
-{
-
 }

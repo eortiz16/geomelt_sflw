@@ -133,14 +133,14 @@ Cloud Cloud::make_cloud(Direction dir)
 	circle.color.b = color;
 	circle.color.alpha = 255;
 	circle.radius = size;
-	circle.center.y = (GLfloat)(rand() % (4 * HDY)) - (2 * HDY);
+	circle.center.y = (GLfloat)(rand() % (4 * SCRN_HT)) - (2 * SCRN_HT);
 
 	//Assign computed attributes to object
 	for (int i = 0; i < SUBCLOUD_SIZE; i++)
 		cloud.body.push_back(make_unique<geomelt::Circle>(circle));
 
 	// Assign x of middle circle // Start ar right or left
-	cloud.body[1].get()->center.x = (dir == LEFT) ? 2.0f * HDX + size : -2.0f * HDX - size;
+	cloud.body[1].get()->center.x = (dir == LEFT) ? 2.0f * SCRN_WD + size : -2.0f * SCRN_WD - size;
 
 	// Assign center of first and last circle, bassed on middle
 	cloud.body[0].get()->center.x = cloud.body[1].get()->center.x - cloud.body[1].get()->radius;
@@ -183,8 +183,8 @@ Star::Star()
 
 void Star::compute_coordinates(int count)
 {
-	int w = 4 * HDX;
-	int h = 5 * HDY;
+	int w = 4 * SCRN_WD;
+	int h = 5 * SCRN_HT;
 
 	float horizonalPartition = (float)w / 8;
 	float verticalPartition = (float)h / 5;

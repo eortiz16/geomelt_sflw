@@ -1,19 +1,19 @@
 #include "camera.h"
 
 float Camera::ZOOM = 1.25f;
-float Camera::aspect_ratio = (float)HDX / (float)HDY;
+float Camera::aspect_ratio = (float)SCRN_WD / (float)SCRN_HT;
 float Camera::xMin = (float)INT_MAX;
 float Camera::xMax = (float)INT_MIN;
 float Camera::yMin = (float)INT_MAX;
 float Camera::yMax = (float)INT_MIN;
 float Camera::competitionXLeft = -400.0f;
 float Camera::competitionXRight = 400.0f;
-geomelt::Boundary Camera::ortho = geomelt::Boundary::setBounds(HDY, -HDY, -HDX, HDX);
-geomelt::Boundary Camera::edges = geomelt::Boundary::setBounds(HDY, -HDY, -HDX, HDX);
+geomelt::Boundary Camera::ortho = geomelt::Boundary::setBounds(SCRN_HT, -SCRN_HT, -SCRN_WD, SCRN_WD);
+geomelt::Boundary Camera::edges = geomelt::Boundary::setBounds(SCRN_HT, -SCRN_HT, -SCRN_WD, SCRN_WD);
 Vec Camera::center = Vec::set_Vec(0, 0, 0);
 
 //Default, need to add level camera
-void Camera::set_center(map<unsigned int, shared_ptr<Player>>& player)
+void Camera::set_center(map<unsigned int, unique_ptr<Player>>& player)
 {
 	//find furthest player away from center (x and y)
 	xMin = (float)INT_MAX;
@@ -21,7 +21,7 @@ void Camera::set_center(map<unsigned int, shared_ptr<Player>>& player)
 	yMin = (float)INT_MAX;
 	yMax = (float)INT_MIN;
 
-	map<unsigned int, shared_ptr<Player>>::iterator it;
+	map<unsigned int, unique_ptr<Player>>::iterator it;
 
 	// obtain center (x,y) between ALL players
 	for (it = player.begin(); it != player.end(); ++it)
@@ -93,7 +93,7 @@ void Camera::set_edges()
 	// Add conditions
 	// define minimum camera and maximum
 	/*
-	if (xMax - xMin < HDX / 2.0f && yMax - yMin < HDY / 2.0f)
+	if (xMax - xMin < HDX / 2.0f && yMax - yMin < SCRN_HT / 2.0f)
 	{
 		edges.left = ortho.left;
 		edges.right = ortho.right;

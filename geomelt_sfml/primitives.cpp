@@ -63,6 +63,14 @@ geomelt::Boundary geomelt::Boundary::setBounds(float t, float b, float l, float 
 	return bnd;
 }
 
+bool geomelt::Boundary::isWithin(int x, int y)
+{
+	if (x >= left && x <= right && y <= top && y >= bottom)
+		return true;
+
+	return false;
+}
+
 Vec Vec::set_Vec(float xx, float yy, float zz)
 {
 	Vec vector;

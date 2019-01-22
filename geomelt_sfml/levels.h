@@ -48,7 +48,7 @@ protected:
 	GradientBG gradientBG;
 	geomelt::Quad filterBG;
 	vector<Platform> platform;
-	static map<unsigned int, shared_ptr<Player>> playerMap;
+	static map<unsigned int, unique_ptr<Player>> playerMap;
 
 	//My friends
 	friend class Game;

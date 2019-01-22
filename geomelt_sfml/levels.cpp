@@ -1,13 +1,13 @@
 #include "levels.h"
 
-map<unsigned int, shared_ptr<Player>> Level::playerMap;
+map<unsigned int, unique_ptr<Player>> Level::playerMap;
 
 void Level::add_player(unsigned int joyID)
 {
 	bool is_created_already = false;
 
 	if (playerMap.size() >= 0 && playerMap.size() < 8) {
-		map<unsigned int, shared_ptr<Player>>::iterator it;
+		map<unsigned int, unique_ptr<Player>>::iterator it;
 
 		for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 			if (it->first == joyID) // If map exists
@@ -15,7 +15,7 @@ void Level::add_player(unsigned int joyID)
 		}
 
 		if (is_created_already == false) {
-			playerMap[joyID] = shared_ptr<Player>(new Ball());
+			playerMap[joyID] = unique_ptr<Player>(new Ball());
 
 			Player *plyr = playerMap[joyID].get();
 			*plyr = Assets::characterPalette.traverse_colors[plyr->myColor];
@@ -25,7 +25,7 @@ void Level::add_player(unsigned int joyID)
 
 void Level::purge_players()
 {
-	map<unsigned int, shared_ptr<Player>>::iterator it;
+	map<unsigned int, unique_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState == ELIMINATED) { //Erase if eliminated
@@ -38,7 +38,7 @@ void Level::purge_players()
 
 void Level::reset_level()
 {
-	map<unsigned int, shared_ptr<Player>>::iterator it;
+	map<unsigned int, unique_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		it->second->body->height = 100;
@@ -105,8 +105,8 @@ Level::Level()
 	blackVoid.set_color(Assets::backgroundPalette.black);
 	blackVoid.body.center.x = 0;
 	blackVoid.body.center.y = 0;
-	blackVoid.body.width = 10.0f * HDX;
-	blackVoid.body.height = 10.0f * HDY;
+	blackVoid.body.width = 10.0f * SCRN_WD;
+	blackVoid.body.height = 10.0f * SCRN_HT;
 }
 
 Field_Level::Field_Level() : Level()
@@ -116,8 +116,8 @@ Field_Level::Field_Level() : Level()
 	//Background Color Assignment
 	background.body.center.x = 0;
 	background.body.center.y = 0;
-	background.body.width = 4.0f * HDX;
-	background.body.height = 5.0f * HDY;
+	background.body.width = 4.0f * SCRN_WD;
+	background.body.height = 5.0f * SCRN_HT;
 	background.set_color(Assets::backgroundPalette.day);
 
 	//filter
@@ -130,42 +130,42 @@ Field_Level::Field_Level() : Level()
 
 	gradientBG.LLBG.body.center.x = 0;
 	gradientBG.LLBG.body.center.y = 0;
-	gradientBG.LLBG.body.width = 4 * HDX;
-	gradientBG.LLBG.body.height = 4 * HDY;
+	gradientBG.LLBG.body.width = 4 * SCRN_WD;
+	gradientBG.LLBG.body.height = 4 * SCRN_HT;
 
 	gradientBG.LRBG.body.center.x = 0;
 	gradientBG.LRBG.body.center.y = 0;
-	gradientBG.LRBG.body.width = 4 * HDX;
-	gradientBG.LRBG.body.height = 4 * HDY;
+	gradientBG.LRBG.body.width = 4 * SCRN_WD;
+	gradientBG.LRBG.body.height = 4 * SCRN_HT;
 
 	gradientBG.TRBG.body.center.x = 0;
 	gradientBG.TRBG.body.center.y = 0;
-	gradientBG.TRBG.body.width = 4 * HDX;
-	gradientBG.TRBG.body.height = 4 * HDY;
+	gradientBG.TRBG.body.width = 4 * SCRN_WD;
+	gradientBG.TRBG.body.height = 4 * SCRN_HT;
 
 	gradientBG.TLBG.body.center.x = 0;
 	gradientBG.TLBG.body.center.y = 0;
-	gradientBG.TLBG.body.width = 4 * HDX;
-	gradientBG.TLBG.body.height = 4 * HDY;
+	gradientBG.TLBG.body.width = 4 * SCRN_WD;
+	gradientBG.TLBG.body.height = 4 * SCRN_HT;
 
 	//Sun Attributes
-	sun.radius = (GLfloat)HDY;
+	sun.radius = (GLfloat)SCRN_HT;
 	sun.color = Assets::palette.sun;
-	sun.center.x = (GLfloat)HDX;
-	sun.center.y = (GLfloat)HDY;
+	sun.center.x = (GLfloat)SCRN_WD;
+	sun.center.y = (GLfloat)SCRN_HT;
 
 	Platform p;
 	platform.push_back(p);
 
 	//Floor Center
 	platform.at(0).body.center.x = 0.0;
-	platform.at(0).body.center.y = HDY / -3.0f;
+	platform.at(0).body.center.y = SCRN_HT / -3.0f;
 	platform.at(0).outline.center.x = platform.at(0).body.center.x;
 	platform.at(0).outline.center.y = platform.at(0).body.center.y;
 
 	//Floor Dimensions
-	platform.at(0).body.width = 5.0f * HDX / 6.0f;
-	platform.at(0).body.height = HDY / 20.0f;
+	platform.at(0).body.width = 5.0f * SCRN_WD / 6.0f;
+	platform.at(0).body.height = SCRN_HT / 20.0f;
 	platform.at(0).outline.width = platform.at(0).body.width + THICKNESS;
 	platform.at(0).outline.height = platform.at(0).body.height + THICKNESS;
 
@@ -189,7 +189,7 @@ Field_Level::Field_Level() : Level()
 	vector<unique_ptr<Cloud>>::iterator it;
 
 	for (it = clouds.begin(); it != clouds.end(); ++it) {
-		it->get()->body[1].get()->center.x = rand() % (4 * HDX) - 2 * HDX;
+		it->get()->body[1].get()->center.x = (float)(rand() % (4 * SCRN_WD) - 2 * SCRN_WD);
 		it->get()->body[0].get()->center.x = it->get()->body[1].get()->center.x - it->get()->body[1].get()->radius;
 		it->get()->body[2].get()->center.x = it->get()->body[1].get()->center.x + it->get()->body[1].get()->radius;
 	}
@@ -209,8 +209,8 @@ void Field_Level::update_clouds()
 		arg2 = it->get()->body[0].get()->center.x - (it->get()->body[0].get()->radius);
 
 		//Reset if Last Cloud Offscreen
-		if ((arg1 < -2.0f * HDX && windDirection == LEFT) 
-			|| (arg2 > 2.0f * HDX && windDirection == RIGHT)) 
+		if ((arg1 < -2.0f * SCRN_WD && windDirection == LEFT) 
+			|| (arg2 > 2.0f * SCRN_WD && windDirection == RIGHT)) 
 			it->get()->offScreen ^= 1;;
 
 		it->get()->update(windDirection);
@@ -236,7 +236,7 @@ void Field_Level::gfx_handler()
 
 	render();
 
-	map<unsigned int, shared_ptr<Player>>::iterator it;
+	map<unsigned int, unique_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {		
 		if (it->second->stats.lifeState == ALIVE)
@@ -249,7 +249,7 @@ void Field_Level::phys_handler()
 	update_clouds();
 	purge_clouds();
 
-	map<unsigned int, shared_ptr<Player>>::iterator it;
+	map<unsigned int, unique_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState != ELIMINATED)
@@ -291,17 +291,17 @@ Night_Level::Night_Level() : Level()
 	//Background Attributes
 	background.body.center.x = 0;
 	background.body.center.y = 0;
-	background.body.width = 4.0f * HDX;
-	background.body.height = 5.0f * HDY;
+	background.body.width = 4.0f * SCRN_WD;
+	background.body.height = 5.0f * SCRN_HT;
 
 	//Color assignment
 	background.set_color(Assets::backgroundPalette.night);
 
 	//Moon Attributes
 	moon.color = Assets::palette.moon;
-	moon.center.x = HDX / 2.0f;
-	moon.center.y = HDY / 2.0f;
-	moon.radius = HDY / 2.0f;
+	moon.center.x = SCRN_WD / 2.0f;
+	moon.center.y = SCRN_HT / 2.0f;
+	moon.radius = SCRN_HT / 2.0f;
 
 	//Platform Horizontal Center
 	platform.at(0).body.center.x = 0;
@@ -310,17 +310,17 @@ Night_Level::Night_Level() : Level()
 	platform.at(3).body.center.x = 750;
 
 	//Platform Dimensions
-	platform.at(0).body.width = 5.0f * HDX / 6.0f;
-	platform.at(0).body.height = HDY / 20.0f;
-	platform.at(0).body.center.y = HDY / -3.0f;
+	platform.at(0).body.width = 5.0f * SCRN_WD / 6.0f;
+	platform.at(0).body.height = SCRN_HT / 20.0f;
+	platform.at(0).body.center.y = SCRN_HT / -3.0f;
 
 	for (unsigned int i = 1; i < platform.size(); i++) {
-		platform.at(i).body.width = HDX / 4.0f;
-		platform.at(i).body.height = HDY / 20.0f;
+		platform.at(i).body.width = SCRN_WD / 4.0f;
+		platform.at(i).body.height = SCRN_HT / 20.0f;
 		platform.at(i).body.center.y = 100.0f;
 	}
 
-	platform.at(2).body.center.y = HDY / 4.0f;
+	platform.at(2).body.center.y = SCRN_HT / 4.0f;
 
 	for (unsigned int i = 0; i < platform.size(); i++) {
 		//Floor Boundaries - For Physics
@@ -349,7 +349,7 @@ void Night_Level::gfx_handler()
 
 	render();
 
-	map<unsigned int, shared_ptr<Player>>::iterator it;
+	map<unsigned int, unique_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState == ALIVE)
@@ -359,7 +359,7 @@ void Night_Level::gfx_handler()
 
 void Night_Level::phys_handler()
 {
-	map<unsigned int, shared_ptr<Player>>::iterator it;
+	map<unsigned int, unique_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState != ELIMINATED)
@@ -393,8 +393,8 @@ Time_Level::Time_Level() : Level()
 	timeOfDay = EVENING;
 	background.body.center.x = 0;
 	background.body.center.y = 0;
-	background.body.width = 4.0f * HDX;
-	background.body.height = 5.0f * HDY;
+	background.body.width = 4.0f * SCRN_WD;
+	background.body.height = 5.0f * SCRN_HT;
 
 	bg_pal = Assets::backgroundPalette;
 
@@ -404,25 +404,25 @@ Time_Level::Time_Level() : Level()
 	background.set_color(Assets::backgroundPalette.evening);
 
 	//Sun Attributes
-	sun.radius = (GLfloat)HDY;
+	sun.radius = (GLfloat)SCRN_HT;
 	sun.color = Assets::palette.sun;
-	sun.center.x = (GLfloat)HDX;
-	sun.center.y = (GLfloat)HDY;
+	sun.center.x = (GLfloat)SCRN_WD;
+	sun.center.y = (GLfloat)SCRN_HT;
 
 	//Moon Attributes
 	moon.color = Assets::palette.moon;
-	moon.center.x = HDX / 2.0f;
-	moon.center.y = HDY / 2.0f;
-	moon.radius = HDY / 2.0f;
+	moon.center.x = SCRN_WD / 2.0f;
+	moon.center.y = SCRN_HT / 2.0f;
+	moon.radius = SCRN_HT / 2.0f;
 
 	Platform p;
 	platform.push_back(p);
 
 	//Floor Dimensions
-	platform.at(0).body.width = 5.0f * HDX / 6.0f;
-	platform.at(0).body.height = HDY / 20.0f;
+	platform.at(0).body.width = 5.0f * SCRN_WD / 6.0f;
+	platform.at(0).body.height = SCRN_HT / 20.0f;
 	platform.at(0).body.center.x = 0.0f;
-	platform.at(0).body.center.y = HDY / -3.0f;
+	platform.at(0).body.center.y = SCRN_HT / -3.0f;
 
 	//Floor Boundaries - For Physics
 	platform.at(0).body.boundary_assignment();
@@ -444,8 +444,8 @@ Time_Level::Time_Level() : Level()
 	vector<unique_ptr<Cloud>>::iterator it;
 
 	for (it = clouds.begin(); it != clouds.end(); ++it) {
-		int randX = rand() % (4 * HDX) - 2 * HDX; // get random position for cloud
-		it->get()->body[1].get()->center.x = randX;
+		int randX = rand() % (4 * SCRN_WD) - 2 * SCRN_WD; // get random position for cloud
+		it->get()->body[1].get()->center.x = (float)randX;
 		it->get()->body[0].get()->center.x = randX - it->get()->body[1].get()->radius;
 		it->get()->body[2].get()->center.x = randX + it->get()->body[1].get()->radius;
 	}
@@ -464,11 +464,11 @@ void Time_Level::update_clouds()
 		arg2 = it->get()->body[1].get()->center.x - (it->get()->body[1].get()->radius * 3);
 
 		//Reset if Last Cloud Offscreen
-		if (arg1 < (-1.0f * HDX) && windDirection == LEFT) {
+		if (arg1 < (-1.0f * SCRN_WD) && windDirection == LEFT) {
 			clouds.erase(clouds.begin() + i);
 			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
 		}
-		else if (arg2 > HDX && windDirection == RIGHT) {
+		else if (arg2 > SCRN_WD && windDirection == RIGHT) {
 			clouds.erase(clouds.begin() + i);
 			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
 		}
@@ -523,7 +523,7 @@ void Time_Level::gfx_handler()
 
 	render();
 
-	map<unsigned int, shared_ptr<Player>>::iterator it;
+	map<unsigned int, unique_ptr<Player>>::iterator it;
 	
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState == ALIVE)
@@ -538,7 +538,7 @@ void Time_Level::phys_handler()
 	update_clouds();
 	purge_clouds();
 	
-	map<unsigned int, shared_ptr<Player>>::iterator it;
+	map<unsigned int, unique_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState != ELIMINATED)

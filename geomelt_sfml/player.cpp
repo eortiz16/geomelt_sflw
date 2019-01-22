@@ -106,7 +106,7 @@ void Player::update_reflection_x()
 
 	OldValue = body->center.x;
 	OldMin = 0;
-	OldMax = HDY;
+	OldMax = SCRN_HT;
 	NewMin = 0;
 	NewMax = sqrt(body->radius / 8);
 	offset = (OldValue - OldMin) * (NewMax - NewMin);
@@ -164,8 +164,8 @@ void Player::simple_update_menu()
 {
 	update_reflection_x();
 
-	body->height = HDY / 4.0f;
-	body->width = HDY / 4.0f;
+	body->height = SCRN_HT / 4.0f;
+	body->width = SCRN_HT / 4.0f;
 	body->radius = body->height / 2;
 
 	outline->radius = body->radius * 1.04f;
@@ -239,8 +239,8 @@ void Player::death_handler()
 	if (stats.lifeState != ELIMINATED)
 	{
 		// If outside boundaries
-		if (body->boundary.right < HDX * -2.0f || body->boundary.left > HDX * 2.0f
-			|| body->boundary.top < HDY * -2.5f || body->boundary.bottom > HDY * 2.5f)
+		if (body->boundary.right < SCRN_WD * -2.0f || body->boundary.left > SCRN_WD * 2.0f
+			|| body->boundary.top < SCRN_HT * -2.5f || body->boundary.bottom > SCRN_HT * 2.5f)
 		{
 			//If player has lives and is not eliminated and not respawning
 			if (stats.lifeCount >= 0 && toggle.initDeath == false) {

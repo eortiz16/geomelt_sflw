@@ -12,18 +12,22 @@ MainMenu::MainMenu()
 	srand((unsigned int)time(NULL));
 
 	title.set_texture_attributes(Assets::textures.title);
-	title.body.center.y = HDY / 2;
+	title.body.center.y = SCRN_HT / 2;
 	title.body.width *= 2;
 	title.body.height *= 2;
+	title.body.boundary_assignment();
 
 	play.set_texture_attributes(Assets::textures.play);
-	play.body.center.y = -HDY / 6;
+	play.body.center.y = -SCRN_HT / 6;
+	play.body.boundary_assignment();
 
 	options.set_texture_attributes(Assets::textures.options);
-	options.body.center.y = -HDY / 3;
+	options.body.center.y = -SCRN_HT / 3;
+	options.body.boundary_assignment();
 	
 	exit.set_texture_attributes(Assets::textures.exit);
-	exit.body.center.y = -HDY / 2;
+	exit.body.center.y = -SCRN_HT / 2;
+	exit.body.boundary_assignment();
 
 	selected = PLAY;
 	selectedIcon.set_texture_attributes(Assets::textures.playSelected);
@@ -33,7 +37,7 @@ MainMenu::MainMenu()
 void MainMenu::handler(unique_ptr<Level>& level)
 {
 	//Fixed Camera
-	glOrtho(-HDX, HDX, -HDY, HDY, -1, 1);
+	glOrtho(-SCRN_WD, SCRN_WD, -SCRN_HT, SCRN_HT, -1, 1);
 	glClear(1);
 
 	//draw level
@@ -65,6 +69,7 @@ void MainMenu::update_selected()
 		break;
 	}
 }
+
 /*
 void MainMenu::read_axis(unsigned int joyID)
 {
@@ -139,8 +144,8 @@ CharacterSelect::CharacterSelect()
 	//Background Attribute Assignment
 	background.body.center.x = 0;
 	background.body.center.y = 0;
-	background.body.width = 2.0f * HDX;
-	background.body.height = 2.0f * HDY;
+	background.body.width = 2.0f * SCRN_WD;
+	background.body.height = 2.0f * SCRN_HT;
 
 	for (int i = 0; i < CORNERS; i++)
 	{
@@ -150,16 +155,16 @@ CharacterSelect::CharacterSelect()
 	}
 
 	//assign center of each char select box
-	float wSpace = -3.0f * HDX / 4.0f;
+	float wSpace = -3.0f * SCRN_WD / 4.0f;
 
 	for (int i = 0; i < 4; i++)	{
 		CharSelBox sb;
 
 		sb.stroke = 30.0f;
 		sb.box.center.x = wSpace;
-		sb.box.center.y = -HDY / 2.5f;
-		sb.box.width = HDX / 3.0f;
-		sb.box.height = 3.0f * HDY / 4.0f;
+		sb.box.center.y = -SCRN_HT / 2.5f;
+		sb.box.width = SCRN_WD / 3.0f;
+		sb.box.height = 3.0f * SCRN_HT / 4.0f;
 		sb.box.build();
 		sb.box.set_color(Assets::palette.white);
 		sb.outline.center.x = sb.box.center.x;
@@ -175,11 +180,11 @@ CharacterSelect::CharacterSelect()
 		sb.start_icon.body.center.y = sb.box.center.y;
 		selectBox.push_back(sb);
 
-		wSpace += HDX / 2.0f;
+		wSpace += SCRN_WD / 2.0f;
 	}
 }
 
-void CharacterSelect::handler(map<unsigned int, shared_ptr<Player>>& players)
+void CharacterSelect::handler(map<unsigned int, unique_ptr<Player>>& players)
 {
 	//Fixed Camera
 	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1);
@@ -194,8 +199,8 @@ void CharacterSelect::handler(map<unsigned int, shared_ptr<Player>>& players)
 			selectBox[i].start_icon.render();
 	}
 
-	map<unsigned int, shared_ptr<Player>>::iterator it = players.begin();
-	map<unsigned int, shared_ptr<Player>>::iterator fin = players.end();
+	map<unsigned int, unique_ptr<Player>>::iterator it = players.begin();
+	map<unsigned int, unique_ptr<Player>>::iterator fin = players.end();
 	
 	while (it != fin) {
 		*it->second = Assets::characterPalette.traverse_colors[it->second->myColor];
@@ -214,8 +219,8 @@ LevelSelect::LevelSelect()
 
 	background.body.center.x = 0;
 	background.body.center.y = 0;
-	background.body.width = 2.0f * HDX;
-	background.body.height = 2.0f * HDY;
+	background.body.width = 2.0f * SCRN_WD;
+	background.body.height = 2.0f * SCRN_HT;
 
 	for (int i = 0; i < CORNERS; i++) {
 		background.color[i].r = Assets::palette.lightGrey.r;
@@ -225,7 +230,7 @@ LevelSelect::LevelSelect()
 
 	level1.set_texture_attributes(Assets::textures.field);
 	level1.body.center.y = 0;
-	level1.body.center.x = -HDY;
+	level1.body.center.x = -SCRN_HT;
 	level1.body.width = 640;
 	level1.body.height = 400;
 
@@ -237,7 +242,7 @@ LevelSelect::LevelSelect()
 
 	level3.set_texture_attributes(Assets::textures.time); 
 	level3.body.center.y = 0;
-	level3.body.center.x = HDY;
+	level3.body.center.x = SCRN_HT;
 	level3.body.width = 640;
 	level3.body.height = 400;
 
@@ -250,7 +255,7 @@ LevelSelect::LevelSelect()
 
 void LevelSelect::handler() 
 {
-	glOrtho(-HDX, HDX, -HDY, HDY, -1, 1);
+	glOrtho(-SCRN_WD, SCRN_WD, -SCRN_HT, SCRN_HT, -1, 1);
 
 	background.render();
 	selector.render();

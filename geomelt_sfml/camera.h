@@ -7,10 +7,10 @@
 
 constexpr auto FAC1 = 1.0000001f;
 constexpr auto FAC2 = 0.9999999f;
-constexpr auto left_ortho = -0.75f * HDX;
-constexpr auto right_ortho = 0.75f * HDX;
-constexpr auto top_ortho = 0.75f * HDY;
-constexpr auto bottom_ortho = -0.75f * HDY;
+constexpr auto left_ortho = -0.75f * SCRN_WD;
+constexpr auto right_ortho = 0.75f * SCRN_WD;
+constexpr auto top_ortho = 0.75f * SCRN_HT;
+constexpr auto bottom_ortho = -0.75f * SCRN_HT;
 
 class Player;
 
@@ -37,7 +37,7 @@ private:
 	friend class CharacterSelect;
 public:
 	// void update_value();
-	static void set_center(map<unsigned int, shared_ptr<Player>>& playerMap);
+	static void set_center(map<unsigned int, unique_ptr<Player>>& playerMap);
 	static void set_edges();
 	static void transition();
 
