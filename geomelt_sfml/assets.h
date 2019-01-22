@@ -180,6 +180,7 @@ private:
 	sf::Texture button_Up;
 
 	friend class MainMenu;
+	friend class MainMenuState;
 	friend class CharacterSelect;
 	friend class LevelSelect;
 public:
@@ -202,6 +203,7 @@ private:
 	friend class CharacterSelect;
 	friend class LevelSelect;
 	friend class Level;
+	friend class MainMenuState;
 	friend class Field_Level;
 	friend class Night_Level;
 	friend class Time_Level;

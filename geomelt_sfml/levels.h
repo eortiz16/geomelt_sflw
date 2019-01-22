@@ -48,12 +48,13 @@ protected:
 	GradientBG gradientBG;
 	geomelt::Quad filterBG;
 	vector<Platform> platform;
-	static map<unsigned int, unique_ptr<Player>> playerMap;
+	static map<unsigned int, shared_ptr<Player>> playerMap;
 
 	//My friends
 	friend class Game;
 	friend class Input;
 	friend class CharacterSelect;
+	friend class CharacterSelectState;
 public:
 	virtual void render() = 0;
 	virtual void gfx_handler() = 0;
@@ -63,7 +64,7 @@ public:
 	void add_player(unsigned int joyID);
 
 	Level();
-	virtual ~Level();
+	virtual ~Level() {}
 };
 
 class Field_Level : public Level {

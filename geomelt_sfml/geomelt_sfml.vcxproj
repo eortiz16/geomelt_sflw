@@ -134,6 +134,8 @@
     <ClCompile Include="menus.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="primitives.cpp" />
+    <ClCompile Include="state.cpp" />
+    <ClCompile Include="sync.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="complex_shapes.h" />
@@ -142,12 +144,13 @@
     <ClInclude Include="generic.h" />
     <ClInclude Include="assets.h" />
     <ClInclude Include="controller.h" />
+    <ClInclude Include="sync.h" />
     <ClInclude Include="headers.h" />
-    <ClInclude Include="helper.h" />
     <ClInclude Include="levels.h" />
     <ClInclude Include="menus.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="primitives.h" />
+    <ClInclude Include="state.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

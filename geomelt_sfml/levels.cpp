@@ -1,13 +1,13 @@
 #include "levels.h"
 
-map<unsigned int, unique_ptr<Player>> Level::playerMap;
+map<unsigned int, shared_ptr<Player>> Level::playerMap;
 
 void Level::add_player(unsigned int joyID)
 {
 	bool is_created_already = false;
 
 	if (playerMap.size() >= 0 && playerMap.size() < 8) {
-		map<unsigned int, unique_ptr<Player>>::iterator it;
+		map<unsigned int, shared_ptr<Player>>::iterator it;
 
 		for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 			if (it->first == joyID) // If map exists
@@ -15,7 +15,7 @@ void Level::add_player(unsigned int joyID)
 		}
 
 		if (is_created_already == false) {
-			playerMap[joyID] = unique_ptr<Player>(new Ball());
+			playerMap[joyID] = shared_ptr<Player>(new Ball());
 
 			Player *plyr = playerMap[joyID].get();
 			*plyr = Assets::characterPalette.traverse_colors[plyr->myColor];
@@ -25,7 +25,7 @@ void Level::add_player(unsigned int joyID)
 
 void Level::purge_players()
 {
-	map<unsigned int, unique_ptr<Player>>::iterator it;
+	map<unsigned int, shared_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState == ELIMINATED) { //Erase if eliminated
@@ -38,7 +38,7 @@ void Level::purge_players()
 
 void Level::reset_level()
 {
-	map<unsigned int, unique_ptr<Player>>::iterator it;
+	map<unsigned int, shared_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		it->second->body->height = 100;
@@ -109,15 +109,10 @@ Level::Level()
 	blackVoid.body.height = 10.0f * HDY;
 }
 
-Level::~Level()
-{
-	//player.clear();
-}
-
-
 Field_Level::Field_Level() : Level()
 {
 	srand((unsigned int)time(NULL));
+
 	//Background Color Assignment
 	background.body.center.x = 0;
 	background.body.center.y = 0;
@@ -142,12 +137,12 @@ Field_Level::Field_Level() : Level()
 	gradientBG.LRBG.body.center.y = 0;
 	gradientBG.LRBG.body.width = 4 * HDX;
 	gradientBG.LRBG.body.height = 4 * HDY;
-	
+
 	gradientBG.TRBG.body.center.x = 0;
 	gradientBG.TRBG.body.center.y = 0;
 	gradientBG.TRBG.body.width = 4 * HDX;
 	gradientBG.TRBG.body.height = 4 * HDY;
-	
+
 	gradientBG.TLBG.body.center.x = 0;
 	gradientBG.TLBG.body.center.y = 0;
 	gradientBG.TLBG.body.width = 4 * HDX;
@@ -241,7 +236,7 @@ void Field_Level::gfx_handler()
 
 	render();
 
-	map<unsigned int, unique_ptr<Player>>::iterator it;
+	map<unsigned int, shared_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {		
 		if (it->second->stats.lifeState == ALIVE)
@@ -254,7 +249,7 @@ void Field_Level::phys_handler()
 	update_clouds();
 	purge_clouds();
 
-	map<unsigned int, unique_ptr<Player>>::iterator it;
+	map<unsigned int, shared_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState != ELIMINATED)
@@ -354,7 +349,7 @@ void Night_Level::gfx_handler()
 
 	render();
 
-	map<unsigned int, unique_ptr<Player>>::iterator it;
+	map<unsigned int, shared_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState == ALIVE)
@@ -364,7 +359,7 @@ void Night_Level::gfx_handler()
 
 void Night_Level::phys_handler()
 {
-	map<unsigned int, unique_ptr<Player>>::iterator it;
+	map<unsigned int, shared_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState != ELIMINATED)
@@ -528,7 +523,7 @@ void Time_Level::gfx_handler()
 
 	render();
 
-	map<unsigned int, unique_ptr<Player>>::iterator it;
+	map<unsigned int, shared_ptr<Player>>::iterator it;
 	
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState == ALIVE)
@@ -543,7 +538,7 @@ void Time_Level::phys_handler()
 	update_clouds();
 	purge_clouds();
 	
-	map<unsigned int, unique_ptr<Player>>::iterator it;
+	map<unsigned int, shared_ptr<Player>>::iterator it;
 
 	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
 		if (it->second->stats.lifeState != ELIMINATED)

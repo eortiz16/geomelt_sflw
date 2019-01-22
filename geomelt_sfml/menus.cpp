@@ -11,9 +11,6 @@ MainMenu::MainMenu()
 	*/
 	srand((unsigned int)time(NULL));
 
-	level = (rand()%2 == 0) ? unique_ptr<Level>(new Field_Level()) 
-		: unique_ptr<Level>(new Night_Level());
-
 	title.set_texture_attributes(Assets::textures.title);
 	title.body.center.y = HDY / 2;
 	title.body.width *= 2;
@@ -33,26 +30,42 @@ MainMenu::MainMenu()
 	selectedIcon.body.center.y = play.body.center.y;
 }
 
-MainMenu::~MainMenu()
-{
-}
-
-void MainMenu::handler()
+void MainMenu::handler(unique_ptr<Level>& level)
 {
 	//Fixed Camera
 	glOrtho(-HDX, HDX, -HDY, HDY, -1, 1);
 	glClear(1);
 
+	//draw level
 	level->phys_handler();
 	level->render();
-	title.render();
 
+	title.render();
 	play.render();
 	options.render();
 	exit.render();
 	selectedIcon.render();
 }
 
+void MainMenu::update_selected()
+{
+	switch (selected)
+	{
+	case PLAY:
+		selectedIcon.set_texture_attributes(Assets::textures.playSelected);
+		selectedIcon.body.center.y = play.body.center.y;
+		break;
+	case OPTIONS:
+		selectedIcon.set_texture_attributes(Assets::textures.optionsSelected);
+		selectedIcon.body.center.y = options.body.center.y;
+		break;
+	case EXIT:
+		selectedIcon.set_texture_attributes(Assets::textures.exitSelected);
+		selectedIcon.body.center.y = exit.body.center.y;
+		break;
+	}
+}
+/*
 void MainMenu::read_axis(unsigned int joyID)
 {
 	//Add a disclaimer message which forces players to use dpad to register
@@ -119,6 +132,7 @@ int MainMenu::read_buttons(sf::Event event, CurrentGameState &current)
 	}
 	return 0;
 }
+*/
 
 CharacterSelect::CharacterSelect()
 {
@@ -165,7 +179,7 @@ CharacterSelect::CharacterSelect()
 	}
 }
 
-void CharacterSelect::handler(map<unsigned int, unique_ptr<Player>>::iterator it, map<unsigned int, unique_ptr<Player>>::iterator fin)
+void CharacterSelect::handler(map<unsigned int, shared_ptr<Player>>& players)
 {
 	//Fixed Camera
 	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1);
@@ -180,6 +194,9 @@ void CharacterSelect::handler(map<unsigned int, unique_ptr<Player>>::iterator it
 			selectBox[i].start_icon.render();
 	}
 
+	map<unsigned int, shared_ptr<Player>>::iterator it = players.begin();
+	map<unsigned int, shared_ptr<Player>>::iterator fin = players.end();
+	
 	while (it != fin) {
 		*it->second = Assets::characterPalette.traverse_colors[it->second->myColor];
 		it->second->body->center.x = selectBox[it->second->myID].box.center.x;
@@ -242,6 +259,7 @@ void LevelSelect::handler()
 	level3.render();
 }
 
+/*
 void LevelSelect::read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &level)
 {
 	switch (event.joystickButton.button)
@@ -312,3 +330,4 @@ void LevelSelect::read_axis(unsigned int joyID)
 		break;
 	}
 }
+*/

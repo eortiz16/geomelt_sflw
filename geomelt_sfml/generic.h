@@ -2,7 +2,7 @@
 
 #include "headers.h"
 
-enum Render_State { TEST, MENU, PAUSE, LEVEL };
+enum RenderState { MM, CSEL, LSEL, PAS, LVL };
 enum Direction { LEFT, RIGHT };
 
 constexpr auto CORNERS = 4;

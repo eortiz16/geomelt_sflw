@@ -3,64 +3,16 @@
 int main()
 {
 	Game game;
-	game.loop();
+
 	return EXIT_SUCCESS;
 }
 
 Game::Game()
 {
-	current.render = MENU;
-
-	// Request a 24-bits depth buffer when creating the window
-	contextSettings.depthBits = 24;
-	contextSettings.sRgbCapable = false;
-
-	window = unique_ptr<sf::RenderWindow> (new sf::RenderWindow(sf::VideoMode(HDX, HDY), "Geometric Meltdown", sf::Style::Default, contextSettings));
-	//window = unique_ptr<RenderWindow> (new sf::RenderWindow(sf::VideoMode(HDX, HDY), "Geometric Meltdown", sf::Style::Fullscreen, contextSettings));
-
-	window->setVerticalSyncEnabled(true);
-	window->setFramerateLimit(FPS);
-
-	current.menuChange = false;
-	current.menu = MAINMENU;
-	menu = unique_ptr<Menu>(new MainMenu());
-
-	// Active for OPENGL
-	window->setActive(true);
-
-	glShadeModel(GL_SMOOTH);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
-	glClearColor(0, 0, 0, 0);
-	glViewport(0, 0, window->getSize().x, window->getSize().y);
-	glMatrixMode(GL_PROJECTION); glLoadIdentity();
-	glMatrixMode(GL_MODELVIEW); glLoadIdentity();
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_DITHER);
-
-	window->setActive(false);
-
-	sync.previous = sync.game_clock.getElapsedTime().asMilliseconds();
+	this->gfxNet.loop();
 }
 
-Game::~Game()
-{
-	menu.reset();
-	level.reset();
-	window.reset();
-}
-
-Sync::Sync()
-{
-	game_clock.restart();
-	lag = 0.0;
-	current = 0.0;
-	elapsed = 0.0;
-	previous = 0.0;
-}
-
+/*
 void Game::process_input()
 {
 	Player *plyr = NULL;
@@ -124,7 +76,8 @@ void Game::process_input()
 		}
 	}
 }
-
+*/
+/*
 void CharacterSelect::read_buttons(sf::Event event, CurrentGameState &current, unique_ptr<Level> &level)
 {
 	Player *plyr = NULL;
@@ -142,48 +95,38 @@ void CharacterSelect::read_buttons(sf::Event event, CurrentGameState &current, u
 		}
 		break;
 	case X:
-	{
 		if (level->playerMap.find(event.joystickButton.joystickId) != level->playerMap.end()) { //if exists
 			level->playerMap[event.joystickButton.joystickId].reset();
 			level->playerMap[event.joystickButton.joystickId] = unique_ptr<Player>(new Boxy());
 		}
-	}
 		break;
 	case Y:
-	{
 		cout << "Y";
-	}
 		break;
 	case LB:
-	{
 		if (level->playerMap.find(event.joystickButton.joystickId) != level->playerMap.end())
 			level->playerMap[event.joystickButton.joystickId].get()->change_color(PREV);
-	}
 		break;
 	case RB:
-	{
 		if (level->playerMap.find(event.joystickButton.joystickId) != level->playerMap.end())
 			level->playerMap[event.joystickButton.joystickId].get()->change_color(NEXT);
-	}
 		break;
 	case START:
-	{
 		level->add_player(event.joystickButton.joystickId);
 		selectBox[level->playerMap[event.joystickButton.joystickId].get()->myID].occupied = true;
-	}
 		break;
 	case SELECT:
-	{
 		//menu.reset();
 		current.menu = LEVELSEL;
 		current.menuChange = true;
-	}
 		break;
 	default:
 		break;
 	}
 }
+*/
 
+/*
 void Game::loop()
 {
 	while (window->isOpen())
@@ -193,8 +136,9 @@ void Game::loop()
 		sync.previous = sync.current;
 		sync.lag += sync.elapsed;
 
-		process_input();
+		//process_input();
 
+		/*
 		while (sync.lag >= MS_PER_UPDATE())
 		{
 			if (current.render == LEVEL)
@@ -203,6 +147,8 @@ void Game::loop()
 		}
 
 		window->setActive(true);
+
+		gfxNet._state->handler();
 
 		switch (current.render)
 		{
@@ -268,5 +214,7 @@ void Game::loop()
 				break;
 			}
 		}
+		
 	}
 }
+*/

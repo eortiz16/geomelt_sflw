@@ -58,7 +58,10 @@ private:
 	geomelt::Quad body;
 
 	friend class MainMenu;
+	friend class MainMenuState;
 	friend class CharacterSelect;
+	friend class CharacterSelectState;
+	friend class LvlSelectState;
 	friend class LevelSelect;
 public:
 	void set_texture_attributes(sf::Texture asset);

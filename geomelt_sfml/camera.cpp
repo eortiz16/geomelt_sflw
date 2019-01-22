@@ -13,7 +13,7 @@ geomelt::Boundary Camera::edges = geomelt::Boundary::setBounds(HDY, -HDY, -HDX, 
 Vec Camera::center = Vec::set_Vec(0, 0, 0);
 
 //Default, need to add level camera
-void Camera::set_center(map<unsigned int, unique_ptr<Player>>& player)
+void Camera::set_center(map<unsigned int, shared_ptr<Player>>& player)
 {
 	//find furthest player away from center (x and y)
 	xMin = (float)INT_MAX;
@@ -21,7 +21,7 @@ void Camera::set_center(map<unsigned int, unique_ptr<Player>>& player)
 	yMin = (float)INT_MAX;
 	yMax = (float)INT_MIN;
 
-	map<unsigned int, unique_ptr<Player>>::iterator it;
+	map<unsigned int, shared_ptr<Player>>::iterator it;
 
 	// obtain center (x,y) between ALL players
 	for (it = player.begin(); it != player.end(); ++it)

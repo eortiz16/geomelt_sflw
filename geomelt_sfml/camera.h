@@ -37,7 +37,7 @@ private:
 	friend class CharacterSelect;
 public:
 	// void update_value();
-	static void set_center(map<unsigned int, unique_ptr<Player>>& playerMap);
+	static void set_center(map<unsigned int, shared_ptr<Player>>& playerMap);
 	static void set_edges();
 	static void transition();
 
