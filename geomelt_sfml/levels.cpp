@@ -2,6 +2,24 @@
 
 map<unsigned int, unique_ptr<Player>> Level::playerMap;
 
+unique_ptr<Level> Level::make(Lvl lvl)
+{
+	switch (lvl) {
+	case FIELD:
+		return unique_ptr<Level>(new Field_Level);
+		break;
+	case NIGHT:
+		return unique_ptr<Level>(new Night_Level);
+		break;
+	case TIME:
+		return unique_ptr<Level>(new Time_Level);
+		break;
+	default:
+		return NULL;
+		break;
+	}
+}
+
 void Level::add_player(unsigned int joyID)
 {
 	bool is_created_already = false;

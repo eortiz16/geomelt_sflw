@@ -18,6 +18,7 @@ class Game;
 class Camera;
 class Player;
 
+enum Lvl { FIELD, NIGHT, TIME };
 enum TOD { DAY, AFTERNOON, EVENING, NITE, DNITE, MORNING };
 
 inline void operator++(TOD &ti, int)
@@ -56,6 +57,7 @@ protected:
 	friend class CharacterSelect;
 	friend class CharacterSelectState;
 	friend class LevelState;
+	friend class PauseState;
 public:
 	virtual void render() = 0;
 	virtual void gfx_handler() = 0;
@@ -63,6 +65,7 @@ public:
 	void reset_level();
 	void purge_players();
 	void add_player(unsigned int joyID);
+	static unique_ptr<Level> make(Lvl lvl); //Factory Method
 
 	Level();
 	virtual ~Level() {}
@@ -78,6 +81,7 @@ private:
 	friend class Player;
 	friend class Attributes;
 	friend class LevelState;
+	friend class PauseState;
 public:
 	void update_clouds();
 	void purge_clouds();
@@ -99,6 +103,7 @@ private:
 	friend class Player;
 	friend class Attributes;
 	friend class LevelState;
+	friend class PauseState;
 public:
 	void render();
 	void gfx_handler();
@@ -123,6 +128,7 @@ private:
 	friend class Player;
 	friend class Attributes;
 	friend class LevelState;
+	friend class PauseState;
 public:
 	void update_clouds();
 	void purge_clouds();

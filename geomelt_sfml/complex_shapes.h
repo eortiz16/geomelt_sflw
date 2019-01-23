@@ -63,6 +63,7 @@ private:
 	friend class CharacterSelectState;
 	friend class LvlSelectState;
 	friend class LevelSelect;
+	friend class Cursor;
 public:
 	void set_texture_attributes(sf::Texture asset);
 	void render();

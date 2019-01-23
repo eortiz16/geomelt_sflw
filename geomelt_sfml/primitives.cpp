@@ -71,12 +71,9 @@ bool geomelt::Boundary::isWithin(int x, int y)
 	return false;
 }
 
-Vec Vec::set_Vec(float xx, float yy, float zz)
+Vec::Vec(float x, float y, float z)
 {
-	Vec vector;
-	vector.x = xx;
-	vector.y = yy;
-	vector.z = zz;
-
-	return vector;
+	this->x = x;
+	this->y = y;
+	this->z = z;
 }

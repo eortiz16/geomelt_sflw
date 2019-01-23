@@ -8,8 +8,9 @@ constexpr auto TRI_NUM = 50;
 class Vec {
 public:
 	float x, y, z;
-
-	static Vec set_Vec(float xx, float yy, float zz);
+	
+	Vec() {}
+	Vec(float, float, float);
 };
 
 namespace geomelt

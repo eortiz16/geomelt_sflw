@@ -42,6 +42,11 @@ private:
 	friend class Ball;
 	friend class Boxy;
 	friend class Level;
+	friend class Command;
+	friend class CommandPlayer;
+	friend class AttackCommand;
+	friend class LeftCommand;
+	friend class RightCommand;
 public:
 	Toggle();
 };
@@ -81,6 +86,11 @@ private:
 	friend class Camera;
 	friend class LevelState;
 	friend class Game;
+	friend class Command;
+	friend class CommandPlayer;
+	friend class AttackCommand;
+	friend class LeftCommand;
+	friend class RightCommand;
 public:
 	//ButtonMapping buttonMapping;
 	void read_buttons(unsigned int button);

@@ -6,14 +6,13 @@
 #include "camera.h"
 #include "sync.h"
 #include "input.h"
+#include "command.h"
 
 constexpr auto FPS = 60;
 constexpr auto MS_PER_UPDATE() { return 1000.0f / (float)FPS; }
 
-class Camera;
 class RState;
-class Menu;
-class Level;
+class Command;
 
 class GFXNet {
 private:
@@ -22,6 +21,7 @@ private:
 	sf::ContextSettings contextSettings;
 	Sync sync;
 	unique_ptr<sf::RenderWindow> window;
+	unique_ptr<Command> command;
 public:
 	void setState(RState* state);
 	void next();
@@ -38,6 +38,7 @@ public:
 	friend class CharacterSelectState;
 	friend class LvlSelectState;
 	friend class LevelState;
+	friend class PauseState;
 };
 
 class RState {
@@ -110,4 +111,18 @@ public:
 	LevelState() {}
 	LevelState(GFXNet* context);
 	~LevelState() {}
+};
+
+class PauseState : public RState {
+private:
+	GFXNet* _context;
+public:
+	void next();
+	void prev();
+	void handler();
+	void read_input();
+
+	PauseState() {}
+	PauseState(GFXNet* context);
+	~PauseState() {}
 };

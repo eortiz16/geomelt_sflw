@@ -22,7 +22,31 @@ inline void operator--(Selected &sel, int)
 		sel = static_cast<Selected> (SELECTED_CARDINALITY - 1);
 }
 
+class Cursor {
+private:
+	vector<TexturedQuad> selectedTextures;
+	unsigned int selected;
+public:
+	void render();
+	Cursor() {}
+	Cursor(vector<TexturedQuad>& vec);
+	void updateSelection();
+	~Cursor() {}
+
+	friend class Menu;
+	friend class MainMenu;
+	friend class LevelSelect;
+	friend class Pause;
+	friend class MainMenuState;
+	friend class CharacterSelectState;
+	friend class LvlSelectState;
+	friend class PauseState;
+};
+
 class Menu {
+protected:
+	vector<TexturedQuad> navigable;
+	unique_ptr<Cursor> cursor;
 public:
 	Menu() {}
 	~Menu() {}
@@ -30,16 +54,10 @@ public:
 
 class MainMenu : public Menu {
 private:
-	Selected selected;
 	TexturedQuad title;
-	TexturedQuad play;
-	TexturedQuad options;
-	TexturedQuad exit;
-	TexturedQuad selectedIcon;
 	sf::Text text;
 public:
 	void handler(unique_ptr<Level>& level);
-	void update_selected();
 
 	MainMenu();
 	~MainMenu() {}
@@ -49,6 +67,8 @@ public:
 
 class Pause : public Menu {
 public:
+	void handler(unique_ptr<Level>& level);
+
 	Pause() {}
 	~Pause() {}
 };

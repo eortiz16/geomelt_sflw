@@ -17,21 +17,63 @@ MainMenu::MainMenu()
 	title.body.height *= 2;
 	title.body.boundary_assignment();
 
+	TexturedQuad play, options, exit;
+
 	play.set_texture_attributes(Assets::textures.play);
 	play.body.center.y = -SCRN_HT / 6;
 	play.body.boundary_assignment();
-
+	
 	options.set_texture_attributes(Assets::textures.options);
 	options.body.center.y = -SCRN_HT / 3;
 	options.body.boundary_assignment();
-	
+
 	exit.set_texture_attributes(Assets::textures.exit);
 	exit.body.center.y = -SCRN_HT / 2;
 	exit.body.boundary_assignment();
 
-	selected = PLAY;
-	selectedIcon.set_texture_attributes(Assets::textures.playSelected);
-	selectedIcon.body.center.y = play.body.center.y;
+	navigable.push_back(play);
+	navigable.push_back(options);
+	navigable.push_back(exit);
+
+	/* Add the selected version to the cursor vector */
+	vector<TexturedQuad> selected;
+	TexturedQuad playS, optionsS, exitS;
+
+	playS.set_texture_attributes(Assets::textures.playSelected);
+	playS.body.center.y = -SCRN_HT / 6;
+	playS.body.boundary_assignment();
+	
+	optionsS.set_texture_attributes(Assets::textures.optionsSelected);
+	optionsS.body.center.y = -SCRN_HT / 3;
+	optionsS.body.boundary_assignment();
+
+	exitS.set_texture_attributes(Assets::textures.exitSelected);
+	exitS.body.center.y = -SCRN_HT / 2;
+	exitS.body.boundary_assignment();
+	
+	selected.push_back(playS);
+	selected.push_back(optionsS);
+	selected.push_back(exitS);
+
+	cursor = unique_ptr<Cursor>(new Cursor(selected));
+}
+
+Cursor::Cursor(vector<TexturedQuad>& vec)
+{
+	selectedTextures = vec;
+	selected = 0;
+}
+
+void Cursor::updateSelection() {
+	if (selected == UINT_MAX)
+		selected = selectedTextures.size() - 1;
+	else if (selected >= selectedTextures.size())
+		selected = 0;
+}
+
+void Cursor::render()
+{
+	selectedTextures[selected].render();
 }
 
 void MainMenu::handler(unique_ptr<Level>& level)
@@ -45,29 +87,11 @@ void MainMenu::handler(unique_ptr<Level>& level)
 	level->render();
 
 	title.render();
-	play.render();
-	options.render();
-	exit.render();
-	selectedIcon.render();
-}
 
-void MainMenu::update_selected()
-{
-	switch (selected)
-	{
-	case PLAY:
-		selectedIcon.set_texture_attributes(Assets::textures.playSelected);
-		selectedIcon.body.center.y = play.body.center.y;
-		break;
-	case OPTIONS:
-		selectedIcon.set_texture_attributes(Assets::textures.optionsSelected);
-		selectedIcon.body.center.y = options.body.center.y;
-		break;
-	case EXIT:
-		selectedIcon.set_texture_attributes(Assets::textures.exitSelected);
-		selectedIcon.body.center.y = exit.body.center.y;
-		break;
-	}
+	for (auto icon : navigable)
+		icon.render();
+	
+	cursor->render();
 }
 
 CharacterSelect::CharacterSelect()
@@ -193,4 +217,9 @@ void LevelSelect::handler()
 	level1.render();
 	level2.render();
 	level3.render();
+}
+
+void Pause::handler(unique_ptr<Level>& level)
+{
+	level->gfx_handler();
 }
