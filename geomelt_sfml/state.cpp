@@ -136,7 +136,7 @@ void MainMenuState::read_input()
 				menu.cursor->updateSelection();
 				break;
 			case sf::Keyboard::Return:
-				if (menu.cursor->selected == PLAY)
+				if (menu.cursor->selected == menu.cursor->icons.begin())
 					next();
 				break;
 			case sf::Keyboard::Escape:
@@ -150,9 +150,9 @@ void MainMenuState::read_input()
 		case sf::Event::JoystickButtonPressed:
 			switch (event.joystickButton.button) {
 			case A:
-				if (menu.cursor->selected == PLAY)
+				if (menu.cursor->selected == menu.cursor->icons.begin())
 					next();
-				if (menu.cursor->selected == EXIT)
+				if (menu.cursor->selected == menu.cursor->icons.begin() + EXIT)
 					_context->window->close();
 				break;
 			default:
@@ -174,22 +174,22 @@ void MainMenuState::read_input()
 			break;
 		case sf::Event::MouseMoved:
 			if (menu.navigable[PLAY].body.boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y))) {
-				menu.cursor->selected = PLAY;
+				menu.cursor->selected = menu.cursor->icons.begin();
 			}
 			else if (menu.navigable[OPTIONS].body.boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y))) {
-				menu.cursor->selected = OPTIONS;
+				menu.cursor->selected = menu.cursor->icons.begin() + OPTIONS;
 			}
 			else if (menu.navigable[EXIT].body.boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y))) {
-				menu.cursor->selected = EXIT;
+				menu.cursor->selected = menu.cursor->icons.begin() + EXIT;
 			}
 			break;
 
 		case sf::Event::MouseButtonPressed:
 			switch (event.mouseButton.button) {
 			case sf::Mouse::Button::Left:
-				if (menu.cursor->selected == PLAY && menu.navigable[PLAY].body.boundary.isWithin(Input::translateX(sf::Mouse::getPosition(*_context->window).x), Input::translateY(sf::Mouse::getPosition(*_context->window).y)))
+				if (menu.cursor->selected == menu.cursor->icons.begin() && menu.navigable[PLAY].body.boundary.isWithin(Input::translateX(sf::Mouse::getPosition(*_context->window).x), Input::translateY(sf::Mouse::getPosition(*_context->window).y)))
 					next();
-				else if (menu.cursor->selected == EXIT && menu.navigable[EXIT].body.boundary.isWithin(Input::translateX(sf::Mouse::getPosition(*_context->window).x), Input::translateY(sf::Mouse::getPosition(*_context->window).y)))
+				else if (menu.cursor->selected == menu.cursor->icons.begin() + EXIT && menu.navigable[EXIT].body.boundary.isWithin(Input::translateX(sf::Mouse::getPosition(*_context->window).x), Input::translateY(sf::Mouse::getPosition(*_context->window).y)))
 					_context->window->close();
 				break;
 			default:

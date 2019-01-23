@@ -22,10 +22,23 @@ inline void operator--(Selected &sel, int)
 		sel = static_cast<Selected> (SELECTED_CARDINALITY - 1);
 }
 
+class Navigable {
+private:
+	typedef vector<TexturedQuad> SelectedTextures;
+	SelectedTextures textures;
+public:
+	typedef SelectedTextures::iterator iterator;
+	typedef SelectedTextures::const_iterator const_iterator;
+	iterator begin() { return textures.begin(); }
+	iterator end() { return textures.end(); }
+
+	friend class Cursor;
+};
+
 class Cursor {
 private:
-	vector<TexturedQuad> selectedTextures;
-	unsigned int selected;
+	Navigable icons;
+	vector<TexturedQuad>::iterator selected;
 public:
 	void render();
 	Cursor() {}

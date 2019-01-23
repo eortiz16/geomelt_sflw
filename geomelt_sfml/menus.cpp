@@ -37,43 +37,39 @@ MainMenu::MainMenu()
 
 	/* Add the selected version to the cursor vector */
 	vector<TexturedQuad> selected;
-	TexturedQuad playS, optionsS, exitS;
 
-	playS.set_texture_attributes(Assets::textures.playSelected);
-	playS.body.center.y = -SCRN_HT / 6;
-	playS.body.boundary_assignment();
+	play.set_texture_attributes(Assets::textures.playSelected);
+	play.body.center.y = -SCRN_HT / 6;
 	
-	optionsS.set_texture_attributes(Assets::textures.optionsSelected);
-	optionsS.body.center.y = -SCRN_HT / 3;
-	optionsS.body.boundary_assignment();
+	options.set_texture_attributes(Assets::textures.optionsSelected);
+	options.body.center.y = -SCRN_HT / 3;
 
-	exitS.set_texture_attributes(Assets::textures.exitSelected);
-	exitS.body.center.y = -SCRN_HT / 2;
-	exitS.body.boundary_assignment();
+	exit.set_texture_attributes(Assets::textures.exitSelected);
+	exit.body.center.y = -SCRN_HT / 2;
 	
-	selected.push_back(playS);
-	selected.push_back(optionsS);
-	selected.push_back(exitS);
+	selected.push_back(play);
+	selected.push_back(options);
+	selected.push_back(exit);
 
 	cursor = unique_ptr<Cursor>(new Cursor(selected));
 }
 
 Cursor::Cursor(vector<TexturedQuad>& vec)
 {
-	selectedTextures = vec;
-	selected = 0;
+	icons.textures = vec;
+	selected = icons.begin();
 }
 
 void Cursor::updateSelection() {
-	if (selected == UINT_MAX)
-		selected = selectedTextures.size() - 1;
-	else if (selected >= selectedTextures.size())
-		selected = 0;
+	if (selected == icons.end())
+		selected = icons.begin();
+	else if (selected == icons.begin() - 1)
+		selected = icons.begin() + 2;
 }
 
 void Cursor::render()
 {
-	selectedTextures[selected].render();
+	selected->render();
 }
 
 void MainMenu::handler(unique_ptr<Level>& level)
