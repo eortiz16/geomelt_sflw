@@ -49,13 +49,12 @@ public:
 class Particles {
 private:
 	geomelt::Quad s;
-	Vec velocity;
+	geomelt::Vec velocity;
 };
 
-class TexturedQuad {
+class TexturedQuad : public geomelt::Shape {
 private:
 	sf::Texture myTexture;
-	geomelt::Quad body;
 
 	friend class MainMenu;
 	friend class MainMenuState;
@@ -67,12 +66,15 @@ private:
 public:
 	void set_texture_attributes(sf::Texture asset);
 	void render();
+
+	TexturedQuad() {}
+	~TexturedQuad() {}
 };
 
 class RoundCornerBox {
 private:
 	GLfloat width, height;
-	Vec center;
+	geomelt::Vec center;
 	geomelt::Circle corner[CORNERS];
 	geomelt::Quad vRectangle, hRectangle; //vertical, horizontal
 
@@ -123,6 +125,7 @@ private:
 	geomelt::Quad body;
 	geomelt::Quad outline;
 	Color_Set my_color;
+
 	friend class Player;
 	friend class Ball;
 	friend class Boxy;

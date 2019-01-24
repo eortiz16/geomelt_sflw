@@ -8,8 +8,8 @@ Player::Player()
 
 	JUMP_MAX = 3;
 	jumpCount = 0;
-	velocity.x = 0.0;
-	velocity.y = 0.0;
+	
+	velocity = geomelt::Vec(0, 0, 0);
 
 	myColor = (CharColorOptions)myID;
 }

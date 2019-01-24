@@ -13,78 +13,79 @@ unique_ptr<Command> Command::create(RState* state)
 	else if (typeid(*state) == typeid(LevelState)) {
 		return unique_ptr<CommandPlayer>();
 	}
-
-	return unique_ptr<Command>();
 }
 
 /* Generic for Menu Navigation */
-void MoveLeftCommand::execute(unique_ptr<Menu>& menu)
+void NavLeftCommand::execute(RState* state)
+{
+	//state.
+}
+
+void NavRightCommand::execute(RState* state)
 {
 }
 
-void MoveRightCommand::execute(unique_ptr<Menu>& menu)
+void NavUpCommand::execute(RState* state)
 {
 }
 
-void MoveUpCommand::execute(unique_ptr<Menu>& menu)
+void NavDownCommand::execute(RState* state)
 {
 }
 
-void MoveDownCommand::execute(unique_ptr<Menu>& menu)
+void ConfirmCommand::execute(RState* state)
 {
 }
 
-void ConfirmCommand::execute(unique_ptr<Menu>& menu)
+void DenyCommand::execute(RState* state)
 {
 }
 
-void DenyCommand::execute(unique_ptr<Menu>& menu)
+/* Specific to Character Select menu */
+void AddCharacterCommand::execute(RState* state)
+{
+	
+}
+
+void RemoveCharacterCommand::execute(RState* state)
 {
 }
 
-/* Specific to Character Select screen */
-void AddCharacterCommand::execute(CharacterSelect & menu, map<unsigned int, unique_ptr<Player>>& players)
+void ChangeCharacterCommand::execute(RState* state)
 {
 }
 
-void RemoveCharacterCommand::execute(CharacterSelect & menu, map<unsigned int, unique_ptr<Player>>& players)
+void NextColorCommand::execute(RState* state)
 {
 }
 
-void ChangeCharacterCommand::execute(CharacterSelect & menu, map<unsigned int, unique_ptr<Player>>& players)
-{
-}
-
-void NextColorCommand::execute(CharacterSelect & menu, map<unsigned int, unique_ptr<Player>>& players)
-{
-}
-
-void PrevColorCommand::execute(CharacterSelect & menu, map<unsigned int, unique_ptr<Player>>& players)
+void PrevColorCommand::execute(RState* state)
 {
 }
 
 /* Specific for all players */
-void JumpCommand::execute(Player & player)
+void JumpCommand::execute(RState* state)
 {
-	player.jump();
+	//state->_context->level->
+	//player.jump();
 }
 
-void AttackCommand::execute(Player & player)
+void AttackCommand::execute(RState* state)
 {
-	player.toggle.attacking ^= 1;
-	player.toggle.attackTimer.restart();
+	//player.toggle.attacking ^= 1;
+	//player.toggle.attackTimer.restart();
 }
 
-void LeftCommand::execute(Player & player)
+void MoveLeftCommand::execute(RState* state)
 {
-	player.toggle.walking = true;
-	player.direction = LEFT;
+	//player.toggle.walking = true;
+	//player.direction = LEFT;
 }
 
-void RightCommand::execute(Player & player)
+void MoveRightCommand::execute(RState* state)
 {
-	player.toggle.walking = true;
-	player.direction = RIGHT;
+	//player.toggle.walking = true;
+	//player.direction = RIGHT;
 }
 
 

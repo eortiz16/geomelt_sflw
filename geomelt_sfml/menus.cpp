@@ -12,64 +12,71 @@ MainMenu::MainMenu()
 	srand((unsigned int)time(NULL));
 
 	title.set_texture_attributes(Assets::textures.title);
-	title.body.center.y = SCRN_HT / 2;
-	title.body.width *= 2;
-	title.body.height *= 2;
-	title.body.boundary_assignment();
+	title.center.y = SCRN_HT / 2;
+	title.width *= 2;
+	title.height *= 2;
+	title.boundary_assignment();
 
 	TexturedQuad play, options, exit;
 
 	play.set_texture_attributes(Assets::textures.play);
-	play.body.center.y = -SCRN_HT / 6;
-	play.body.boundary_assignment();
+	play.center.y = -SCRN_HT / 6;
+	play.boundary_assignment();
 	
 	options.set_texture_attributes(Assets::textures.options);
-	options.body.center.y = -SCRN_HT / 3;
-	options.body.boundary_assignment();
+	options.center.y = -SCRN_HT / 3;
+	options.boundary_assignment();
 
 	exit.set_texture_attributes(Assets::textures.exit);
-	exit.body.center.y = -SCRN_HT / 2;
-	exit.body.boundary_assignment();
+	exit.center.y = -SCRN_HT / 2;
+	exit.boundary_assignment();
 
-	navigable.push_back(play);
-	navigable.push_back(options);
-	navigable.push_back(exit);
+	navigable.push_back(make_unique<TexturedQuad>(play));
+	navigable.push_back(make_unique<TexturedQuad>(options));
+	navigable.push_back(make_unique<TexturedQuad>(exit));
+	
 
 	/* Add the selected version to the cursor vector */
-	vector<TexturedQuad> selected;
+	vector<unique_ptr<geomelt::Shape>> selected;
 
 	play.set_texture_attributes(Assets::textures.playSelected);
-	play.body.center.y = -SCRN_HT / 6;
+	play.center.y = -SCRN_HT / 6;
 	
 	options.set_texture_attributes(Assets::textures.optionsSelected);
-	options.body.center.y = -SCRN_HT / 3;
+	options.center.y = -SCRN_HT / 3;
 
 	exit.set_texture_attributes(Assets::textures.exitSelected);
-	exit.body.center.y = -SCRN_HT / 2;
+	exit.center.y = -SCRN_HT / 2;
 	
-	selected.push_back(play);
-	selected.push_back(options);
-	selected.push_back(exit);
-
+	selected.push_back(make_unique<TexturedQuad>(play));
+	selected.push_back(make_unique<TexturedQuad>(options));
+	selected.push_back(make_unique<TexturedQuad>(exit));
+	
 	cursor = unique_ptr<Cursor>(new Cursor(selected));
 }
 
-Cursor::Cursor(vector<TexturedQuad>& vec)
+Cursor::Cursor(vector<unique_ptr<geomelt::Shape>>& vect)
 {
-	icons.textures = vec;
-	selected = icons.begin();
+	icons = make_unique<Navigable>(vect);
+	selected = icons->begin();
 }
 
 void Cursor::updateSelection() {
-	if (selected == icons.end())
-		selected = icons.begin();
-	else if (selected == icons.begin() - 1)
-		selected = icons.begin() + 2;
+	if (selected == icons->end())
+		selected = icons->begin();
+	else if (selected == icons->begin() - 1)
+		selected = icons->begin() + 2;
 }
 
 void Cursor::render()
 {
-	selected->render();
+	selected->get()->render();
+}
+
+
+Navigable::Navigable(vector<unique_ptr<geomelt::Shape>>& vec)
+{
+	textures.insert(textures.end(), std::make_move_iterator(vec.begin()), std::make_move_iterator(vec.end()));
 }
 
 void MainMenu::handler(unique_ptr<Level>& level)
@@ -84,10 +91,11 @@ void MainMenu::handler(unique_ptr<Level>& level)
 
 	title.render();
 
-	for (auto icon : navigable)
-		icon.render();
+	for (vector<unique_ptr<geomelt::Shape>>::iterator it = navigable.begin(); it != navigable.end(); ++it)
+		it->get()->render();
 	
 	cursor->render();
+	
 }
 
 CharacterSelect::CharacterSelect()
@@ -125,10 +133,10 @@ CharacterSelect::CharacterSelect()
 		sb.outline.build();
 		sb.outline.set_color(Assets::palette.black);
 		sb.start_icon.set_texture_attributes(Assets::textures.button_Start);
-		sb.start_icon.body.width = 100;
-		sb.start_icon.body.height = 100;
-		sb.start_icon.body.center.x = sb.box.center.x - (1.5f / 4.0f  * sb.box.width);
-		sb.start_icon.body.center.y = sb.box.center.y;
+		sb.start_icon.width = 100;
+		sb.start_icon.height = 100;
+		sb.start_icon.center.x = sb.box.center.x - (1.5f / 4.0f  * sb.box.width);
+		sb.start_icon.center.y = sb.box.center.y;
 		selectBox.push_back(sb);
 
 		wSpace += SCRN_WD / 2.0f;
@@ -139,6 +147,7 @@ void CharacterSelect::handler(map<unsigned int, unique_ptr<Player>>& players)
 {
 	//Fixed Camera
 	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1);
+	glClear(1);
 
 	background.render();
 
@@ -151,9 +160,8 @@ void CharacterSelect::handler(map<unsigned int, unique_ptr<Player>>& players)
 	}
 
 	map<unsigned int, unique_ptr<Player>>::iterator it = players.begin();
-	map<unsigned int, unique_ptr<Player>>::iterator fin = players.end();
 	
-	while (it != fin) {
+	while (it != players.end()) {
 		*it->second = Assets::characterPalette.traverse_colors[it->second->myColor];
 		it->second->body->center.x = selectBox[it->second->myID].box.center.x;
 		it->second->body->center.y = selectBox[it->second->myID].box.center.y;
@@ -165,54 +173,78 @@ void CharacterSelect::handler(map<unsigned int, unique_ptr<Player>>& players)
 }
 
 LevelSelect::LevelSelect()
-{
-	position = 0;
-
+{	
 	background.body.center.x = 0;
 	background.body.center.y = 0;
 	background.body.width = 2.0f * SCRN_WD;
 	background.body.height = 2.0f * SCRN_HT;
 
-	for (int i = 0; i < CORNERS; i++) {
+	for (int i = 0; i < CORNERS; i++)
+	{
 		background.color[i].r = Assets::palette.lightGrey.r;
 		background.color[i].g = Assets::palette.lightGrey.g;
 		background.color[i].b = Assets::palette.lightGrey.b;
 	}
 
+	TexturedQuad level1, level2, level3;
+
 	level1.set_texture_attributes(Assets::textures.field);
-	level1.body.center.y = 0;
-	level1.body.center.x = -SCRN_HT;
-	level1.body.width = 640;
-	level1.body.height = 400;
+	level1.center.y = 0;
+	level1.center.x = -SCRN_HT;
+	level1.width = 640;
+	level1.height = 400;
 
 	level2.set_texture_attributes(Assets::textures.night);
-	level2.body.center.y = 0;
-	level2.body.center.x = 0;
-	level2.body.width = 640;
-	level2.body.height = 400;
+	level2.center.y = 0;
+	level2.center.x = 0;
+	level2.width = 640;
+	level2.height = 400;
 
 	level3.set_texture_attributes(Assets::textures.time); 
-	level3.body.center.y = 0;
-	level3.body.center.x = SCRN_HT;
-	level3.body.width = 640;
-	level3.body.height = 400;
+	level3.center.y = 0;
+	level3.center.x = SCRN_HT;
+	level3.width = 640;
+	level3.height = 400;
+	
+	navigable.push_back(make_unique<TexturedQuad>(level1));
+	navigable.push_back(make_unique<TexturedQuad>(level2));
+	navigable.push_back(make_unique<TexturedQuad>(level3));
 
-	selector.width = level1.body.width + 16;
-	selector.height = level1.body.height + 16;
-	selector.center.x = level1.body.center.x;
-	selector.center.y = level1.body.center.y;
+	/* Add the selected version to the cursor vector */
+	vector<unique_ptr<geomelt::Shape>> selected;
+
+	geomelt::Quad selector;
+	selector.center.x = level1.center.x;
+	selector.center.y = level1.center.y;
+	selector.width = 650;
+	selector.height = 410;
 	selector.color = Assets::palette.green;
+	selected.push_back(make_unique<geomelt::Quad>(selector));
+
+	selector.center.x = level2.center.x;
+	selector.center.y = level2.center.y;
+	selector.color = Assets::palette.green;
+	selected.push_back(make_unique<geomelt::Quad>(selector));
+
+	selector.center.x = level3.center.x;
+	selector.center.y = level3.center.y;
+	selector.color = Assets::palette.green;
+	selected.push_back(make_unique<geomelt::Quad>(selector));
+
+	cursor = unique_ptr<Cursor>(new Cursor(selected));
 }
 
 void LevelSelect::handler() 
 {
 	glOrtho(-SCRN_WD, SCRN_WD, -SCRN_HT, SCRN_HT, -1, 1);
+	glClear(1);
 
 	background.render();
-	selector.render();
-	level1.render();
-	level2.render();
-	level3.render();
+
+	cursor->render();
+
+	for (vector<unique_ptr<geomelt::Shape>>::iterator it = navigable.begin(); it != navigable.end(); ++it)
+		it->get()->render();
 }
 
 void Pause::handler(unique_ptr<Level>& level)

@@ -65,7 +65,7 @@ private:
 	unsigned int myID;
 	Toggle toggle;
 	Attributes stats;
-	Vec	velocity;
+	geomelt::Vec velocity;
 
 	unique_ptr<geomelt::Shape> body;
 	unique_ptr<geomelt::Shape> outline;

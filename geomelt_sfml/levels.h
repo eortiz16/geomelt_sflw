@@ -58,6 +58,7 @@ protected:
 	friend class CharacterSelectState;
 	friend class LevelState;
 	friend class PauseState;
+	friend class MainMenuState;
 public:
 	virtual void render() = 0;
 	virtual void gfx_handler() = 0;

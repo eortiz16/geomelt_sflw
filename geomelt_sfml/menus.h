@@ -24,7 +24,7 @@ inline void operator--(Selected &sel, int)
 
 class Navigable {
 private:
-	typedef vector<TexturedQuad> SelectedTextures;
+	typedef vector<unique_ptr<geomelt::Shape>> SelectedTextures;
 	SelectedTextures textures;
 public:
 	typedef SelectedTextures::iterator iterator;
@@ -32,18 +32,26 @@ public:
 	iterator begin() { return textures.begin(); }
 	iterator end() { return textures.end(); }
 
+	Navigable() {}
+	Navigable(vector<unique_ptr<geomelt::Shape>>& vec);
+	~Navigable() {}
+
 	friend class Cursor;
+	friend class MainMenu;
+	friend class CharacterSelect;
+	friend class LevelSelect;
 };
 
 class Cursor {
 private:
-	Navigable icons;
-	vector<TexturedQuad>::iterator selected;
+	unique_ptr<Navigable> icons;
+	vector<unique_ptr<geomelt::Shape>>::iterator selected;
 public:
 	void render();
-	Cursor() {}
-	Cursor(vector<TexturedQuad>& vec);
 	void updateSelection();
+
+	Cursor() {}
+	Cursor(vector<unique_ptr<geomelt::Shape>>& vec);
 	~Cursor() {}
 
 	friend class Menu;
@@ -58,11 +66,16 @@ public:
 
 class Menu {
 protected:
-	vector<TexturedQuad> navigable;
+	vector<unique_ptr<geomelt::Shape>> navigable;
 	unique_ptr<Cursor> cursor;
 public:
 	Menu() {}
 	~Menu() {}
+
+	friend class MainMenuState;
+	friend class CharacterSelectState;
+	friend class LvlSelectState;
+	friend class PauseState;
 };
 
 class MainMenu : public Menu {
@@ -84,6 +97,8 @@ public:
 
 	Pause() {}
 	~Pause() {}
+
+	friend class PauseState;
 };
 
 class CharacterSelect : public Menu {
@@ -101,12 +116,7 @@ public:
 
 class LevelSelect : public Menu {
 private:
-	unsigned int position;
-	geomelt::Quad selector;
 	Background background;
-	TexturedQuad level1;
-	TexturedQuad level2;
-	TexturedQuad level3;
 public:
 	void handler();
 

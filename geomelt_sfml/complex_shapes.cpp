@@ -80,7 +80,7 @@ void RoundCornerBox::set_color(geomelt::Color clr)
 void RoundCornerBox::build()
 {
 	int size = 250; // diameter of circle
-
+	
 	vRectangle.height = height; // actual height
 	hRectangle.width = width; // actual width
 
@@ -140,11 +140,11 @@ Cloud Cloud::make_cloud(Direction dir)
 		cloud.body.push_back(make_unique<geomelt::Circle>(circle));
 
 	// Assign x of middle circle // Start ar right or left
-	cloud.body[1].get()->center.x = (dir == LEFT) ? 2.0f * SCRN_WD + size : -2.0f * SCRN_WD - size;
+	cloud.body[1]->center.x = (dir == LEFT) ? 2.0f * SCRN_WD + size : -2.0f * SCRN_WD - size;
 
 	// Assign center of first and last circle, bassed on middle
-	cloud.body[0].get()->center.x = cloud.body[1].get()->center.x - cloud.body[1].get()->radius;
-	cloud.body[2].get()->center.x = cloud.body[1].get()->center.x + cloud.body[1].get()->radius;
+	cloud.body[0]->center.x = cloud.body[1]->center.x - cloud.body[1]->radius;
+	cloud.body[2]->center.x = cloud.body[1]->center.x + cloud.body[1]->radius;
 
 	//Set Speed - Based on Size (Kind of)
 	cloud.speed = rand() % MAX_SPEED + (int)size % MAX_SPEED + 1;
@@ -242,17 +242,18 @@ void StarGroup::render()
 
 void StarGroup::update()
 {
-
+	//for moving accross the screen;
 }
 
-void TexturedQuad::set_texture_attributes(sf::Texture asset)
+void TexturedQuad::set_texture_attributes(sf::Texture tex)
 {
-	myTexture = asset;
-	body.width = (float)asset.getSize().x;
-	body.height = (float)asset.getSize().y;
+	myTexture = tex;
+	
+	width = (float)tex.getSize().x;
+	height = (float)tex.getSize().y;
 
-	body.center.x = 0;
-	body.center.y = 0; 
+	center.x = 0;
+	center.y = 0; 
 }
 
 void TexturedQuad::render()
@@ -273,10 +274,10 @@ void TexturedQuad::render()
 	glAlphaFunc(GL_GREATER, 0.0f);
 	glColor4ub(255, 255, 255, 255);
 	glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 1.0f); glVertex2i((GLint)(body.center.x - body.width / 2), (GLint)(body.center.y - body.height / 2)); // BL
-		glTexCoord2f(0.0f, 0.0f); glVertex2i((GLint)(body.center.x - body.width / 2), (GLint)(body.center.y + body.height / 2)); // TL
-		glTexCoord2f(1.0f, 0.0f); glVertex2i((GLint)(body.center.x + body.width / 2), (GLint)(body.center.y + body.height / 2)); // TR
-		glTexCoord2f(1.0f, 1.0f); glVertex2i((GLint)(body.center.x + body.width / 2), (GLint)(body.center.y - body.height / 2)); // BR
+		glTexCoord2f(0.0f, 1.0f); glVertex2i((GLint)(center.x - width / 2), (GLint)(center.y - height / 2)); // BL
+		glTexCoord2f(0.0f, 0.0f); glVertex2i((GLint)(center.x - width / 2), (GLint)(center.y + height / 2)); // TL
+		glTexCoord2f(1.0f, 0.0f); glVertex2i((GLint)(center.x + width / 2), (GLint)(center.y + height / 2)); // TR
+		glTexCoord2f(1.0f, 1.0f); glVertex2i((GLint)(center.x + width / 2), (GLint)(center.y - height / 2)); // BR
 	glEnd();
 	glPopMatrix();
 	glDisable(GL_ALPHA_TEST);

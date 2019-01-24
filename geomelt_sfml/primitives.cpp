@@ -52,15 +52,12 @@ void geomelt::Quad::render()
 	glEnd();
 }
 
-geomelt::Boundary geomelt::Boundary::setBounds(float t, float b, float l, float r)
+geomelt::Boundary::Boundary(float t, float b, float l, float r)
 {
-	geomelt::Boundary bnd;
-	bnd.top = t;
-	bnd.bottom = b;
-	bnd.left = l;
-	bnd.right = r;
-
-	return bnd;
+	top = t;
+	bottom = b;
+	left = l;
+	right = r;
 }
 
 bool geomelt::Boundary::isWithin(int x, int y)
@@ -71,7 +68,7 @@ bool geomelt::Boundary::isWithin(int x, int y)
 	return false;
 }
 
-Vec::Vec(float x, float y, float z)
+geomelt::Vec::Vec(float x, float y, float z)
 {
 	this->x = x;
 	this->y = y;

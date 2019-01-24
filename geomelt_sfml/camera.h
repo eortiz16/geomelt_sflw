@@ -28,7 +28,7 @@ private:
 
 	static geomelt::Boundary edges;
 	static geomelt::Boundary ortho;
-	static Vec center;
+	static geomelt::Vec center;
 
 	friend class Level;
 	friend class Field_Level;

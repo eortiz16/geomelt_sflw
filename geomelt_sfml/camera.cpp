@@ -8,9 +8,9 @@ float Camera::yMin = (float)INT_MAX;
 float Camera::yMax = (float)INT_MIN;
 float Camera::competitionXLeft = -400.0f;
 float Camera::competitionXRight = 400.0f;
-geomelt::Boundary Camera::ortho = geomelt::Boundary::setBounds(SCRN_HT, -SCRN_HT, -SCRN_WD, SCRN_WD);
-geomelt::Boundary Camera::edges = geomelt::Boundary::setBounds(SCRN_HT, -SCRN_HT, -SCRN_WD, SCRN_WD);
-Vec Camera::center = Vec::Vec(0, 0, 0);
+geomelt::Boundary Camera::ortho = geomelt::Boundary::Boundary(SCRN_HT, -SCRN_HT, -SCRN_WD, SCRN_WD);
+geomelt::Boundary Camera::edges = geomelt::Boundary::Boundary(SCRN_HT, -SCRN_HT, -SCRN_WD, SCRN_WD);
+geomelt::Vec Camera::center = geomelt::Vec::Vec(0, 0, 0);
 
 //Default, need to add level camera
 void Camera::set_center(map<unsigned int, unique_ptr<Player>>& player)

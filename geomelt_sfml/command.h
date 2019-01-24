@@ -9,55 +9,56 @@ class RState;
 
 class Command {
 public:
+	virtual void execute(RState* state) = 0;
 	static unique_ptr<Command> create(RState*); //Factory for type of commands
 };
 
 /*****************************************************************************************************/
 class CommandMenu : public Command {
 public:
-	virtual void execute(unique_ptr<Menu>& menu) = 0;
+	virtual void execute(RState* state) = 0;
 	CommandMenu() {}
 	virtual ~CommandMenu() {}
 };
 
-class MoveLeftCommand : public CommandMenu {
+class NavLeftCommand : public CommandMenu {
 public:
-	void execute(unique_ptr<Menu>& menu);
-	MoveLeftCommand() {}
-	~MoveLeftCommand() {}
+	void execute(RState* state);
+	NavLeftCommand() {}
+	~NavLeftCommand() {}
 };
 
-class MoveRightCommand : public CommandMenu {
+class NavRightCommand : public CommandMenu {
 public:
-	void execute(unique_ptr<Menu>& menu);
-	MoveRightCommand() {}
-	~MoveRightCommand() {}
+	void execute(RState* state);
+	NavRightCommand() {}
+	~NavRightCommand() {}
 };
 
-class MoveUpCommand : public CommandMenu {
+class NavUpCommand : public CommandMenu {
 public:
-	void execute(unique_ptr<Menu>& menu);
-	MoveUpCommand() {}
-	~MoveUpCommand() {}
+	void execute(RState* state);
+	NavUpCommand() {}
+	~NavUpCommand() {}
 };
 
-class MoveDownCommand : public CommandMenu {
+class NavDownCommand : public CommandMenu {
 public:
-	void execute(unique_ptr<Menu>& menu);
-	MoveDownCommand() {}
-	~MoveDownCommand() {}
+	void execute(RState* state);
+	NavDownCommand() {}
+	~NavDownCommand() {}
 };
 
 class ConfirmCommand : public CommandMenu {
 public:
-	void execute(unique_ptr<Menu>& menu);
+	void execute(RState* state);
 	ConfirmCommand() {}
 	~ConfirmCommand() {}
 };
 
 class DenyCommand : public CommandMenu {
 public:
-	void execute(unique_ptr<Menu>& menu);
+	void execute(RState* state);
 	DenyCommand() {}
 	~DenyCommand() {}
 };
@@ -65,42 +66,42 @@ public:
 /*****************************************************************************************************/
 class CommandCharSel : public CommandMenu {
 public:
-	virtual void execute(CharacterSelect& menu, map<unsigned int, unique_ptr<Player>>& players) = 0;
+	virtual void execute(RState* state) = 0;
 	CommandCharSel() {}
 	virtual ~CommandCharSel() {}
 };
 
 class AddCharacterCommand : public CommandCharSel {
 public:
-	void execute(CharacterSelect& menu, map<unsigned int, unique_ptr<Player>>& players);
+	void execute(RState* state);
 	AddCharacterCommand() {}
 	~AddCharacterCommand() {}
 };
 
 class RemoveCharacterCommand : public CommandCharSel {
 public:
-	void execute(CharacterSelect& menu, map<unsigned int, unique_ptr<Player>>& players);
+	void execute(RState* state);
 	RemoveCharacterCommand() {}
 	~RemoveCharacterCommand() {}
 };
 
 class ChangeCharacterCommand : public CommandCharSel {
 public:
-	void execute(CharacterSelect& menu, map<unsigned int, unique_ptr<Player>>& players);
+	void execute(RState* state);
 	ChangeCharacterCommand() {}
 	~ChangeCharacterCommand() {}
 };
 
 class NextColorCommand : public CommandCharSel {
 public:
-	void execute(CharacterSelect& menu, map<unsigned int, unique_ptr<Player>>& players);
+	void execute(RState* state);
 	NextColorCommand() {}
 	~NextColorCommand() {}
 };
 
 class PrevColorCommand : public CommandCharSel {
 public:
-	void execute(CharacterSelect& menu, map<unsigned int, unique_ptr<Player>>& players);
+	void execute(RState* state);
 	PrevColorCommand() {}
 	~PrevColorCommand() {}
 };
@@ -108,7 +109,7 @@ public:
 /*****************************************************************************************************/
 class CommandPlayer : public Command {
 public:
-	virtual void execute(Player& player) = 0;
+	virtual void execute(RState* state) = 0;
 	CommandPlayer() {}
 	virtual ~CommandPlayer() {}
 
@@ -117,7 +118,7 @@ public:
 
 class JumpCommand : public CommandPlayer {
 public:
-	void execute(Player& player);
+	void execute(RState* state);
 	JumpCommand() {}
 	~JumpCommand() {}
 
@@ -126,27 +127,27 @@ public:
 
 class AttackCommand : public CommandPlayer {
 public:
-	void execute(Player& player);
+	void execute(RState* state);
 	AttackCommand() {}
 	~AttackCommand() {}
 
 	friend class Toggle;
 };
 
-class LeftCommand : public CommandPlayer {
+class MoveLeftCommand : public CommandPlayer {
 public:
-	void execute(Player& player);
-	LeftCommand() {}
-	~LeftCommand() {}
+	void execute(RState* state);
+	MoveLeftCommand() {}
+	~MoveLeftCommand() {}
 
 	friend class Toggle;
 };
 
-class RightCommand : public CommandPlayer {
+class MoveRightCommand : public CommandPlayer {
 public:
-	void execute(Player& player);
-	RightCommand() {}
-	~RightCommand() {}
+	void execute(RState* state);
+	MoveRightCommand() {}
+	~MoveRightCommand() {}
 
 	friend class Toggle;
 };

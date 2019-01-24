@@ -173,29 +173,30 @@ Field_Level::Field_Level() : Level()
 	sun.center.y = (GLfloat)SCRN_HT;
 
 	Platform p;
-	platform.push_back(p);
-
+	
 	//Floor Center
-	platform.at(0).body.center.x = 0.0;
-	platform.at(0).body.center.y = SCRN_HT / -3.0f;
-	platform.at(0).outline.center.x = platform.at(0).body.center.x;
-	platform.at(0).outline.center.y = platform.at(0).body.center.y;
+	p.body.center.x = 0.0;
+	p.body.center.y = SCRN_HT / -3.0f;
+	p.outline.center.x = p.body.center.x;
+	p.outline.center.y = p.body.center.y;
 
 	//Floor Dimensions
-	platform.at(0).body.width = 5.0f * SCRN_WD / 6.0f;
-	platform.at(0).body.height = SCRN_HT / 20.0f;
-	platform.at(0).outline.width = platform.at(0).body.width + THICKNESS;
-	platform.at(0).outline.height = platform.at(0).body.height + THICKNESS;
+	p.body.width = 5.0f * SCRN_WD / 6.0f;
+	p.body.height = SCRN_HT / 20.0f;
+	p.outline.width = p.body.width + THICKNESS;
+	p.outline.height = p.body.height + THICKNESS;
 
 	//Floor Boundaries - For Physics
-	platform.at(0).body.boundary_assignment();
+	p.body.boundary_assignment();
 
 	//Assign Color to Floor
-	platform.at(0).body.color = Assets::platformPalette.grass.body;
-	platform.at(0).outline.color = Assets::platformPalette.grass.outline;
+	p.body.color = Assets::platformPalette.grass.body;
+	p.outline.color = Assets::platformPalette.grass.outline;
 
 	//Floor Stroke Assignment
-	platform.at(0).body.boundary_assignment();
+	p.body.boundary_assignment();
+
+	platform.push_back(p);
 
 	//Wind
 	(rand() % 2 == 0) ? windDirection = RIGHT : windDirection = LEFT;
