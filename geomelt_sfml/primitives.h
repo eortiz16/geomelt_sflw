@@ -57,11 +57,11 @@ namespace geomelt
 	};
 
 	class Line {
-	public:
+	private:
 		float width;
 		Vec from, to;
 		Color color;
-
+	public:
 		void render();
 		Line();
 	};
@@ -70,7 +70,10 @@ namespace geomelt
 	public:
 		float top, bottom, left, right;
 
-		bool isWithin(int x, int y);
+		bool isWithin(int x, int y); /* For mouse detection */
+		bool isWithin(Boundary); /* one boundary within another? */
+		bool isWithin(Boundary, float center);/* for use with player */
+
 		Boundary() {}
 		Boundary(float t, float b, float l, float r);
 
@@ -80,6 +83,16 @@ namespace geomelt
 		friend class Camera;
 		friend class CharacterSelect;
 		friend class RoundCornerBox;
+		friend class Platform;
+		friend class Player;
+		friend class Ball;
+		friend class Boxy;
+		friend class Level;
+		friend class Field_Level;
+		friend class Night_Level;
+		friend class Time_Level;
+		friend class Game;
+		friend class GFXNet;
 	};
 
 	class Shape {

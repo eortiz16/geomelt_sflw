@@ -42,4 +42,6 @@ public:
 	static void transition();
 
 	Camera() {}
+
+	friend class geomelt::Boundary;
 };

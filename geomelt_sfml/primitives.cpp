@@ -68,6 +68,25 @@ bool geomelt::Boundary::isWithin(int x, int y)
 	return false;
 }
 
+/* Will need modification */
+bool geomelt::Boundary::isWithin(Boundary bnd)
+{
+	if (this->bottom <= bnd.top	&& this->bottom > bnd.bottom
+		&& this->left <= bnd.right	&& this->right > bnd.left)
+		return true;
+	else
+		return false;
+}
+
+bool geomelt::Boundary::isWithin(Boundary bnd, float center)
+{
+	if (this->bottom <= bnd.top	&& this->bottom > bnd.bottom
+		&& center >= bnd.left && center <= bnd.right)
+		return true;
+	else
+		return false;
+}
+
 geomelt::Vec::Vec(float x, float y, float z)
 {
 	this->x = x;

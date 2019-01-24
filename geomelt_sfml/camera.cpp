@@ -103,37 +103,46 @@ void Camera::set_edges()
 	else
 	{
 	*/
+	float left = 0, right = 0, top = 0, bottom = 0;
+
 		if (xMax - xMin > yMax - yMin)
 		{
-			edges.left = center.x - (xMax - xMin) * ZOOM;
-			edges.right = center.x + (xMax - xMin) * ZOOM;
-			edges.top = center.y + ((edges.right - edges.left) / aspect_ratio) / 2.0f;
-			edges.bottom = center.y - ((edges.right - edges.left) / aspect_ratio) / 2.0f;
+
+			left = center.x - (xMax - xMin) * ZOOM;
+			right = center.x + (xMax - xMin) * ZOOM;
+			top = center.y + ((right - left) / aspect_ratio) / 2.0f;
+			bottom = center.y - ((right - left) / aspect_ratio) / 2.0f;
 		}
 		else
 		{
-			edges.top = center.y + (yMax - yMin) * ZOOM / aspect_ratio;
-			edges.bottom = center.y - (yMax - yMin) * ZOOM / aspect_ratio;
-			edges.left = center.x - (edges.top - edges.bottom) * aspect_ratio / 2.0f;
-			edges.right = center.x + (edges.top - edges.bottom) * aspect_ratio / 2.0f;
+			top = center.y + (yMax - yMin) * ZOOM / aspect_ratio;
+			bottom = center.y - (yMax - yMin) * ZOOM / aspect_ratio;
+			left = center.x - (top - bottom) * aspect_ratio / 2.0f;
+			right = center.x + (top - bottom) * aspect_ratio / 2.0f;
 		}
+
+		edges = geomelt::Boundary(top, bottom, left, right);
 	//}
 }
 
 void Camera::transition()
 {
+	float left = 0, right = 0, top = 0, bottom = 0;
+
 	if (edges.right - edges.left > ortho.right - ortho.left)
 	{
-		ortho.left = edges.left * FAC1;
-		ortho.right = edges.right * FAC1;
-		ortho.top = edges.top * FAC1;
-		ortho.bottom = edges.bottom * FAC1;
+		left = left * FAC1;
+		right = edges.right * FAC1;
+		top = edges.top * FAC1;
+		bottom = edges.bottom * FAC1;
 	}
 	else if (edges.right - edges.left < ortho.right - ortho.left)
 	{
-		ortho.left = edges.left * FAC2;
-		ortho.right = edges.right * FAC2;
-		ortho.top = edges.top * FAC2;
-		ortho.bottom = edges.bottom * FAC2;
+		left = edges.left * FAC2;
+		right = edges.right * FAC2;
+		top = edges.top * FAC2;
+		bottom = edges.bottom * FAC2;
 	}
+
+	ortho = geomelt::Boundary(top, bottom, left, right);
 }

@@ -56,6 +56,7 @@ private:
 	static unsigned int count; // num of players
 	static vector<int> availableIDs;
 
+	float weight;
 	float move_param_x; // speed
 	float move_param_y; // jump
 	int JUMP_MAX;
@@ -111,7 +112,7 @@ public:
 	void reset_attributes();
 	virtual void render(void) = 0;
 	virtual void update_position(vector<Platform> plat) = 0;
-	virtual void physics(vector<Platform> plat) = 0;
+	virtual void physics(vector<Platform> plat);
 	
 	Player& operator = (const Char_Color_Set &clr)
 	{
@@ -132,7 +133,6 @@ class Ball : public Player {
 public:
 	void render();
 	void update_position(vector<Platform> plat);
-	void physics(vector<Platform> plat);
 	void jump();
 	void exhale();
 	void special() {}
@@ -149,7 +149,6 @@ class Boxy : public Player {
 public:
 	void render();
 	void update_position(vector<Platform> plat);
-	void physics(vector<Platform> plat);
 	void jump();
 	void special() {}
 	

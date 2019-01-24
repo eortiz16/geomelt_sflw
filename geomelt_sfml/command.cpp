@@ -13,12 +13,13 @@ unique_ptr<Command> Command::create(RState* state)
 	else if (typeid(*state) == typeid(LevelState)) {
 		return unique_ptr<CommandPlayer>();
 	}
+
+	return unique_ptr<Command>(); 
 }
 
 /* Generic for Menu Navigation */
 void NavLeftCommand::execute(RState* state)
 {
-	//state.
 }
 
 void NavRightCommand::execute(RState* state)

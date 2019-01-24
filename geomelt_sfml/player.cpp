@@ -6,6 +6,8 @@ Player::Player()
 	myID = extract_lowest_ID();
 	count++;
 
+	weight = 0.0f;
+
 	JUMP_MAX = 3;
 	jumpCount = 0;
 	
@@ -45,7 +47,6 @@ void Player::change_color(SelectColor option)
 		myColor--;
 		break;
 	case RANDOM:
-
 		break;
 	default:
 		break;
@@ -132,6 +133,49 @@ void Player::read_axis(unsigned int joyID)
 	}
 	else
 		toggle.walking = false;
+}
+
+void Player::physics(vector<Platform> plat)
+{
+	if (stats.lifeState == ALIVE)
+	{
+		//This character is less affected by gravity
+		velocity.y -= weight;
+
+		body->center.y += velocity.y;
+		body->center.x += velocity.x;
+
+		//Check contact with each platform in level
+		for (unsigned int i = 0; i < plat.size(); i++) {
+			if (body->boundary.isWithin(plat.at(i).body.boundary, body->center.x)
+				&& velocity.y <= 0.0) {
+				//Reset attributes
+				toggle.on_ground = true;
+				jumpCount = 0;
+				velocity.y *= -0.25f;
+				body->center.y = plat.at(i).body.boundary.top + body->height / 2;
+				break;
+			}
+			else
+				toggle.on_ground = false;
+		}
+
+		//affect horizontal momentum with friction
+		if (velocity.x < 0.0 && toggle.on_ground) {
+			velocity.x += FRICTION;
+			if (velocity.x > 0.0)
+				velocity.x = 0.0;
+		}
+		else if (velocity.x > 0.0 && toggle.on_ground) {
+			velocity.x -= FRICTION;
+			if (velocity.x < 0.0)
+				velocity.x = 0.0;
+		}
+
+		//Reset size
+		if (toggle.on_ground)
+			body->radius = body->width / 2;
+	}
 }
 
 /*Takes the width resolution and scales down to a factor controls reflection of character*/
@@ -302,6 +346,8 @@ void Player::death_handler()
 
 Ball::Ball() : Player()
 {
+	weight = 3.0f * GLfloat(GRAVITY) / 4.0f;
+
 	//Default Character Values
 	JUMP_MAX = 4;
 
@@ -391,52 +437,6 @@ void Ball::update_position(vector<Platform> plat)
 	}
 }
 
-void Ball::physics(vector<Platform> plat)
-{
-	if (stats.lifeState == ALIVE)
-	{
-		//This character is less affected by gravity
-		velocity.y -= 3.0f * GLfloat(GRAVITY) / 4.0f;
-
-		body->center.y += velocity.y;
-		body->center.x += velocity.x;
-
-		//Check contact with each platform in level
-		for (unsigned int i = 0; i < plat.size(); i++) {
-			if (body->boundary.bottom <= plat.at(i).body.boundary.top
-				&& body->boundary.bottom > plat.at(i).body.boundary.bottom
-				&& body->center.x >= plat.at(i).body.boundary.left
-				&& body->center.x <= plat.at(i).body.boundary.right
-				&& velocity.y <= 0.0)
-			{
-				//Reset attributes
-				toggle.on_ground = true;
-				jumpCount = 0;
-				velocity.y *= -0.25f;
-				body->center.y = plat.at(i).body.boundary.top + body->height / 2;
-				break;
-			}
-			else
-				toggle.on_ground = false;
-		}
-
-		//affect horizontal momentum with friction
-		if (velocity.x < 0.0 && toggle.on_ground) {
-			velocity.x += FRICTION;
-			if (velocity.x > 0.0)
-				velocity.x = 0.0;
-		} else if (velocity.x > 0.0 && toggle.on_ground) {
-			velocity.x -= FRICTION;
-			if (velocity.x < 0.0)
-				velocity.x = 0.0;
-		}
-
-		//Reset size
-		if (toggle.on_ground)
-			body->radius = body->width / 2;
-	}
-}
-
 void Ball::jump()
 {
 	toggle.on_ground = false;
@@ -455,6 +455,8 @@ void Ball::exhale()
 
 Boxy::Boxy() : Player()
 {
+	weight = GLfloat(GRAVITY);
+
 	//Default Character Values
 	JUMP_MAX = 2;
 
@@ -544,55 +546,6 @@ void Boxy::update_position(vector<Platform> plat)
 		body->boundary_assignment();
 
 		reflection->center.y = body->center.y + sqrt(body->radius) * 1.5f;
-	}
-}
-
-void Boxy::physics(vector<Platform> plat)
-{
-	// If player is alive
-	if (stats.lifeState == ALIVE) {
-		// Apply gravity
-		// Manipulate x and y velocity
-
-		velocity.y -= GLfloat(GRAVITY);
-		body->center.y += velocity.y;
-		body->center.x += velocity.x;
-
-		for (unsigned int i = 0; i < plat.size(); i++) {
-			if (body->boundary.bottom <= plat.at(i).body.boundary.top
-				&& body->boundary.bottom > plat.at(i).body.boundary.bottom
-				&& body->center.x >= plat.at(i).body.boundary.left
-				&& body->center.x <= plat.at(i).body.boundary.right
-				&& velocity.y <= 0.0)
-			{
-				// Player is on ground
-				// Reset jumpcount
-				// Lose vertical momentum 
-				// Assign player center
-
-				toggle.on_ground = true;
-				jumpCount = 0;
-				velocity.y *= -0.25f;
-				body->center.y = plat.at(i).body.boundary.top + body->height / 2;
-				break;
-			}
-			else // Else not on ground
-				toggle.on_ground = false;
-		}
-
-		//apply friction
-		if (toggle.on_ground) {
-			if (velocity.x < 0.0) {
-				velocity.x += FRICTION;
-				if (velocity.x > 0.0)
-					velocity.x = 0.0;
-			}
-			else if (velocity.x > 0.0) {
-				velocity.x -= FRICTION;
-				if (velocity.x < 0.0)
-					velocity.x = 0.0;
-			}
-		}
 	}
 }
 
