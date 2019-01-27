@@ -140,7 +140,7 @@ Cloud Cloud::make_cloud(Direction dir)
 		cloud.body.push_back(make_unique<geomelt::Circle>(circle));
 
 	// Assign x of middle circle // Start ar right or left
-	cloud.body[1]->center.x = (dir == LEFT) ? 2.0f * SCRN_WD + size : -2.0f * SCRN_WD - size;
+	cloud.body[1]->center.x = (dir == LEFT) ? 2.0f * SCRN_WD + 1.5f * size : -2.0f * SCRN_WD - 1.5f * size;
 
 	// Assign center of first and last circle, bassed on middle
 	cloud.body[0]->center.x = cloud.body[1]->center.x - cloud.body[1]->radius;
@@ -181,62 +181,56 @@ Star::Star()
 	body->color.alpha = 255;
 }
 
-void Star::compute_coordinates(int count)
-{
-	int w = 4 * SCRN_WD;
-	int h = 5 * SCRN_HT;
-
-	float horizonalPartition = (float)w / 8;
-	float verticalPartition = (float)h / 5;
-
-	//Produces Randomly arranged stars
-	do {
-		int r1 = rand() % 800;
-		body->center.x = ((count % 8 + 1) * horizonalPartition) - w / 2 - horizonalPartition / 2 + r1;
-		body->center.y = ((count % 5 + 1) * verticalPartition) - h / 2 - verticalPartition / 2 + r1;
-	} while (body->center.x < -w / 2 || body->center.x > w / 2 || body->center.y < -h / 2 || body->center.y > h / 2);
-
-	//Produces Uniform Stars
-	//body.center.x = ((count % 8 + 1) * horizonalPartition) - w / 2 - horizonalPartition / 2;
-	//body.center.y = ((count % 5 + 1) * verticalPartition) - h / 2 - verticalPartition / 2;
-}
-
 void Star::change_color()
 {
 	//Stars Flicker in the Night Sky
-	if (rand() % 2 == 0)
-	{
+	if (rand() % 2 == 0) {
 		body->color.r = 255;
 		body->color.g = (float)(rand() % (255 - 0));
 		body->color.b = 215;
 	}
-	else
-	{
+	else {
 		body->color.r = (float)(rand() % (255 - 0));
 		body->color.g = 215;
 		body->color.b = 255;
 	}
 }
 
-void Star::set_offset(float val)
+
+Star::Star(unsigned int seed) : Star() 
 {
-	offset = val;
+	float w = 4.0f * SCRN_WD;
+	float h = 5.0f * SCRN_HT;
+	float x = 0.0f, y = 0.0f;
+
+	float horizonalPartition = w / 16.0f;
+	float verticalPartition = h / 10.0f;
+
+	//Produces Randomly arranged stars
+	do {
+		int r1 = ((rand() % 400) - 800) * rnd();
+		x = ((seed % 16 + 1) * horizonalPartition) - w / 2.0f - horizonalPartition / 2.0f + r1;
+		y = ((seed % 10 + 1) * verticalPartition) - h / 2.0f - verticalPartition / 2.0f + r1;
+	} while (x < (-w / 2.0f) || x > (w / 2.0f) || y < (-h / 2.0f) || y > (h / 2.0f));
+
+	/* //Produces Uniform Stars
+	x = ((seed % 16 + 1) * horizonalPartition) - w / 2 - horizonalPartition / 2;
+	y = ((seed % 10 + 1) * verticalPartition) - h / 2 - verticalPartition / 2;
+	*/
+	body->center = geomelt::Vec(x, y, 0);
 }
 
 StarGroup::StarGroup() 
 {
-	//Star Attributes
-	for (int i = 0; i < MAX_STAR; i++) {
-		star[i].set_offset(rnd());
-		star[i].compute_coordinates(i);
-	}
+	for (unsigned int i = 0; i < MAX_STAR; i++) 
+		star.push_back(Star(i));
 }
 
 void StarGroup::render()
 {
-	for (int i = 0; i < MAX_STAR; i++) {
-		star[i].change_color();
-		star[i].body->render();
+	for (vector<Star>::iterator it = star.begin(); it != star.end(); ++it) {
+		it->change_color();
+		it->body->render();
 	}
 }
 

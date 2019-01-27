@@ -2,7 +2,7 @@
 #include "assets.h"
 
 #define rnd() (float)rand() / (float)RAND_MAX
-constexpr auto MAX_STAR = 40 ;
+constexpr auto MAX_STAR = 80 ;
 constexpr auto MAX_SPEED = 5;
 constexpr auto MAX_CLOUDS = 20;
 constexpr auto SUBCLOUD_SIZE = 3;
@@ -26,18 +26,16 @@ public:
 class Star {
 private:
 	unique_ptr<geomelt::Shape> body;
-	float offset;
 	friend class StarGroup;
 public:
-	void compute_coordinates(int count);
-	void set_offset(float val);
 	void change_color();
 	Star();
+	Star(unsigned int seed);
 };
 
 class StarGroup {
 private:
-	Star star[MAX_STAR];
+	vector<Star> star;
 	friend class Night_Level;
 	friend class Time_Level;
 public:

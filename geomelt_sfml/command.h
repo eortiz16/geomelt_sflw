@@ -5,12 +5,6 @@
 #include "menus.h"
 #include "state.h"
 
-/*
-I may need to abstract this a bit further. For example, A LevelCommand should be added.
-This class should have a vector of player commands with controller_id as a private member.
-This will allow for the identification of player input.
-*/
-
 class RState;
 
 class Command {

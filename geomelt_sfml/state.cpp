@@ -1,5 +1,14 @@
 #include "state.h"
 
+/* Game class abstracted as a network of states */
+int main()
+{
+	GFXNet geomelt;
+	geomelt.loop();
+
+	return EXIT_SUCCESS;
+}
+
 /* Utilize the State Design Pattern to control the transition of menus and levels. */
 
 GFXNet::GFXNet()
@@ -15,8 +24,7 @@ GFXNet::GFXNet()
 	_state = new MainMenuState(this);
 
 	// To draw the back ground
-	level = (rand() % 2 == 0) ? unique_ptr<Level>(new Field_Level())
-		: unique_ptr<Level>(new Night_Level());
+	level = Level::make((Lvl)(rand() % 3)); //random level to draw
 
 	window = unique_ptr<sf::RenderWindow>(new sf::RenderWindow(sf::VideoMode(SCRN_WD, SCRN_HT), "Geometric Meltdown", sf::Style::Default, contextSettings));
 	//window = unique_ptr<sf::RenderWindow> (new sf::RenderWindow(sf::VideoMode(SCRN_WD, SCRN_HT), "Geometric Meltdown", sf::Style::Fullscreen, contextSettings));

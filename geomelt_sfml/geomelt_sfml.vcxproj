@@ -129,7 +129,6 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="command.cpp" />
     <ClCompile Include="complex_shapes.cpp" />
-    <ClCompile Include="geomelt.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="levels.cpp" />
     <ClCompile Include="menus.cpp" />
@@ -141,7 +140,6 @@
   <ItemGroup>
     <ClInclude Include="command.h" />
     <ClInclude Include="complex_shapes.h" />
-    <ClInclude Include="geomelt.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="generic.h" />
     <ClInclude Include="assets.h" />

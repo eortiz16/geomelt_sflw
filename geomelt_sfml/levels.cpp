@@ -179,16 +179,16 @@ void Field_Level::update_clouds()
 
 	for (vector<unique_ptr<Cloud>>::iterator it = clouds.begin(); it != clouds.end(); ++it) {
 		// Parameters to determine when a cloud is off screen
-		arg1 = it->get()->body[1]->center.x + (it->get()->body[1]->radius * 3); // Left
-		arg2 = it->get()->body[1]->center.x - (it->get()->body[1]->radius * 3); // Right
+		arg1 = it->get()->body[1]->center.x + (it->get()->body[1]->radius * 1.5f); // Left
+		arg2 = it->get()->body[1]->center.x - (it->get()->body[1]->radius  * 1.5f); // Right
 		offset = it - clouds.begin();
 
 		//Reset if Last Cloud Offscreen
-		if (arg1 < -SCRN_WD && windDirection == LEFT) {
+		if (arg1 < -2.0f * SCRN_WD && windDirection == LEFT) {
 			clouds.erase(clouds.begin() + offset);
 			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
 		}
-		else if (arg2 > SCRN_WD && windDirection == RIGHT) {
+		else if (arg2 > 2.0f * SCRN_WD && windDirection == RIGHT) {
 			clouds.erase(clouds.begin() + offset);
 			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
 		}
@@ -376,16 +376,16 @@ void Time_Level::update_clouds()
 
 	for (vector<unique_ptr<Cloud>>::iterator it = clouds.begin(); it != clouds.end(); ++it) {
 		// Parameters to determine when a cloud is off screen
-		arg1 = it->get()->body[1]->center.x + (it->get()->body[1]->radius * 3);
-		arg2 = it->get()->body[1]->center.x - (it->get()->body[1]->radius * 3);
+		arg1 = it->get()->body[1]->center.x + (it->get()->body[1]->radius  * 1.5f);
+		arg2 = it->get()->body[1]->center.x - (it->get()->body[1]->radius  * 1.5f);
 		offset = it - clouds.begin();
 
 		//Reset if Last Cloud Offscreen
-		if (arg1 < -SCRN_WD && windDirection == LEFT) {
+		if (arg1 < -2.0f * SCRN_WD && windDirection == LEFT) {
 			clouds.erase(clouds.begin() + offset);
 			clouds.push_back(make_unique<Cloud>(Cloud::make_cloud(windDirection)));
 		}
-		else if (arg2 > SCRN_WD && windDirection == RIGHT) {
+		else if (arg2 > 2.0f * SCRN_WD && windDirection == RIGHT) {
 			clouds.erase(clouds.begin() + offset);
 			clouds.push_back(make_unique<Cloud>(Cloud::make_cloud(windDirection)));
 		}

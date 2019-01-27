@@ -82,7 +82,7 @@ Navigable::Navigable(vector<unique_ptr<geomelt::Shape>>& vec)
 void MainMenu::handler(unique_ptr<Level>& level)
 {
 	//Fixed Camera
-	glOrtho(-SCRN_WD, SCRN_WD, -SCRN_HT, SCRN_HT, -1, 1);
+	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1);
 	glClear(1);
 
 	//draw level
@@ -233,7 +233,7 @@ LevelSelect::LevelSelect()
 
 void LevelSelect::handler() 
 {
-	glOrtho(-SCRN_WD, SCRN_WD, -SCRN_HT, SCRN_HT, -1, 1);
+	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1);
 	glClear(1);
 
 	background.render();

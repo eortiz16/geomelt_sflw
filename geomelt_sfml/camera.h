@@ -35,6 +35,11 @@ private:
 	friend class Night_Level;
 	friend class Time_Level;
 	friend class CharacterSelect;
+	friend class Menu;
+	friend class MainMenu;
+	friend class CharacterSelect;
+	friend class LevelSelect;
+	friend class Pause;
 public:
 	// void update_value();
 	static void set_center(map<unsigned int, unique_ptr<Player>>& playerMap);
