@@ -1,5 +1,7 @@
 #include "state.h"
 
+/* Utilize the State Design Pattern to control the transition of menus and levels. */
+
 GFXNet::GFXNet()
 {
 	srand((unsigned int)time(NULL));
@@ -52,7 +54,12 @@ void GFXNet::loop()
 		sync.lag += sync.elapsed;
 
 		_state->read_input();
-		//command->create(_state);
+		
+		//Input via Command
+		if (command) {
+			command->execute(_state);
+			command.release();
+		}
 
 		while (sync.lag >= MS_PER_UPDATE()) {
 			//if (typeid(*_state) == typeid(LevelState))
@@ -102,14 +109,19 @@ void GFXNet::handler()
 
 MainMenuState::MainMenuState(GFXNet* context) 
 { 
-	this->_context = context; 
+	_context = context; 
 	menu = unique_ptr<Menu>(new MainMenu);
 }
 
 void MainMenuState::next()
 {
-	_context->setState(new CharacterSelectState(_context));
-	_context->command = Command::create(_context->_state);
+	if (this->menu->cursor->selected == this->menu->cursor->icons->begin() + PLAY) {
+		_context->setState(new CharacterSelectState(_context));
+		_context->command = Command::create(_context->_state);
+	}
+	else if (this->menu->cursor->selected == this->menu->cursor->icons->begin() + EXIT) {
+		this->_context->window->close();
+	}
 }
 
 void MainMenuState::prev() { /* Do nothing */ }
@@ -126,26 +138,23 @@ void MainMenuState::read_input()
 	while (_context->window->pollEvent(event)) {
 		switch (event.type)	{
 		case sf::Event::Closed:
-			_context->window->close();
+			_context->command = unique_ptr<Command>(new ExitCommand);
 			break;
 		case sf::Event::KeyPressed:
 			switch (event.key.code) {
 			case sf::Keyboard::Up:
 			case sf::Keyboard::W:
-				menu->cursor->selected--;
-				menu->cursor->updateSelection();
+				_context->command = unique_ptr<CommandMenu>(new PrevCommand);
 				break;
 			case sf::Keyboard::Down:
 			case sf::Keyboard::S:
-				menu->cursor->selected++;
-				menu->cursor->updateSelection();
+				this->_context->command = unique_ptr<CommandMenu>(new NextCommand);
 				break;
 			case sf::Keyboard::Return:
-				if (menu->cursor->selected == menu->cursor->icons->begin())
-					next();
+				_context->command = unique_ptr<Command>(new ConfirmCommand);
 				break;
 			case sf::Keyboard::Escape:
-				_context->window->close();
+				_context->command = unique_ptr<Command>(new ExitCommand);
 				break;
 			default:
 				break;
@@ -154,11 +163,8 @@ void MainMenuState::read_input()
 
 		case sf::Event::JoystickButtonPressed:
 			switch (event.joystickButton.button) {
-			case A:
-				if (menu->cursor->selected == menu->cursor->icons->begin())
-					next();
-				if (menu->cursor->selected == menu->cursor->icons->begin() + EXIT)
-					_context->window->close();
+			case xbox::A:
+				_context->command = unique_ptr<Command>(new ConfirmCommand);
 				break;
 			default:
 				break;
@@ -169,33 +175,27 @@ void MainMenuState::read_input()
 		{
 			float axis_position1 = sf::Joystick::getAxisPosition(event.joystickMove.joystickId, sf::Joystick::PovY); //DPAD
 
-			if (axis_position1 == 100) //up
-				menu->cursor->selected--;
-			else if (axis_position1 == -100) //down
-				menu->cursor->selected++;
-
-			menu->cursor->updateSelection();
+			if (axis_position1 == 100) 
+				_context->command = unique_ptr<CommandMenu>(new PrevCommand);
+			else if (axis_position1 == -100) 
+				_context->command = unique_ptr<CommandMenu>(new NextCommand);
 		}
 			break;
+
 		case sf::Event::MouseMoved:
-			if (menu->navigable[PLAY]->boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y))) {
-				menu->cursor->selected = menu->cursor->icons->begin();
+			for (vector<unique_ptr<geomelt::Shape>>::iterator it = menu->navigable.begin(); it != menu->navigable.end(); ++it) {
+				int index = it - menu->navigable.begin();
+
+				if (it->get()->boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y)))
+					menu->cursor->selected = menu->cursor->icons->begin() + index;
 			}
-			else if (menu->navigable[OPTIONS]->boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y))) {
-				menu->cursor->selected = menu->cursor->icons->begin() + OPTIONS;
-			}
-			else if (menu->navigable[EXIT]->boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y))) {
-				menu->cursor->selected = menu->cursor->icons->begin() + EXIT;
-			}
+
 			break;
 
 		case sf::Event::MouseButtonPressed:
 			switch (event.mouseButton.button) {
 			case sf::Mouse::Button::Left:
-				if (menu->cursor->selected == menu->cursor->icons->begin() && menu->navigable[PLAY]->boundary.isWithin(Input::translateX(sf::Mouse::getPosition(*_context->window).x), Input::translateY(sf::Mouse::getPosition(*_context->window).y)))
-					next();
-				else if (menu->cursor->selected == menu->cursor->icons->begin() + EXIT && menu->navigable[EXIT]->boundary.isWithin(Input::translateX(sf::Mouse::getPosition(*_context->window).x), Input::translateY(sf::Mouse::getPosition(*_context->window).y)))
-					_context->window->close();
+				_context->command = unique_ptr<Command>(new ConfirmCommand(event.mouseMove.x, event.mouseMove.y));
 				break;
 			default:
 				break;
@@ -209,7 +209,6 @@ void MainMenuState::read_input()
 }
 
 //==================================================================
-
 CharacterSelectState::CharacterSelectState(GFXNet* context)
 {
 	this->_context = context;
@@ -217,15 +216,15 @@ CharacterSelectState::CharacterSelectState(GFXNet* context)
 	menu = unique_ptr<Menu>(new CharacterSelect);
 }
 
-
 void CharacterSelectState::next()
 {
-	_context->setState(new LvlSelectState(_context));
+	_context->setState(new LevelSelectState(_context));
 	_context->command = Command::create(_context->_state);
 }
 
 void CharacterSelectState::prev()
 {
+	_context->level->playerMap.clear();
 	_context->setState(new MainMenuState(_context));
 	_context->command = Command::create(_context->_state);
 }
@@ -237,7 +236,6 @@ void CharacterSelectState::handler()
 
 void CharacterSelectState::read_input()
 {
-	
 	sf::Event event;
 
 	while (_context->window->pollEvent(event))
@@ -245,77 +243,53 @@ void CharacterSelectState::read_input()
 		switch (event.type)
 		{
 		case sf::Event::Closed:
-			_context->window->close();
+			_context->command = unique_ptr<Command>(new ExitCommand);
 			break;
 
 		case sf::Event::KeyPressed:
 			switch (event.key.code) {
 			case sf::Keyboard::E:
-				_context->level->add_player(-1);
-				static_cast<CharacterSelect&>(*menu).selectBox[-1].occupied = true;
+				_context->command = unique_ptr<Command>(new AddCharacterCommand(KEY_ID));
 				break;
 			case sf::Keyboard::Q:
-				if (_context->level->playerMap.find(-1) != _context->level->playerMap.end()) {
-					if (typeid(*_context->level->playerMap[-1]).name() == typeid(Ball).name()) {
-						_context->level->playerMap[-1].reset();
-						_context->level->playerMap[-1] = unique_ptr<Player>(new Boxy);
-					}
-					else {
-						_context->level->playerMap[-1].reset();
-						_context->level->playerMap[-1] = unique_ptr<Player>(new Ball);
-					}
-				}
+				_context->command = unique_ptr<Command>(new ChangeCharacterCommand(KEY_ID));
 				break;
 			case sf::Keyboard::Left:
-				if (_context->level->playerMap.find(-1) != _context->level->playerMap.end())
-					_context->level->playerMap[-1].get()->change_color(PREV);
+				_context->command = unique_ptr<Command>(new PrevColorCommand(KEY_ID));
 				break;
 			case sf::Keyboard::Right:
-				if (_context->level->playerMap.find(-1) != _context->level->playerMap.end())
-					_context->level->playerMap[-1].get()->change_color(NEXT);
+				_context->command = unique_ptr<Command>(new NextColorCommand(KEY_ID));
 				break;
 			case sf::Keyboard::Return:
-				next();
+				_context->command = unique_ptr<Command>(new ConfirmCommand);
 				break;
 			case sf::Keyboard::Escape:
-				_context->window->close();
+				_context->command = unique_ptr<Command>(new ExitCommand);
 				break;
 			default:
 				break;
 			}
 			break;
+
 		case sf::Event::JoystickButtonPressed:
 			switch (event.joystickButton.button) {
-			case START:
-				_context->level->add_player(event.joystickButton.joystickId);
-				static_cast<CharacterSelect&>(*menu).selectBox[event.joystickButton.joystickId].occupied = true;
+			case xbox::START:
+				_context->command = unique_ptr<Command>(new AddCharacterCommand(event.joystickButton.joystickId));
 				break;
-			case X:
-				if (_context->level->playerMap.find(event.joystickButton.joystickId) != _context->level->playerMap.end()) {
-					if (typeid(*_context->level->playerMap[event.joystickButton.joystickId]).name() == typeid(Ball).name()) {
-						_context->level->playerMap[event.joystickButton.joystickId].reset();
-						_context->level->playerMap[event.joystickButton.joystickId] = unique_ptr<Player>(new Boxy);
-					}
-					else {
-						_context->level->playerMap[event.joystickButton.joystickId].reset();
-						_context->level->playerMap[event.joystickButton.joystickId] = unique_ptr<Player>(new Ball);
-					}
-				}
+			case xbox::X:
+				_context->command = unique_ptr<Command>(new ChangeCharacterCommand(event.joystickButton.joystickId));
 				break;
-			case B:
-				_context->level->playerMap.clear();
-				prev();
+			case xbox::B:
+				_context->command = unique_ptr<Command>(new DenyCommand);
 				break;
-			case SELECT:
-				next();
+			case xbox::SELECT:
+				_context->command = unique_ptr<Command>(new ConfirmCommand);
 				break;
-			case LB:
-				if (_context->level->playerMap.find(event.joystickButton.joystickId) != _context->level->playerMap.end())
-					_context->level->playerMap[event.joystickButton.joystickId].get()->change_color(PREV);
+			case xbox::LB:
+				_context->command = unique_ptr<Command>(new PrevColorCommand(event.joystickButton.joystickId));
 				break;
-			case RB:
-				if (_context->level->playerMap.find(event.joystickButton.joystickId) != _context->level->playerMap.end())
-					_context->level->playerMap[event.joystickButton.joystickId].get()->change_color(NEXT);
+			case xbox::RB:
+				_context->command = unique_ptr<Command>(new NextColorCommand(event.joystickButton.joystickId));
 				break;
 			default:
 				break;
@@ -330,38 +304,39 @@ void CharacterSelectState::read_input()
 
 //==================================================================
 
-LvlSelectState::LvlSelectState(GFXNet* context)
+LevelSelectState::LevelSelectState(GFXNet* context)
 {
 	this->_context = context;
 	menu.release();
 	menu = unique_ptr<Menu>(new LevelSelect);
 }
 
-void LvlSelectState::next()
+void LevelSelectState::next()
 {
+	_context->level = Level::make((Lvl)(std::distance(menu->cursor->icons->begin(), menu->cursor->selected)));
+	_context->level->reset_level();
 	_context->setState(new LevelState(_context));
 	_context->command = Command::create(_context->_state);
 }
 
-void LvlSelectState::prev()
+void LevelSelectState::prev()
 {
 	_context->setState(new CharacterSelectState(_context));
 	_context->command = Command::create(_context->_state);
 }
 
-void LvlSelectState::handler()
+void LevelSelectState::handler()
 {
 	static_cast<LevelSelect&>(*menu).handler();
 }
 
-void LvlSelectState::read_input()
+void LevelSelectState::read_input()
 {
 	sf::Event event;
 
 	while (_context->window->pollEvent(event))
 	{
-		switch (event.type)
-		{
+		switch (event.type)	{
 		case sf::Event::Closed:
 			_context->window->close();
 			break;
@@ -370,20 +345,37 @@ void LvlSelectState::read_input()
 			switch (event.key.code) {
 			case sf::Keyboard::Right:
 			case sf::Keyboard::D:
-				menu->cursor->selected++;
-				menu->cursor->updateSelection();
+				_context->command = unique_ptr<CommandMenu>(new PrevCommand);
 			case sf::Keyboard::Left:
 			case sf::Keyboard::A:
-				menu->cursor->selected--;
-				menu->cursor->updateSelection();
+				_context->command = unique_ptr<CommandMenu>(new NextCommand);
 				break;
 			case sf::Keyboard::Return:
-				_context->level = Level::make((Lvl)(std::distance( menu->cursor->icons->begin(), menu->cursor->selected)));
-				_context->level->reset_level();
-				next();
+				_context->command = unique_ptr<Command>(new ConfirmCommand);
 				break;
 			case sf::Keyboard::Escape:
-				_context->window->close();
+				_context->command = unique_ptr<Command>(new ExitCommand);				
+				break;
+			default:
+				break;
+			}
+			break;
+
+		case sf::Event::MouseMoved:
+			for (vector<unique_ptr<geomelt::Shape>>::iterator it = menu->navigable.begin(); it != menu->navigable.end(); ++it) {
+				int index = it - menu->navigable.begin();
+
+				if (it->get()->boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y))) {
+					menu->cursor->selected = menu->cursor->icons->begin() + index;
+				}
+			}
+
+			break;
+
+		case sf::Event::MouseButtonPressed:
+			switch (event.mouseButton.button) {
+			case sf::Mouse::Button::Left:
+				_context->command = unique_ptr<Command>(new ConfirmCommand(event.mouseMove.x, event.mouseMove.y));
 				break;
 			default:
 				break;
@@ -392,13 +384,11 @@ void LvlSelectState::read_input()
 
 		case sf::Event::JoystickButtonPressed:
 			switch (event.joystickButton.button) {
-			case A:
-				_context->level = Level::make((Lvl)(std::distance(menu->cursor->icons->begin(), menu->cursor->selected)));
-				_context->level->reset_level();
-				next();
+			case xbox::A:
+				_context->command = unique_ptr<Command>(new ConfirmCommand);
 				break;
-			case B:
-				prev();
+			case xbox::B:
+				_context->command = unique_ptr<Command>(new DenyCommand);				
 				break;
 			default:
 				break;
@@ -410,17 +400,11 @@ void LvlSelectState::read_input()
 			float axis_position1 = sf::Joystick::getAxisPosition(event.joystickMove.joystickId, sf::Joystick::PovX); //DPAD
 
 			if (axis_position1 == 100) //RIGHT
-			{
-				menu->cursor->selected++;
-				menu->cursor->updateSelection();
-			}
+				_context->command = unique_ptr<CommandMenu>(new NextCommand);
 			else if (axis_position1 == -100) //LEFT
-			{
-				menu->cursor->selected--;
-				menu->cursor->updateSelection();
-			}
+				_context->command = unique_ptr<CommandMenu>(new PrevCommand);
 		}
-		break;
+			break;
 
 		default:
 			break;
@@ -433,9 +417,10 @@ void LvlSelectState::read_input()
 LevelState::LevelState(GFXNet* context) 
 { 
 	this->_context = context; 
+	this->_context->command = Command::create(this);
 }
 
-void LevelState::next() 
+void LevelState::next()
 { 
 	_context->setState(new PauseState(_context));
 	_context->command = Command::create(_context->_state);
@@ -443,7 +428,7 @@ void LevelState::next()
 
 void LevelState::prev()
 {
-	_context->setState(new LvlSelectState(_context));
+	_context->setState(new LevelSelectState(_context));
 	_context->command = Command::create(_context->_state);
 }
 
@@ -459,68 +444,95 @@ void LevelState::read_input()
 
 	while (_context->window->pollEvent(event))
 	{
-		switch (event.type)
-		{
+		switch (event.type) {
 		case sf::Event::Closed:
-			_context->window->close();
+			_context->command = unique_ptr<Command>(new ExitCommand);
 			break;
 
 		case sf::Event::KeyPressed:
-		{
-			Player *plyr = NULL;
-
-			if (_context->level->playerMap.find(-1) != _context->level->playerMap.end()) {
-				plyr = _context->level->playerMap[-1].get();
-				plyr->read_keys(event.key.code);
-			}
-
 			switch (event.key.code) {
+			case sf::Keyboard::A:
+			case sf::Keyboard::Left:
+				_context->command = unique_ptr<CommandPlayer>(new MoveLeftCommand(KEY_ID));
+				break;
+			case sf::Keyboard::D:
+			case sf::Keyboard::Right:
+				_context->command = unique_ptr<CommandPlayer>(new MoveRightCommand(KEY_ID));
+				break;
+			case sf::Keyboard::Space:
+				_context->command = unique_ptr<CommandPlayer>(new JumpCommand(KEY_ID));
+				break;
+			case sf::Keyboard::E:
+				_context->command = unique_ptr<CommandPlayer>(new AttackCommand(KEY_ID));
+				break;
 			case sf::Keyboard::Escape:
-				_context->window->close();
+				_context->command = unique_ptr<Command>(new ExitCommand);
 				break;
 			default:
 				break;
 			}
-		}
 			break;
 
 		case sf::Event::KeyReleased:
-		{
-			Player *plyr = NULL;
-
-			if (_context->level->playerMap.find(-1) != _context->level->playerMap.end()) {
-				plyr = _context->level->playerMap[-1].get();
-				plyr->read_released_keys(event.key.code);
-			}
-		}
-			break;
-
-		case sf::Event::JoystickButtonPressed:
-		{
-			Player *plyr = NULL;
-
-			if (_context->level->playerMap.find(event.joystickButton.joystickId) != _context->level->playerMap.end()) {
-				plyr = _context->level->playerMap[event.joystickButton.joystickId].get();
-				plyr->read_buttons(event.joystickButton.button);
-			}
-
-			switch (event.joystickButton.button) {
-			case START:
-				next();
+			switch (event.key.code) {
+			case sf::Keyboard::A:
+			case sf::Keyboard::Left:
+			case sf::Keyboard::D:
+			case sf::Keyboard::Right:
+				_context->command = unique_ptr<CommandPlayer>(new StopCommand(KEY_ID));
 				break;
 			default:
 				break;
 			}
-		}
+			break;
+
+		case sf::Event::JoystickButtonPressed:
+			switch (event.joystickButton.button) {
+			case xbox::A:
+			case xbox::B:
+				_context->command = unique_ptr<CommandPlayer>(new AttackCommand(event.joystickButton.joystickId));
+				break;
+			case xbox::X:
+			case xbox::Y:
+				_context->command = unique_ptr<CommandPlayer>(new JumpCommand(event.joystickButton.joystickId));
+				break;
+			case xbox::START:
+				_context->command = unique_ptr<Command>(new ConfirmCommand);
+				break;
+			default:
+				break;
+			}
 			break;
 
 		case sf::Event::JoystickMoved:
 		{
-			Player *plyr = NULL;
+			float axis_position = 0.0f;
 
-			if (_context->level->playerMap.find(event.joystickButton.joystickId) != _context->level->playerMap.end()) {
-				plyr = _context->level->playerMap[event.joystickButton.joystickId].get();
-				plyr->read_axis(event.joystickConnect.joystickId);
+			switch (event.joystickMove.axis) {
+			case sf::Joystick::PovX:
+				axis_position = sf::Joystick::getAxisPosition(event.joystickMove.joystickId, sf::Joystick::PovX);
+
+				if (axis_position == 100.0)
+					_context->command = unique_ptr<CommandPlayer>(new MoveRightCommand(event.joystickMove.joystickId));
+				else if (axis_position == -100.0)
+					_context->command = unique_ptr<CommandPlayer>(new MoveLeftCommand(event.joystickMove.joystickId));
+				else if (axis_position == 0.0f)
+					_context->command = unique_ptr<CommandPlayer>(new StopCommand(event.joystickMove.joystickId));
+				break;
+
+			case sf::Joystick::X:
+				axis_position = sf::Joystick::getAxisPosition(event.joystickMove.joystickId, sf::Joystick::X);
+
+				if (axis_position == 100.0)
+					_context->command = unique_ptr<CommandPlayer>(new MoveRightCommand(event.joystickMove.joystickId));
+				else if (axis_position == -100.0)
+					_context->command = unique_ptr<CommandPlayer>(new MoveLeftCommand(event.joystickMove.joystickId));
+				else 
+					_context->command = unique_ptr<CommandPlayer>(new StopCommand(event.joystickMove.joystickId));
+				break;
+
+			default:
+				break;
 			}
 		}
 			break;
@@ -535,9 +547,9 @@ void LevelState::read_input()
 
 PauseState::PauseState(GFXNet* context) 
 {
+	this->_context = context;
 	menu.release();
 	menu = unique_ptr<Menu>(new Pause);
-	this->_context = context; 
 }
 
 void PauseState::next() { /* Do nothing */ }
@@ -559,24 +571,21 @@ void PauseState::read_input()
 
 	while (_context->window->pollEvent(event))
 	{
-		switch (event.type)
-		{
+		switch (event.type)	{
 		case sf::Event::Closed:
 			_context->window->close();
 			break;
 
 		case sf::Event::JoystickButtonPressed:
-		{
 			switch (event.joystickButton.button) {
-			case START:
-			case B:
-				prev();
+			case xbox::START:
+			case xbox::B:
+				_context->command = unique_ptr<Command>(new DenyCommand);
 				break;
 			default:
 				break;
 			}
-		}
-		break;
+			break;
 
 		default:
 			break;

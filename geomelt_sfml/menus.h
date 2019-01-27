@@ -3,7 +3,7 @@
 #include "headers.h"
 #include "assets.h"
 #include "complex_shapes.h"
-#include "controller.h"
+#include "input.h"
 
 constexpr auto SELECTED_CARDINALITY = 3;
 enum Selected { PLAY, OPTIONS, EXIT };
@@ -40,6 +40,10 @@ public:
 	friend class MainMenu;
 	friend class CharacterSelect;
 	friend class LevelSelect;
+	friend class PrevCommand;
+	friend class NextCommand;
+	friend class ConfirmCommand;
+	friend class DenyCommand;
 };
 
 class Cursor {
@@ -60,8 +64,12 @@ public:
 	friend class Pause;
 	friend class MainMenuState;
 	friend class CharacterSelectState;
-	friend class LvlSelectState;
+	friend class LevelSelectState;
 	friend class PauseState;
+	friend class PrevCommand;
+	friend class NextCommand;
+	friend class ConfirmCommand;
+	friend class DenyCommand;
 };
 
 class Menu {
@@ -74,8 +82,12 @@ public:
 
 	friend class MainMenuState;
 	friend class CharacterSelectState;
-	friend class LvlSelectState;
+	friend class LevelSelectState;
 	friend class PauseState;
+	friend class PrevCommand;
+	friend class NextCommand;
+	friend class ConfirmCommand;
+	friend class DenyCommand;
 };
 
 class MainMenu : public Menu {
@@ -84,21 +96,15 @@ private:
 	sf::Text text;
 public:
 	void handler(unique_ptr<Level>& level);
-
+	bool isWithin(int x, int y);
 	MainMenu();
 	~MainMenu() {}
 
 	friend class MainMenuState;
-};
-
-class Pause : public Menu {
-public:
-	void handler(unique_ptr<Level>& level);
-
-	Pause() {}
-	~Pause() {}
-
-	friend class PauseState;
+	friend class PrevCommand;
+	friend class NextCommand;;
+	friend class ConfirmCommand;
+	friend class DenyCommand;
 };
 
 class CharacterSelect : public Menu {
@@ -112,6 +118,11 @@ public:
 	~CharacterSelect() {}
 
 	friend class CharacterSelectState;
+	friend class PrevCommand;
+	friend class NextCommand;
+	friend class ConfirmCommand;
+	friend class DenyCommand;
+	friend class AddCharacterCommand;
 };
 
 class LevelSelect : public Menu {
@@ -123,5 +134,24 @@ public:
 	LevelSelect();
 	~LevelSelect() {}
 
-	friend class LvlSelectState;
+	friend class LevelSelectState;
+	friend class PrevCommand;
+	friend class NextCommand;
+	friend class ConfirmCommand;
+	friend class DenyCommand;
+};
+
+class Pause : public Menu {
+public:
+	void handler(unique_ptr<Level>& level);
+
+	Pause() {}
+	~Pause() {}
+
+	friend class PauseState;
+	friend class LevelSelectState;
+	friend class PrevCommand;
+	friend class NextCommand;
+	friend class ConfirmCommand;
+	friend class DenyCommand;
 };

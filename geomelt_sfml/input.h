@@ -2,6 +2,25 @@
 
 #include "headers.h"
 #include "generic.h"
+#include "command.h"
+
+//sf::Joystick::getIdentification(event.joystickButton.joystickId).vendorId
+// Microsoft = 1118
+// Sony = 1356
+// logitech Controller = 1133
+
+constexpr unsigned int KEY_ID = -1;
+
+namespace xbox {
+	enum Axis { LAX, LAY, LTRT, RAX, RAY, DPADX, DPADY };
+	enum Button { A, B, X, Y, LB, RB, SELECT, START, L3, R3 };
+}
+
+namespace ps {
+	enum Button { SQUARE, CROSS, CIRCLE, TRIANGLE, L1, R1, L2, R2, SELECT, START, L3, R3, HOME, TOUCH };
+}
+
+enum ActionType { JUMP, ATTACK, SPECIAL };
 
 /* Get coordinates via translation
 * SFML:
@@ -25,7 +44,6 @@
 
 class Input {
 public:
-	// Method: SFML Mouse Coordinates -> GLViewport Coordinates
 	static int translateX(int x);
 	static int translateY(int y);
 };

@@ -12,7 +12,7 @@ MainMenu::MainMenu()
 	srand((unsigned int)time(NULL));
 
 	title.set_texture_attributes(Assets::textures.title);
-	title.center.y = SCRN_HT / 2;
+	title.center = geomelt::Vec(0, SCRN_HT / 2, 0);
 	title.width *= 2;
 	title.height *= 2;
 	title.boundary_assignment();
@@ -20,15 +20,15 @@ MainMenu::MainMenu()
 	TexturedQuad play, options, exit;
 
 	play.set_texture_attributes(Assets::textures.play);
-	play.center.y = -SCRN_HT / 6;
+	play.center = geomelt::Vec(0, -SCRN_HT / 6, 0);
 	play.boundary_assignment();
 	
 	options.set_texture_attributes(Assets::textures.options);
-	options.center.y = -SCRN_HT / 3;
+	options.center = geomelt::Vec(0, -SCRN_HT / 3, 0);
 	options.boundary_assignment();
 
 	exit.set_texture_attributes(Assets::textures.exit);
-	exit.center.y = -SCRN_HT / 2;
+	exit.center = geomelt::Vec(0, -SCRN_HT / 2, 0);
 	exit.boundary_assignment();
 
 	navigable.push_back(make_unique<TexturedQuad>(play));
@@ -40,13 +40,13 @@ MainMenu::MainMenu()
 	vector<unique_ptr<geomelt::Shape>> selected;
 
 	play.set_texture_attributes(Assets::textures.playSelected);
-	play.center.y = -SCRN_HT / 6;
+	play.center = geomelt::Vec(0, -SCRN_HT / 6, 0);
 	
 	options.set_texture_attributes(Assets::textures.optionsSelected);
-	options.center.y = -SCRN_HT / 3;
+	options.center = geomelt::Vec(0, -SCRN_HT / 3, 0);
 
 	exit.set_texture_attributes(Assets::textures.exitSelected);
-	exit.center.y = -SCRN_HT / 2;
+	exit.center = geomelt::Vec(0, -SCRN_HT / 2, 0);
 	
 	selected.push_back(make_unique<TexturedQuad>(play));
 	selected.push_back(make_unique<TexturedQuad>(options));
@@ -98,36 +98,42 @@ void MainMenu::handler(unique_ptr<Level>& level)
 	
 }
 
+bool MainMenu::isWithin(int x, int y)
+{
+	if (navigable[PLAY]->boundary.isWithin(Input::translateX(x), Input::translateY(y))
+		|| navigable[OPTIONS]->boundary.isWithin(Input::translateX(x), Input::translateY(y))
+		|| navigable[EXIT]->boundary.isWithin(Input::translateX(x), Input::translateY(y))) {
+		return true;
+	}
+
+	return false;
+}
+
 CharacterSelect::CharacterSelect()
 {
 	//Background Attribute Assignment
-	background.body.center.x = 0;
-	background.body.center.y = 0;
+	background.body.center = geomelt::Vec(0, 0, 0);
 	background.body.width = 2.0f * SCRN_WD;
 	background.body.height = 2.0f * SCRN_HT;
 
 	for (int i = 0; i < CORNERS; i++)
-	{
-		background.color[i].r = Assets::palette.lightGrey.r;
-		background.color[i].g = Assets::palette.lightGrey.g;
-		background.color[i].b = Assets::palette.lightGrey.b;
-	}
+		background.color[i] = Assets::palette.lightGrey;
 
 	//assign center of each char select box
 	float wSpace = -3.0f * SCRN_WD / 4.0f;
 
-	for (int i = 0; i < 4; i++)	{
-		CharSelBox sb;
+	CharSelBox sb;
+	sb.stroke = 30.0f;
+	sb.box.width = SCRN_WD / 3.0f;
+	sb.box.height = 3.0f * SCRN_HT / 4.0f;
 
-		sb.stroke = 30.0f;
-		sb.box.center.x = wSpace;
-		sb.box.center.y = -SCRN_HT / 2.5f;
-		sb.box.width = SCRN_WD / 3.0f;
-		sb.box.height = 3.0f * SCRN_HT / 4.0f;
+	//Construct Char Select Box
+	for (int i = 0; i < 4; i++)	{
+		
+		sb.box.center = geomelt::Vec(wSpace, -SCRN_HT / 2.5f, 0);
 		sb.box.build();
 		sb.box.set_color(Assets::palette.white);
-		sb.outline.center.x = sb.box.center.x;
-		sb.outline.center.y = sb.box.center.y;
+		sb.outline.center = sb.box.center;
 		sb.outline.width = sb.box.width + sb.stroke;
 		sb.outline.height = sb.box.height + sb.stroke;
 		sb.outline.build();
@@ -135,8 +141,8 @@ CharacterSelect::CharacterSelect()
 		sb.start_icon.set_texture_attributes(Assets::textures.button_Start);
 		sb.start_icon.width = 100;
 		sb.start_icon.height = 100;
-		sb.start_icon.center.x = sb.box.center.x - (1.5f / 4.0f  * sb.box.width);
-		sb.start_icon.center.y = sb.box.center.y;
+		sb.start_icon.center = geomelt::Vec(wSpace - (1.5f / 4.0f  * sb.box.width), -SCRN_HT / 2.5f, 0);
+
 		selectBox.push_back(sb);
 
 		wSpace += SCRN_WD / 2.0f;
@@ -163,8 +169,7 @@ void CharacterSelect::handler(map<unsigned int, unique_ptr<Player>>& players)
 	
 	while (it != players.end()) {
 		*it->second = Assets::characterPalette.traverse_colors[it->second->myColor];
-		it->second->body->center.x = selectBox[it->second->myID].box.center.x;
-		it->second->body->center.y = selectBox[it->second->myID].box.center.y;
+		it->second->body->center = selectBox[it->second->myID].box.center;
 		it->second->simple_update_menu();
 		it->second->render();
 
@@ -174,37 +179,32 @@ void CharacterSelect::handler(map<unsigned int, unique_ptr<Player>>& players)
 
 LevelSelect::LevelSelect()
 {	
-	background.body.center.x = 0;
-	background.body.center.y = 0;
+	background.body.center = geomelt::Vec(0, 0, 0);
 	background.body.width = 2.0f * SCRN_WD;
 	background.body.height = 2.0f * SCRN_HT;
 
-	for (int i = 0; i < CORNERS; i++)
-	{
-		background.color[i].r = Assets::palette.lightGrey.r;
-		background.color[i].g = Assets::palette.lightGrey.g;
-		background.color[i].b = Assets::palette.lightGrey.b;
-	}
+	for (int i = 0; i < CORNERS; i++) 
+		background.color[i] = Assets::palette.lightGrey;
 
 	TexturedQuad level1, level2, level3;
 
 	level1.set_texture_attributes(Assets::textures.field);
-	level1.center.y = 0;
-	level1.center.x = -SCRN_HT;
+	level1.center = geomelt::Vec(-SCRN_HT, 0, 0);
 	level1.width = 640;
 	level1.height = 400;
+	level1.boundary_assignment();
 
 	level2.set_texture_attributes(Assets::textures.night);
-	level2.center.y = 0;
-	level2.center.x = 0;
+	level2.center = geomelt::Vec(0, 0, 0);
 	level2.width = 640;
 	level2.height = 400;
+	level2.boundary_assignment();
 
 	level3.set_texture_attributes(Assets::textures.time); 
-	level3.center.y = 0;
-	level3.center.x = SCRN_HT;
+	level3.center = geomelt::Vec(SCRN_HT, 0, 0);
 	level3.width = 640;
 	level3.height = 400;
+	level3.boundary_assignment();
 	
 	navigable.push_back(make_unique<TexturedQuad>(level1));
 	navigable.push_back(make_unique<TexturedQuad>(level2));
@@ -214,20 +214,17 @@ LevelSelect::LevelSelect()
 	vector<unique_ptr<geomelt::Shape>> selected;
 
 	geomelt::Quad selector;
-	selector.center.x = level1.center.x;
-	selector.center.y = level1.center.y;
+	selector.center = level1.center;
 	selector.width = 650;
 	selector.height = 410;
 	selector.color = Assets::palette.green;
 	selected.push_back(make_unique<geomelt::Quad>(selector));
 
-	selector.center.x = level2.center.x;
-	selector.center.y = level2.center.y;
+	selector.center = level2.center;
 	selector.color = Assets::palette.green;
 	selected.push_back(make_unique<geomelt::Quad>(selector));
 
-	selector.center.x = level3.center.x;
-	selector.center.y = level3.center.y;
+	selector.center = level3.center;
 	selector.color = Assets::palette.green;
 	selected.push_back(make_unique<geomelt::Quad>(selector));
 

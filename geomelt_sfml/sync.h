@@ -10,7 +10,6 @@ private:
 	double elapsed;
 	double lag;
 
-	friend class Game;
 	friend class GFXNet;
 public:
 	Sync();

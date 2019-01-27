@@ -21,10 +21,8 @@ void Camera::set_center(map<unsigned int, unique_ptr<Player>>& player)
 	yMin = (float)INT_MAX;
 	yMax = (float)INT_MIN;
 
-	map<unsigned int, unique_ptr<Player>>::iterator it;
-
 	// obtain center (x,y) between ALL players
-	for (it = player.begin(); it != player.end(); ++it)
+	for (map<unsigned int, unique_ptr<Player>>::iterator it = player.begin(); it != player.end(); ++it)
 	{
 		if (it->second->stats.lifeState == ALIVE)	{
 			//Set all min and max

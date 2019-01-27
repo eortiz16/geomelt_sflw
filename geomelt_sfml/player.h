@@ -4,7 +4,7 @@
 #include "assets.h"
 #include "complex_shapes.h"
 #include "levels.h"
-#include "controller.h"
+#include "command.h"
 
 constexpr auto JUMP_PARAM = 25.0f;
 enum PlayerState { ALIVE, DEAD, ELIMINATED };
@@ -45,8 +45,9 @@ private:
 	friend class Command;
 	friend class CommandPlayer;
 	friend class AttackCommand;
-	friend class LeftCommand;
-	friend class RightCommand;
+	friend class MoveLeftCommand;
+	friend class MoveRightCommand;
+	friend class StopCommand;
 public:
 	Toggle();
 };
@@ -76,7 +77,6 @@ private:
 	geomelt::Circle eye;
 	CharColorOptions myColor;
 
-	//My friends
 	friend class Level;
 	friend class Field_Level;
 	friend class Time_Level;
@@ -86,18 +86,13 @@ private:
 	friend class Ball;
 	friend class Camera;
 	friend class LevelState;
-	friend class Game;
 	friend class Command;
 	friend class CommandPlayer;
 	friend class AttackCommand;
-	friend class LeftCommand;
-	friend class RightCommand;
+	friend class MoveLeftCommand;
+	friend class MoveRightCommand;
+	friend class StopCommand;
 public:
-	//ButtonMapping buttonMapping;
-	void read_buttons(unsigned int button);
-	void read_axis(unsigned int joyID);
-	void read_keys(unsigned int key);
-	void read_released_keys(unsigned int key);
 	void simple_update();
 	void simple_update_menu();
 	void change_color(SelectColor option);
@@ -143,6 +138,8 @@ public:
 	~Ball() {}
 
 	friend class LevelState;
+	friend class MoveLeftCommand;
+	friend class MoveRightCommand;
 };
 
 class Boxy : public Player {

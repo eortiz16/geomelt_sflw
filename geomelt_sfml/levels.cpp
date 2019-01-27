@@ -54,6 +54,59 @@ void Level::purge_players()
 	}
 }
 
+/* Platform[0] is the maain platform */
+void Level::set_platforms()
+{
+	Platform p0, p1, p2, p3;
+	//Platform Horizontal Center
+	p0.body.center.x = 0;
+	p1.body.center.x = -SCRN_HT * 3.0f / 4.0f;
+	p2.body.center.x = 0;
+	p3.body.center.x = SCRN_HT * 3.0f / 4.0f;
+
+	//Platform Dimensions
+	p0.body.width = 5.0f * SCRN_WD / 6.0f;
+	p0.body.height = SCRN_HT / 20.0f;
+	p0.body.center.y = SCRN_HT / -3.0f;
+
+	p1.body.width = SCRN_WD / 4.0f;
+	p1.body.height = SCRN_HT / 20.0f;
+	p1.body.center.y = 100.0f;
+
+	p2.body.width = SCRN_WD / 4.0f;
+	p2.body.height = SCRN_HT / 20.0f;
+	p2.body.center.y = 100.0f;
+
+	p3.body.width = SCRN_WD / 4.0f;
+	p3.body.height = SCRN_HT / 20.0f;
+	p3.body.center.y = 100.0f;
+
+	p2.body.center.y = SCRN_HT / 4.0f;
+
+	platform.push_back(p0);
+	platform.push_back(p1);
+	platform.push_back(p2);
+	platform.push_back(p3);
+
+	for (unsigned int i = 0; i < platform.size(); i++) {
+		//Floor Boundaries - For Physics
+		platform.at(i).body.boundary_assignment();
+
+		//outline centered at body
+		platform.at(i).outline.center = platform.at(i).body.center;
+
+		platform.at(i).outline.width = platform.at(i).body.width + THICKNESS;
+		platform.at(i).outline.height = platform.at(i).body.height + THICKNESS;
+
+		//Assign Color to Floor
+		platform.at(i).body.color = Assets::platformPalette.grass.body;
+		platform.at(i).outline.color = Assets::platformPalette.grass.outline;
+
+		//Assign Floor Outline Attributes
+		platform.at(i).body.boundary_assignment();
+	}
+}
+
 void Level::reset_level()
 {
 	map<unsigned int, unique_ptr<Player>>::iterator it;
@@ -67,56 +120,13 @@ void Level::reset_level()
 		it->second->update_reflection_x();
 		it->second->simple_update();
 
-		if (it->second->myID % 2 == 0) {
-			it->second->body->center.x = 500.0f;
-			it->second->body->center.y = 500.0f;
-		} else {
-			it->second->body->center.x = -500.0f;
-			it->second->body->center.y = 500.0f;
-		}
+		if (it->second->myID % 2 == 0) 
+			it->second->body->center = geomelt::Vec(500.0f, 500.0f, 0);
+		else
+			it->second->body->center = geomelt::Vec(-500.0f, 500.0f, 0);
+		
 	}
-}
-
-void GradientBG::render()
-{
-	//Top LEFT
-	glBegin(GL_QUADS);
-		//bottom right
-		glColor4ub(255, 255, 255, 0);
-		glVertex2f(TLBG.body.center.x + TLBG.body.width / 2, TLBG.body.center.y - TLBG.body.height / 2);
-
-		//bottom left
-		glColor4ub(0, 155, 255, 200);
-		glVertex2f(TLBG.body.center.x - TLBG.body.width / 2, TLBG.body.center.y - TLBG.body.height / 2);
-
-		//top left
-		glColor4ub(0,155,255, 200);
-		glVertex2f(TLBG.body.center.x - TLBG.body.width / 2, TLBG.body.center.y + TLBG.body.height / 2);
-
-		//top right
-		glColor4ub(255,255,255, 0);
-		glVertex2f(TLBG.body.center.x + TLBG.body.width / 2, TLBG.body.center.y + TLBG.body.height / 2);	
-	glEnd();
-
-	//TOP RIGHT
-	glBegin(GL_QUADS);
-		//bottom left
-		glColor4ub(255, 255, 255, 0);
-		glVertex2f(TRBG.body.center.x - TRBG.body.width / 2, TRBG.body.center.y - TRBG.body.height / 2);
-
-		//bottom right
-		glColor4ub(255, 155, 0, 200);
-		glVertex2f(TRBG.body.center.x + TRBG.body.width / 2, TRBG.body.center.y - TRBG.body.height / 2);
-
-		//top right
-		glColor4ub(255, 155, 0, 200);
-		glVertex2f(TRBG.body.center.x + TRBG.body.width / 2, TRBG.body.center.y + TRBG.body.height / 2);
-
-		//top left
-		glColor4ub(255, 255, 255, 0);
-		glVertex2f(TRBG.body.center.x - TRBG.body.width / 2, TRBG.body.center.y + TRBG.body.height / 2);
-	glEnd();
-}                
+}          
 
 Level::Level()
 {
@@ -138,65 +148,11 @@ Field_Level::Field_Level() : Level()
 	background.body.height = 5.0f * SCRN_HT;
 	background.set_color(Assets::backgroundPalette.day);
 
-	//filter
-	filterBG.center.x = background.body.center.x;
-	filterBG.center.y = background.body.center.y;
-	filterBG.width = background.body.width;
-	filterBG.height = background.body.height;
-	filterBG.color = Assets::palette.white;
-	filterBG.color.alpha = 255;
-
-	gradientBG.LLBG.body.center.x = 0;
-	gradientBG.LLBG.body.center.y = 0;
-	gradientBG.LLBG.body.width = 4 * SCRN_WD;
-	gradientBG.LLBG.body.height = 4 * SCRN_HT;
-
-	gradientBG.LRBG.body.center.x = 0;
-	gradientBG.LRBG.body.center.y = 0;
-	gradientBG.LRBG.body.width = 4 * SCRN_WD;
-	gradientBG.LRBG.body.height = 4 * SCRN_HT;
-
-	gradientBG.TRBG.body.center.x = 0;
-	gradientBG.TRBG.body.center.y = 0;
-	gradientBG.TRBG.body.width = 4 * SCRN_WD;
-	gradientBG.TRBG.body.height = 4 * SCRN_HT;
-
-	gradientBG.TLBG.body.center.x = 0;
-	gradientBG.TLBG.body.center.y = 0;
-	gradientBG.TLBG.body.width = 4 * SCRN_WD;
-	gradientBG.TLBG.body.height = 4 * SCRN_HT;
-
 	//Sun Attributes
 	sun.radius = (GLfloat)SCRN_HT;
 	sun.color = Assets::palette.sun;
 	sun.center.x = (GLfloat)SCRN_WD;
 	sun.center.y = (GLfloat)SCRN_HT;
-
-	Platform p;
-	
-	//Floor Center
-	p.body.center.x = 0.0;
-	p.body.center.y = SCRN_HT / -3.0f;
-	p.outline.center.x = p.body.center.x;
-	p.outline.center.y = p.body.center.y;
-
-	//Floor Dimensions
-	p.body.width = 5.0f * SCRN_WD / 6.0f;
-	p.body.height = SCRN_HT / 20.0f;
-	p.outline.width = p.body.width + THICKNESS;
-	p.outline.height = p.body.height + THICKNESS;
-
-	//Floor Boundaries - For Physics
-	p.body.boundary_assignment();
-
-	//Assign Color to Floor
-	p.body.color = Assets::platformPalette.grass.body;
-	p.outline.color = Assets::platformPalette.grass.outline;
-
-	//Floor Stroke Assignment
-	p.body.boundary_assignment();
-
-	platform.push_back(p);
 
 	//Wind
 	(rand() % 2 == 0) ? windDirection = RIGHT : windDirection = LEFT;
@@ -212,29 +168,32 @@ Field_Level::Field_Level() : Level()
 		it->get()->body[0].get()->center.x = it->get()->body[1].get()->center.x - it->get()->body[1].get()->radius;
 		it->get()->body[2].get()->center.x = it->get()->body[1].get()->center.x + it->get()->body[1].get()->radius;
 	}
+
+	set_platforms();
 }
 
 void Field_Level::update_clouds()
 {
 	GLfloat arg1, arg2;
-	int i = 0;
+	int offset = 0;
 
-	vector<unique_ptr<Cloud>>::iterator it;
-
-	for (it = clouds.begin(); it != clouds.end(); ++it) {
-		// Parameters to determine when a cloud is off screen : 
-		// Direction: Left, Anlyze position of Right subcloud
-		arg1 = it->get()->body[2].get()->center.x + (it->get()->body[2].get()->radius);
-		arg2 = it->get()->body[0].get()->center.x - (it->get()->body[0].get()->radius);
+	for (vector<unique_ptr<Cloud>>::iterator it = clouds.begin(); it != clouds.end(); ++it) {
+		// Parameters to determine when a cloud is off screen
+		arg1 = it->get()->body[1]->center.x + (it->get()->body[1]->radius * 3); // Left
+		arg2 = it->get()->body[1]->center.x - (it->get()->body[1]->radius * 3); // Right
+		offset = it - clouds.begin();
 
 		//Reset if Last Cloud Offscreen
-		if ((arg1 < -2.0f * SCRN_WD && windDirection == LEFT) 
-			|| (arg2 > 2.0f * SCRN_WD && windDirection == RIGHT)) 
-			it->get()->offScreen ^= 1;;
+		if (arg1 < -SCRN_WD && windDirection == LEFT) {
+			clouds.erase(clouds.begin() + offset);
+			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
+		}
+		else if (arg2 > SCRN_WD && windDirection == RIGHT) {
+			clouds.erase(clouds.begin() + offset);
+			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
+		}
 
 		it->get()->update(windDirection);
-
-		++i;
 	}
 }
 
@@ -284,10 +243,7 @@ void Field_Level::phys_handler()
 void Field_Level::render()
 {
 	blackVoid.render();
-	filterBG.render();
 	background.render();
-	//gradientBG.render();
-
 	sun.render();
 
 	vector<unique_ptr<Cloud>>::iterator it;
@@ -295,18 +251,14 @@ void Field_Level::render()
 	for (it = clouds.begin(); it != clouds.end(); ++it) 
 		it->get()->render();
 	
-	platform.at(0).outline.render();
-	platform.at(0).body.render();
+	for (vector<Platform>::iterator it = platform.begin(); it != platform.end(); ++it) {
+		it->outline.render();
+		it->body.render();
+	}
 }
 
 Night_Level::Night_Level() : Level()
 {
-	Platform p0, p1, p2, p3;
-	platform.push_back(p0);
-	platform.push_back(p1);
-	platform.push_back(p2);
-	platform.push_back(p3);
-
 	//Background Attributes
 	background.body.center.x = 0;
 	background.body.center.y = 0;
@@ -322,43 +274,7 @@ Night_Level::Night_Level() : Level()
 	moon.center.y = SCRN_HT / 2.0f;
 	moon.radius = SCRN_HT / 2.0f;
 
-	//Platform Horizontal Center
-	platform.at(0).body.center.x = 0;
-	platform.at(1).body.center.x = -750;
-	platform.at(2).body.center.x = 0;
-	platform.at(3).body.center.x = 750;
-
-	//Platform Dimensions
-	platform.at(0).body.width = 5.0f * SCRN_WD / 6.0f;
-	platform.at(0).body.height = SCRN_HT / 20.0f;
-	platform.at(0).body.center.y = SCRN_HT / -3.0f;
-
-	for (unsigned int i = 1; i < platform.size(); i++) {
-		platform.at(i).body.width = SCRN_WD / 4.0f;
-		platform.at(i).body.height = SCRN_HT / 20.0f;
-		platform.at(i).body.center.y = 100.0f;
-	}
-
-	platform.at(2).body.center.y = SCRN_HT / 4.0f;
-
-	for (unsigned int i = 0; i < platform.size(); i++) {
-		//Floor Boundaries - For Physics
-		platform.at(i).body.boundary_assignment();
-
-		//outline centered at body
-		platform.at(i).outline.center.x = platform.at(i).body.center.x;
-		platform.at(i).outline.center.y = platform.at(i).body.center.y;
-
-		platform.at(i).outline.width = platform.at(i).body.width + THICKNESS;
-		platform.at(i).outline.height = platform.at(i).body.height + THICKNESS;
-
-		//Assign Color to Floor
-		platform.at(i).body.color = Assets::platformPalette.grass.body;
-		platform.at(i).outline.color = Assets::platformPalette.grass.outline;
-
-		//Assign Floor Outline Attributes
-		platform.at(i).body.boundary_assignment();
-	}
+	set_platforms();
 }
 
 void Night_Level::gfx_handler()
@@ -398,9 +314,9 @@ void Night_Level::render()
 	stars.render();
 	moon.render();
 
-	for (unsigned int i = 0; i < platform.size(); i++) {
-		platform.at(i).outline.render();
-		platform.at(i).body.render();
+	for (vector<Platform>::iterator it = platform.begin(); it != platform.end(); ++it) {
+		it->outline.render();
+		it->body.render();
 	}
 }
 
@@ -434,25 +350,6 @@ Time_Level::Time_Level() : Level()
 	moon.center.y = SCRN_HT / 2.0f;
 	moon.radius = SCRN_HT / 2.0f;
 
-	Platform p;
-	platform.push_back(p);
-
-	//Floor Dimensions
-	platform.at(0).body.width = 5.0f * SCRN_WD / 6.0f;
-	platform.at(0).body.height = SCRN_HT / 20.0f;
-	platform.at(0).body.center.x = 0.0f;
-	platform.at(0).body.center.y = SCRN_HT / -3.0f;
-
-	//Floor Boundaries - For Physics
-	platform.at(0).body.boundary_assignment();
-
-	//Assign Color to Floor
-	platform.at(0).body.color = Assets::palette.platform;
-	platform.at(0).outline.color = Assets::palette.black;
-
-	//Floor Stroke Assignment
-	platform.at(0).body.boundary_assignment();
-
 	//Wind
 	(rand() % 2 == 0) ? windDirection = RIGHT : windDirection = LEFT;
 
@@ -468,33 +365,31 @@ Time_Level::Time_Level() : Level()
 		it->get()->body[0].get()->center.x = randX - it->get()->body[1].get()->radius;
 		it->get()->body[2].get()->center.x = randX + it->get()->body[1].get()->radius;
 	}
+
+	set_platforms();
 }
 
 void Time_Level::update_clouds()
 {
 	GLfloat arg1, arg2;
-	int i = 0;
+	int offset = 0;
 
-	vector<unique_ptr<Cloud>>::iterator it;
-
-	for (it = clouds.begin(); it != clouds.end(); ++it) {
+	for (vector<unique_ptr<Cloud>>::iterator it = clouds.begin(); it != clouds.end(); ++it) {
 		// Parameters to determine when a cloud is off screen
-		arg1 = it->get()->body[1].get()->center.x + (it->get()->body[1].get()->radius * 3);
-		arg2 = it->get()->body[1].get()->center.x - (it->get()->body[1].get()->radius * 3);
+		arg1 = it->get()->body[1]->center.x + (it->get()->body[1]->radius * 3);
+		arg2 = it->get()->body[1]->center.x - (it->get()->body[1]->radius * 3);
+		offset = it - clouds.begin();
 
 		//Reset if Last Cloud Offscreen
-		if (arg1 < (-1.0f * SCRN_WD) && windDirection == LEFT) {
-			clouds.erase(clouds.begin() + i);
-			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
+		if (arg1 < -SCRN_WD && windDirection == LEFT) {
+			clouds.erase(clouds.begin() + offset);
+			clouds.push_back(make_unique<Cloud>(Cloud::make_cloud(windDirection)));
 		}
 		else if (arg2 > SCRN_WD && windDirection == RIGHT) {
-			clouds.erase(clouds.begin() + i);
-			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
+			clouds.erase(clouds.begin() + offset);
+			clouds.push_back(make_unique<Cloud>(Cloud::make_cloud(windDirection)));
 		}
-
 		it->get()->update(windDirection);
-
-		++i;
 	}
 }
 
@@ -503,14 +398,14 @@ void Time_Level::purge_clouds()
 	for (unsigned int i = 0; i < clouds.size(); ++i) {
 		if (clouds[i].get()->offScreen) {
 			clouds.erase(clouds.begin() + i);
-			clouds.push_back(make_unique<Cloud>(Cloud().make_cloud(windDirection)));
+			clouds.push_back(make_unique<Cloud>(Cloud::make_cloud(windDirection)));
 		}
 	}
 }
 
+/* Great Candidate for State Design Pattern */
 void Time_Level::transition_handler()
 {
-	
 	if (transition == true)
 		switch (timeOfDay)
 		{
@@ -591,8 +486,10 @@ void Time_Level::render()
 	for (it = clouds.begin(); it != clouds.end(); ++it)
 		it->get()->render();
 
-	platform.at(0).body.render();
-	platform.at(0).outline.render();
+	for (vector<Platform>::iterator it = platform.begin(); it != platform.end(); ++it) {
+		it->outline.render();
+		it->body.render();
+	}
 }
 
 //changes color of background by factor of 1 each frame

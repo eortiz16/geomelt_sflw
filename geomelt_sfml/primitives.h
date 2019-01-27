@@ -10,7 +10,7 @@ namespace geomelt
 	class Vec {
 	public:
 		float x, y, z;
-
+	
 		Vec() {}
 		Vec(float, float, float);
 
@@ -23,12 +23,21 @@ namespace geomelt
 		friend class Cloud;
 		friend class RoundCornerBox;
 		friend class Background;
-		friend class MainMenu;
+
 		friend class Player;
 		friend class Ball;
 		friend class Boxy;
+
+		friend class Menu;
+		friend class MainMenu;
 		friend class LevelSelect;
 		friend class CharacterSelect;
+		friend class Level;
+		friend class Pause;
+		
+		friend class Camera;
+		friend class Cloud;
+		friend class Player;
 	};
 
 	class Color {
@@ -91,7 +100,6 @@ namespace geomelt
 		friend class Field_Level;
 		friend class Night_Level;
 		friend class Time_Level;
-		friend class Game;
 		friend class GFXNet;
 	};
 

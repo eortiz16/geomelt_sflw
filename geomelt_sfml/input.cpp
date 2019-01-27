@@ -9,3 +9,4 @@ int Input::translateY(int y)
 {
 	return -y + (SCRN_HT - y);
 }
+

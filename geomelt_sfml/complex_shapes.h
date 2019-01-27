@@ -60,7 +60,7 @@ private:
 	friend class MainMenuState;
 	friend class CharacterSelect;
 	friend class CharacterSelectState;
-	friend class LvlSelectState;
+	friend class LevelSelectState;
 	friend class LevelSelect;
 	friend class Cursor;
 public:
@@ -97,6 +97,7 @@ private:
 
 	friend class CharacterSelect;
 	friend class CharacterSelectState;
+	friend class AddCharacterCommand;
 public:
 	CharSelBox() { occupied = false; }
 };

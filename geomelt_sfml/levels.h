@@ -27,42 +27,29 @@ inline void operator++(TOD &ti, int)
 	ti = static_cast<TOD>((i + 1) % TOD_CARDINALITY);
 }
 
-class GradientBG {
-private:
-	Background TLBG;
-	Background TRBG;
-	Background LLBG;
-	Background LRBG;
-
-	friend class Level;
-	friend class Field_Level;
-	friend class Night_Level;
-	friend class Time_Level;
-public:
-	void render();
-};
-
 class Level {
 protected:
 	Background blackVoid;
 	Background background;
-	GradientBG gradientBG;
-	geomelt::Quad filterBG;
 	vector<Platform> platform;
 	static map<unsigned int, unique_ptr<Player>> playerMap;
 
-	//My friends
-	friend class Game;
-	friend class Input;
-	friend class CharacterSelect;
 	friend class CharacterSelectState;
 	friend class LevelState;
-	friend class PauseState;
-	friend class MainMenuState;
+	friend class JumpCommand;
+	friend class AttackCommand;
+	friend class MoveLeftCommand;
+	friend class MoveRightCommand;
+	friend class StopCommand;
+	friend class ChangeCharacterCommand;
+	friend class AddCharacterCommand;
+	friend class PrevColorCommand;
+	friend class NextColorCommand;
 public:
 	virtual void render() = 0;
 	virtual void gfx_handler() = 0;
 	virtual void phys_handler() = 0;
+	void set_platforms();
 	void reset_level();
 	void purge_players();
 	void add_player(unsigned int joyID);
@@ -77,16 +64,9 @@ private:
 	vector<unique_ptr<Cloud>> clouds;
 	Direction windDirection;
 	geomelt::Circle sun;
-
-	// My Friends
-	friend class Player;
-	friend class Attributes;
-	friend class LevelState;
-	friend class PauseState;
 public:
 	void update_clouds();
 	void purge_clouds();
-	
 	void render();
 	void gfx_handler();
 	void phys_handler();
@@ -99,12 +79,6 @@ class Night_Level : public Level {
 private:
 	StarGroup stars;
 	geomelt::Circle moon;
-
-	// My Friends
-	friend class Player;
-	friend class Attributes;
-	friend class LevelState;
-	friend class PauseState;
 public:
 	void render();
 	void gfx_handler();
@@ -124,20 +98,12 @@ private:
 	StarGroup stars; //change opacity during day
 	Direction windDirection;
 	Palette_BG bg_pal;
-
-	// My Friends
-	friend class Player;
-	friend class Attributes;
-	friend class LevelState;
-	friend class PauseState;
 public:
 	void update_clouds();
 	void purge_clouds();
-
 	void render();
 	void gfx_handler();
 	void phys_handler();
-
 	void transition_handler();
 	void transition_to(geomelt::Color *clr);
 

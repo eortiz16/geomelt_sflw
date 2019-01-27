@@ -13,6 +13,8 @@ constexpr auto MS_PER_UPDATE() { return 1000.0f / (float)FPS; }
 
 class RState;
 class Command;
+class Menu;
+class Level;
 
 class GFXNet {
 private:
@@ -32,31 +34,38 @@ public:
 	GFXNet();
 	~GFXNet() {}
 
-	friend class Game;
+	friend class Input;
+
 	friend class RState;
 	friend class MainMenuState;
 	friend class CharacterSelectState;
-	friend class LvlSelectState;
+	friend class LevelSelectState;
 	friend class LevelState;
 	friend class PauseState;
 	
 	friend class Command;
 	friend class CommandMainMenu;
-	friend class NavLeftCommand;
-	friend class NavRightCommand;
-	friend class NavUpCommand;
-	friend class NavDownCommand;
+	friend class PrevCommand;
+	friend class NextCommand;
 	friend class ConfirmCommand;
 	friend class DenyCommand;
+	friend class ExitCommand;
 
 	friend class JumpCommand;
 	friend class AttackCommand;
 	friend class MoveLeftCommand;
 	friend class MoveRightCommand;
+	friend class StopCommand;
+	friend class CommandLevel;
+
+	friend class ChangeCharacterCommand;
+	friend class AddCharacterCommand;
+	friend class PrevColorCommand;
+	friend class NextColorCommand;
 };
 
 class RState {
-protected:
+private:
 	GFXNet* _context;
 public:
 	virtual void next() = 0;
@@ -67,15 +76,32 @@ public:
 	RState() {}
 	RState(GFXNet* context) {}
 	virtual ~RState() {}
-	friend class Game;
+	
+	friend class Input;
+
+	friend class MainMenuState;
+	friend class CharacterSelectState;
+	friend class LevelSelectState;
+	friend class LevelState;
+	friend class PauseState;
 	friend class JumpCommand;
 	friend class AttackCommand;
 	friend class MoveLeftCommand;
 	friend class MoveRightCommand;
+	friend class StopCommand;
+	friend class CommandLevel;
+	friend class ConfirmCommand;
+	friend class DenyCommand;
+	friend class ExitCommand;
+
+	friend class ChangeCharacterCommand;
+	friend class AddCharacterCommand;
+	friend class PrevColorCommand;
+	friend class NextColorCommand;
 };
 
 class MenuState : public RState {
-protected:
+private:
 	unique_ptr<Menu> menu;
 public:
 	virtual void next() = 0;
@@ -84,16 +110,22 @@ public:
 	virtual void read_input() = 0;
 
 	MenuState() {}
-	MenuState(GFXNet* context);
+	MenuState(GFXNet* context) {}
 	~MenuState() {}
 
+	friend class MainMenuState;
+	friend class CharacterSelectState;
+	friend class LevelSelectState;
+	friend class PauseState;
 	friend class CommandMainMenu;
-	friend class NavLeftCommand;
-	friend class NavRightCommand;
-	friend class NavUpCommand;
-	friend class NavDownCommand;
+	friend class PrevCommand;
+	friend class NextCommand;
 	friend class ConfirmCommand;
 	friend class DenyCommand;
+
+	friend class AddCharacterCommand;
+	friend class PrevColorCommand;
+	friend class NextColorCommand;
 };
 
 class MainMenuState : public MenuState {
@@ -108,10 +140,8 @@ public:
 	~MainMenuState() {}
 
 	friend class CommandMainMenu;
-	friend class NavLeftCommand;
-	friend class NavRightCommand;
-	friend class NavUpCommand;
-	friend class NavDownCommand;
+	friend class PrevCommand;
+	friend class NextCommand;
 	friend class ConfirmCommand;
 	friend class DenyCommand;
 };
@@ -128,16 +158,16 @@ public:
 	~CharacterSelectState() {}
 };
 
-class LvlSelectState : public MenuState {
+class LevelSelectState : public MenuState {
 public:
 	void next();
 	void prev();
 	void handler();
 	void read_input();
 
-	LvlSelectState() {}
-	LvlSelectState(GFXNet* context);
-	~LvlSelectState() {}
+	LevelSelectState() {}
+	LevelSelectState(GFXNet* context);
+	~LevelSelectState() {}
 };
 
 class PauseState : public MenuState {
