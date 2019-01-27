@@ -106,8 +106,9 @@ public:
 	void move(Direction dir);
 	void reset_attributes();
 	virtual void render(void) = 0;
-	virtual void update_position(vector<Platform> plat) = 0;
-	virtual void physics(vector<Platform> plat);
+
+	virtual void update_position(PlatformGroup plat) = 0;
+	virtual void physics(PlatformGroup plat);
 	
 	Player& operator = (const Char_Color_Set &clr)
 	{
@@ -127,7 +128,7 @@ public:
 class Ball : public Player {
 public:
 	void render();
-	void update_position(vector<Platform> plat);
+	void update_position(PlatformGroup plat);
 	void jump();
 	void exhale();
 	void special() {}
@@ -145,7 +146,7 @@ public:
 class Boxy : public Player {
 public:
 	void render();
-	void update_position(vector<Platform> plat);
+	void update_position(PlatformGroup plat);
 	void jump();
 	void special() {}
 	

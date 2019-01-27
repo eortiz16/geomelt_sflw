@@ -113,6 +113,7 @@ namespace geomelt
 		void boundary_assignment();
 		virtual void render() = 0; // <--- Abstract class
 		Shape() {}
+		Shape(float w, float h, float r, Color clr, Vec v);
 		~Shape() {}
 
 		friend class Star;
@@ -127,6 +128,7 @@ namespace geomelt
 	public:
 		virtual void render();
 		Circle() {}
+		Circle(float w, float h, float r, Color clr, Vec v) : Shape(w, h, r, clr, v) {}
 		~Circle() {}
 
 		friend class Star;
@@ -141,7 +143,7 @@ namespace geomelt
 	public:
 		void render();
 		Quad() {}
-		Quad(Vec v, float w, float h) { center.x = v.x; center.y = v.y; width = w; height = h; };
+		Quad(float w, float h, float r, Color clr, Vec v) : Shape(w, h, r, clr, v) {}
 		~Quad() {}
 
 		friend class Star;

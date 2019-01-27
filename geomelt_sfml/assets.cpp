@@ -1,10 +1,12 @@
 #include "assets.h"
 
+/*
 sf::Font Assets::font;
 sf::Texture Assets::backgroundTexture;
 sf::Texture Assets::texture;
-Textures Assets::textures;
 sf::Sprite Assets::background;
+*/
+Textures Assets::textures;
 Palette Assets::palette;
 Palette_BG Assets::backgroundPalette;
 Palette_CHAR Assets::characterPalette;
@@ -12,6 +14,7 @@ Palette_PLAT Assets::platformPalette = Palette_PLAT(palette);
 
 Assets::Assets()
 {
+	/*
 	if (!font.loadFromFile("resources/sansation.ttf"))
 		cout << "font failed to load\n";
 
@@ -21,6 +24,7 @@ Assets::Assets()
 
 	sf::Sprite temp(backgroundTexture);
 	background = temp;
+	*/
 }
 
 Palette::Palette()
@@ -321,14 +325,12 @@ Textures::Textures()
 	night.loadFromFile("resources/textures/night.png");
 	time.loadFromFile("resources/textures/time.png");
 	title.loadFromFile("resources/textures/title.png");
-
 	play.loadFromFile("resources/textures/play_u.png");
 	playSelected.loadFromFile("resources/textures/play_s.png");
 	options.loadFromFile("resources/textures/options_u.png");
 	optionsSelected.loadFromFile("resources/textures/options_s.png");
 	exit.loadFromFile("resources/textures/exit_u.png");
 	exitSelected.loadFromFile("resources/textures/exit_s.png");
-
 	button_A.loadFromFile("resources/textures/controls/button_A.png");
 	button_B.loadFromFile("resources/textures/controls/button_B.png");
 	button_X.loadFromFile("resources/textures/controls/button_X.png");

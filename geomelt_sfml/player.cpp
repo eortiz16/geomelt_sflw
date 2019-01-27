@@ -53,7 +53,7 @@ void Player::change_color(SelectColor option)
 	}
 }
 
-void Player::physics(vector<Platform> plat)
+void Player::physics(PlatformGroup plat)
 {
 	if (stats.lifeState == ALIVE)
 	{
@@ -64,14 +64,14 @@ void Player::physics(vector<Platform> plat)
 		body->center.x += velocity.x;
 
 		//Check contact with each platform in level
-		for (unsigned int i = 0; i < plat.size(); i++) {
-			if (body->boundary.isWithin(plat.at(i).body.boundary, body->center.x)
+		for (vector<Platform>::iterator it = plat.platforms.begin(); it != plat.platforms.end(); ++it) {
+			if (body->boundary.isWithin(it->body.boundary, body->center.x)
 				&& velocity.y <= 0.0) {
 				//Reset attributes
 				toggle.on_ground = true;
 				jumpCount = 0;
 				velocity.y *= -0.25f;
-				body->center.y = plat.at(i).body.boundary.top + body->height / 2;
+				body->center.y = it->body.boundary.top + body->height / 2;
 				break;
 			}
 			else
@@ -339,7 +339,7 @@ void Ball::render()
 	}
 }
 
-void Ball::update_position(vector<Platform> plat)
+void Ball::update_position(PlatformGroup plat)
 {
 	if (stats.lifeState == ALIVE)	{
 		physics(plat);
@@ -447,7 +447,7 @@ void Boxy::render()
 	}
 }
 
-void Boxy::update_position(vector<Platform> plat)
+void Boxy::update_position(PlatformGroup plat)
 {
 	// If player is alive
 	if (stats.lifeState == ALIVE) {

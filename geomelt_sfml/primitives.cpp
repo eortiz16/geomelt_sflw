@@ -26,6 +26,17 @@ void geomelt::Shape::boundary_assignment()
 	boundary.right = center.x + width / 2;
 }
 
+geomelt::Shape::Shape(float w, float h, float r, Color clr, Vec v)
+{
+	width = w;
+	height = h;
+	radius = r;
+	color = clr;
+	center = v;
+
+	boundary_assignment();
+}
+
 void geomelt::Circle::render()
 {
 	GLfloat arg1, arg2;

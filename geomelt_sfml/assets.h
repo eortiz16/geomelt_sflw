@@ -21,6 +21,7 @@ private:
 	friend class Player;
 	friend class Ball;
 	friend class Boxy;
+	friend class PlatformGroup;
 public:
 	Color_Set& operator = (const Color_Set &clr)
 	{
@@ -94,6 +95,7 @@ private:
 	friend class Field_Level;
 	friend class Night_Level;
 	friend class Time_Level;
+	friend class CharacterSelect;
 public:
 	Palette_BG();
 };
@@ -106,6 +108,7 @@ private:
 	friend class Field_Level;
 	friend class Night_Level;
 	friend class Time_Level;
+	friend class PlatformGroup;
 public:
 	Palette_PLAT(Palette pal);
 };
@@ -189,11 +192,14 @@ public:
 
 class Assets {
 private:
+	/*
 	static sf::Font font;
 	static sf::Texture backgroundTexture;
 	static sf::Texture texture;
+	static sf::Sprite sprite;
+	*/
+
 	static Textures textures;
-	static sf::Sprite background;
 	static Palette palette;
 	static Palette_BG backgroundPalette;
 	static Palette_CHAR characterPalette;
@@ -201,6 +207,7 @@ private:
 
 	friend class MainMenu;
 	friend class CharacterSelect;
+	friend class CharSelState;
 	friend class LevelSelect;
 	friend class Level;
 	friend class MainMenuState;
@@ -209,6 +216,8 @@ private:
 	friend class Time_Level;
 	friend class Ball;
 	friend class Boxy;
+
+	friend class PlatformGroup;
 public:
 	Assets();
 	~Assets() {}

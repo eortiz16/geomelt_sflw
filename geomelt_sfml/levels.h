@@ -27,11 +27,43 @@ inline void operator++(TOD &ti, int)
 	ti = static_cast<TOD>((i + 1) % TOD_CARDINALITY);
 }
 
+class Platform {
+private:
+	geomelt::Quad body;
+	geomelt::Quad outline;
+	Color_Set my_color;
+
+	friend class Player;
+	friend class Ball;
+	friend class Boxy;
+	friend class Level;
+	friend class Field_Level;
+	friend class Night_Level;
+	friend class Time_Level;
+	friend class PlatformGroup;
+};
+
+class PlatformGroup {
+private:
+	vector<Platform> platforms;
+public:
+	void render();
+
+	PlatformGroup();
+	friend class Level;
+	friend class Field_Level;
+	friend class Night_Level;
+	friend class Time_Level;
+	friend class Player;
+	friend class Ball;
+	friend class Boxy;
+};
+
 class Level {
 protected:
 	Background blackVoid;
 	Background background;
-	vector<Platform> platform;
+	PlatformGroup platforms;
 	static map<unsigned int, unique_ptr<Player>> playerMap;
 
 	friend class CharacterSelectState;
@@ -49,7 +81,6 @@ public:
 	virtual void render() = 0;
 	virtual void gfx_handler() = 0;
 	virtual void phys_handler() = 0;
-	void set_platforms();
 	void reset_level();
 	void purge_players();
 	void add_player(unsigned int joyID);
@@ -61,12 +92,9 @@ public:
 
 class Field_Level : public Level {
 private:
-	vector<unique_ptr<Cloud>> clouds;
-	Direction windDirection;
+	CloudGroup clouds;
 	geomelt::Circle sun;
 public:
-	void update_clouds();
-	void purge_clouds();
 	void render();
 	void gfx_handler();
 	void phys_handler();
@@ -90,17 +118,14 @@ public:
 
 class Time_Level : public Level {
 private:
-	vector<unique_ptr<Cloud>> clouds;
 	TOD timeOfDay;
 	bool transition;
 	geomelt::Circle sun;
 	geomelt::Circle moon;
 	StarGroup stars; //change opacity during day
-	Direction windDirection;
+	CloudGroup clouds;
 	Palette_BG bg_pal;
 public:
-	void update_clouds();
-	void purge_clouds();
 	void render();
 	void gfx_handler();
 	void phys_handler();

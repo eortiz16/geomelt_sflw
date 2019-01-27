@@ -14,6 +14,7 @@ void Background::render()
 	glEnd();
 }
 
+//Accepts a gradient, Color is and Array of 4
 void Background::set_color(geomelt::Color *clr)
 {
 	for (int i = 0; i < CORNERS; i++)
@@ -196,7 +197,6 @@ void Star::change_color()
 	}
 }
 
-
 Star::Star(unsigned int seed) : Star() 
 {
 	float w = 4.0f * SCRN_WD;
@@ -276,4 +276,65 @@ void TexturedQuad::render()
 	glPopMatrix();
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_TEXTURE_2D);
+}
+
+
+
+CloudGroup::CloudGroup()
+{
+	//Wind Direction
+	(rand() % 2 == 0) ? windDirection = RIGHT : windDirection = LEFT;
+
+	for (int i = 0; i < MAX_CLOUDS; ++i)
+		clouds.push_back(Cloud::make_cloud(windDirection));
+
+	// Initially only Assign random X coordinate
+	for (vector<Cloud>::iterator it = clouds.begin(); it != clouds.end(); ++it) {
+		int randX = rand() % (4 * SCRN_WD) - 2 * SCRN_WD; // get random position for cloud
+		it->body[1]->center.x = (float)randX;
+		it->body[0]->center.x = randX - it->body[1]->radius;
+		it->body[2]->center.x = randX + it->body[1]->radius;
+	}
+}
+
+void CloudGroup::update()
+{
+	GLfloat arg1, arg2;
+	int offset = 0;
+
+	for (vector<Cloud>::iterator it = clouds.begin(); it != clouds.end(); ++it) {
+		// Parameters to determine when a cloud is off screen
+		arg1 = it->body[1]->center.x + (it->body[1]->radius  * 1.5f);
+		arg2 = it->body[1]->center.x - (it->body[1]->radius  * 1.5f);
+		offset = it - clouds.begin();
+
+		//Reset if Last Cloud Offscreen
+		if (arg1 < -2.0f * SCRN_WD && windDirection == LEFT) {
+			clouds.erase(clouds.begin() + offset);
+			clouds.push_back(Cloud::make_cloud(windDirection));
+		}
+		else if (arg2 > 2.0f * SCRN_WD && windDirection == RIGHT) {
+			clouds.erase(clouds.begin() + offset);
+			clouds.push_back(Cloud::make_cloud(windDirection));
+		}
+		it->update(windDirection);
+	}
+
+	purge();
+}
+
+void CloudGroup::purge()
+{
+	for (vector<Cloud>::iterator it = clouds.begin(); it != clouds.end(); ++it) {
+		if (it->offScreen) {
+			clouds.erase(it);
+			clouds.push_back(Cloud::make_cloud(windDirection));
+		}
+	}
+}
+
+void CloudGroup::render()
+{
+	for (vector<Cloud>::iterator it = clouds.begin(); it != clouds.end(); ++it)
+		it->render();
 }

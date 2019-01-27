@@ -112,12 +112,9 @@ bool MainMenu::isWithin(int x, int y)
 CharacterSelect::CharacterSelect()
 {
 	//Background Attribute Assignment
-	background.body.center = geomelt::Vec(0, 0, 0);
-	background.body.width = 2.0f * SCRN_WD;
-	background.body.height = 2.0f * SCRN_HT;
-
-	for (int i = 0; i < CORNERS; i++)
-		background.color[i] = Assets::palette.lightGrey;
+	//Shape(w, h, r, clr, v)
+	background.body = geomelt::Quad(2.0f * SCRN_WD, 2.0f * SCRN_HT, 0.0f, Assets::palette.lightGrey, geomelt::Vec(0, 0, 0));
+	background.set_color(Assets::backgroundPalette.overcast);
 
 	//assign center of each char select box
 	float wSpace = -3.0f * SCRN_WD / 4.0f;
@@ -129,7 +126,6 @@ CharacterSelect::CharacterSelect()
 
 	//Construct Char Select Box
 	for (int i = 0; i < 4; i++)	{
-		
 		sb.box.center = geomelt::Vec(wSpace, -SCRN_HT / 2.5f, 0);
 		sb.box.build();
 		sb.box.set_color(Assets::palette.white);

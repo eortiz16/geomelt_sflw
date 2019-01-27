@@ -21,6 +21,20 @@ public:
 	void update(Direction dir);
 	void render();
 	static Cloud make_cloud(Direction dir); //Factory Method
+
+	friend class CloudGroup;
+};
+
+class CloudGroup {
+private:
+	vector<Cloud> clouds;
+	Direction windDirection;
+public:
+	void update();
+	void purge();
+	void render();
+
+	CloudGroup();
 };
 
 class Star {
@@ -119,18 +133,4 @@ public:
 	Background() {}
 };
 
-class Platform {
-private:
-	geomelt::Quad body;
-	geomelt::Quad outline;
-	Color_Set my_color;
-
-	friend class Player;
-	friend class Ball;
-	friend class Boxy;
-	friend class Level;
-	friend class Field_Level;
-	friend class Night_Level;
-	friend class Time_Level;
-};
 
