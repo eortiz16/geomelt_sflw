@@ -57,6 +57,7 @@ public:
 	friend class MoveRightCommand;
 	friend class StopCommand;
 	friend class CommandLevel;
+	friend class RemoveCharacterCommand;
 
 	friend class ChangeCharacterCommand;
 	friend class AddCharacterCommand;
@@ -96,6 +97,7 @@ public:
 
 	friend class ChangeCharacterCommand;
 	friend class AddCharacterCommand;
+	friend class RemoveCharacterCommand;
 	friend class PrevColorCommand;
 	friend class NextColorCommand;
 };
@@ -124,6 +126,7 @@ public:
 	friend class DenyCommand;
 
 	friend class AddCharacterCommand;
+	friend class RemoveCharacterCommand;
 	friend class PrevColorCommand;
 	friend class NextColorCommand;
 };

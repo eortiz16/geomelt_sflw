@@ -21,6 +21,7 @@ private:
 	friend class Player;
 	friend class Ball;
 	friend class Boxy;
+	friend class PlayerMap;
 	friend class PlatformGroup;
 public:
 	Color_Set& operator = (const Color_Set &clr)
@@ -37,8 +38,7 @@ private:
 	
 	friend class Palette_CHAR;
 	friend class Player;
-	friend class Ball;
-	friend class Boxy;
+	friend class PlayerMap;
 public:
 	Char_Color_Set& operator = (const Char_Color_Set &clr)
 	{
@@ -74,6 +74,7 @@ private:
 	friend class Palette_CHAR;
 	friend class Ball;
 	friend class Boxy;
+	friend class PlayerMap;
 	friend class CharacterSelect;
 	friend class LevelSelect;
 public:
@@ -144,6 +145,7 @@ private:
 	map <CharColorOptions, Char_Color_Set> traverse_colors;
 
 	friend class Player;
+	friend class PlayerMap;
 	friend class CharacterSelect;
 	friend class Level;
 public:
@@ -216,7 +218,7 @@ private:
 	friend class Time_Level;
 	friend class Ball;
 	friend class Boxy;
-
+	friend class PlayerMap;
 	friend class PlatformGroup;
 public:
 	Assets();

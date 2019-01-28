@@ -10,6 +10,8 @@ constexpr auto JUMP_PARAM = 25.0f;
 enum PlayerState { ALIVE, DEAD, ELIMINATED };
 enum SelectColor{NEXT, PREV, RANDOM};
 
+class PlatformGroup;
+
 class Attributes {
 private:
 	float health;
@@ -19,6 +21,8 @@ private:
 	friend class Player;
 	friend class Ball;
 	friend class Boxy;
+	friend class PlayerMap;
+
 	friend class Level;
 	friend class Field_Level;
 	friend class Night_Level;
@@ -41,6 +45,8 @@ private:
 	friend class Player;
 	friend class Ball;
 	friend class Boxy;
+	friend class PlayerMap;
+
 	friend class Level;
 	friend class Command;
 	friend class CommandPlayer;
@@ -53,22 +59,18 @@ public:
 };
 
 class Player {
-private:
-	static unsigned int count; // num of players
+protected:
 	static vector<int> availableIDs;
-
 	float weight;
+	geomelt::Vec velocity;
 	float move_param_x; // speed
 	float move_param_y; // jump
 	int JUMP_MAX;
 	int jumpCount;
 	Direction direction;
-
 	unsigned int myID;
 	Toggle toggle;
 	Attributes stats;
-	geomelt::Vec velocity;
-
 	unique_ptr<geomelt::Shape> body;
 	unique_ptr<geomelt::Shape> outline;
 	unique_ptr<geomelt::Shape> reflection;
@@ -82,8 +84,7 @@ private:
 	friend class Time_Level;
 	friend class Night_Level;
 	friend class CharacterSelect;
-	friend class Boxy;
-	friend class Ball;
+	friend class PlayerMap;
 	friend class Camera;
 	friend class LevelState;
 	friend class Command;
@@ -156,4 +157,27 @@ public:
 	~Boxy() {}
 
 	friend class LevelState;
+};
+
+class PlayerMap {
+private:
+	static map<unsigned int, unique_ptr<Player>> _map;
+public:
+	void add(unsigned int id);
+	void purge(unsigned int id);
+	void transform(unsigned int id);
+	void change_color(unsigned int id, SelectColor dir);
+	void attack(unsigned int id);
+	void jump(unsigned int id);
+	void move(unsigned int id, Direction dir);
+	void stop(unsigned int id);
+	void clear();
+	unsigned int size();
+	void render();
+	void options_render(vector<CharSelBox> selectBox);
+	void phys_handler(PlatformGroup plat);
+	void reset();
+
+	friend class Camera;
+	friend class LevelSelectState;
 };

@@ -91,6 +91,7 @@ private:
 	geomelt::Quad vRectangle, hRectangle; //vertical, horizontal
 
 	friend class CharacterSelect;
+	friend class PlayerMap;
 public:
 	void set_color(geomelt::Color clr);
 	void build();
@@ -110,6 +111,8 @@ private:
 	friend class CharacterSelect;
 	friend class CharacterSelectState;
 	friend class AddCharacterCommand;
+	friend class RemoveCharacterCommand;
+	friend class PlayerMap;
 public:
 	CharSelBox() { occupied = false; }
 };

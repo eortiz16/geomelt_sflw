@@ -145,7 +145,7 @@ CharacterSelect::CharacterSelect()
 	}
 }
 
-void CharacterSelect::handler(map<unsigned int, unique_ptr<Player>>& players)
+void CharacterSelect::handler(PlayerMap players)
 {
 	//Fixed Camera
 	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1);
@@ -161,16 +161,7 @@ void CharacterSelect::handler(map<unsigned int, unique_ptr<Player>>& players)
 			selectBox[i].start_icon.render();
 	}
 
-	map<unsigned int, unique_ptr<Player>>::iterator it = players.begin();
-	
-	while (it != players.end()) {
-		*it->second = Assets::characterPalette.traverse_colors[it->second->myColor];
-		it->second->body->center = selectBox[it->second->myID].box.center;
-		it->second->simple_update_menu();
-		it->second->render();
-
-		it++;
-	}
+	players.options_render(selectBox);
 }
 
 LevelSelect::LevelSelect()

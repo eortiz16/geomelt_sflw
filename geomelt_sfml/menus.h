@@ -4,9 +4,12 @@
 #include "assets.h"
 #include "complex_shapes.h"
 #include "input.h"
+#include "levels.h"
 
 constexpr auto SELECTED_CARDINALITY = 3;
 enum Selected { PLAY, OPTIONS, EXIT };
+
+class Level;
 
 inline void operator++(Selected &sel, int)
 {
@@ -105,6 +108,7 @@ public:
 	friend class NextCommand;;
 	friend class ConfirmCommand;
 	friend class DenyCommand;
+	friend class RemoveCharacterCommand;
 };
 
 class CharacterSelect : public Menu {
@@ -112,7 +116,7 @@ private:
 	Background background;
 	vector<CharSelBox> selectBox;
 public:
-	void handler(map<unsigned int, unique_ptr<Player>>& players);
+	void handler(PlayerMap players);
 
 	CharacterSelect();
 	~CharacterSelect() {}
@@ -123,6 +127,8 @@ public:
 	friend class ConfirmCommand;
 	friend class DenyCommand;
 	friend class AddCharacterCommand;
+	friend class RemoveCharacterCommand;
+
 };
 
 class LevelSelect : public Menu {

@@ -1,6 +1,6 @@
 #include "levels.h"
 
-map<unsigned int, unique_ptr<Player>> Level::playerMap;
+PlayerMap Level::players;
 
 unique_ptr<Level> Level::make(Lvl lvl)
 {
@@ -20,45 +20,29 @@ unique_ptr<Level> Level::make(Lvl lvl)
 	}
 }
 
-void Level::add_player(unsigned int joyID)
+void Level::render()
 {
-	bool is_created_already = false;
-
-	if (playerMap.size() >= 0 && playerMap.size() < 8) {
-		map<unsigned int, unique_ptr<Player>>::iterator it;
-
-		for (it = playerMap.begin(); it != playerMap.end(); ++it) {
-			if (it->first == joyID) // If map exists
-				is_created_already = true; //Don't create
-		}
-
-		if (is_created_already == false) {
-			playerMap[joyID] = unique_ptr<Player>(new Ball());
-
-			Player *plyr = playerMap[joyID].get();
-			*plyr = Assets::characterPalette.traverse_colors[plyr->myColor];
-		}
-	}
+	blackVoid.render();
+	background.render();
 }
 
-void Level::purge_players()
+void Level::gfx_handler()
 {
-	map<unsigned int, unique_ptr<Player>>::iterator it;
-
-	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
-		if (it->second->stats.lifeState == ELIMINATED) { //Erase if eliminated
-			it->second.reset();
-			playerMap.erase(it);
-			break;
-		}
-	}
+	//Dynamic Camera
+	glOrtho(Camera::edges.left, Camera::edges.right, Camera::edges.bottom, Camera::edges.top, -1, 1);
+	render();
 }
 
-void Level::reset_level()
+void Level::phys_handler()
 {
-	map<unsigned int, unique_ptr<Player>>::iterator it;
+	players.phys_handler(platforms);
+	Camera::set_center();
+	Camera::set_edges();
+}
 
-	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
+void PlayerMap::reset()
+{
+	for (map<unsigned int, unique_ptr<Player>>::iterator it = _map.begin(); it != _map.end(); ++it) {
 		it->second->body->height = 100;
 		it->second->body->width = 100;
 		it->second->body->radius = 50;
@@ -102,46 +86,19 @@ Field_Level::Field_Level() : Level()
 	sun.center.y = (GLfloat)SCRN_HT;
 }
 
-void Field_Level::gfx_handler()
-{
-	//Dynamic Camera
-	glOrtho(Camera::edges.left, Camera::edges.right, Camera::edges.bottom, Camera::edges.top, -1, 1);
-
-	render();
-
-	map<unsigned int, unique_ptr<Player>>::iterator it;
-
-	for (it = playerMap.begin(); it != playerMap.end(); ++it) {		
-		if (it->second->stats.lifeState == ALIVE)
-			it->second->render();
-	}
-}
-
 void Field_Level::phys_handler()
 {
+	Level::phys_handler();
 	clouds.update();
-
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = playerMap.begin(); it != playerMap.end(); ++it) {
-		if (it->second->stats.lifeState != ELIMINATED)
-			it->second->update_position(platforms);
-
-		it->second->death_handler();
-	}
-
-	Camera::set_center(playerMap);
-	Camera::set_edges();
 }
 
 void Field_Level::render()
 {
-	blackVoid.render();
-	background.render();
+	Level::render();
 	sun.render();
-
-	vector<unique_ptr<Cloud>>::iterator it;
-
 	clouds.render();
 	platforms.render();
+	players.render();
 }
 
 Night_Level::Night_Level() : Level()
@@ -162,43 +119,18 @@ Night_Level::Night_Level() : Level()
 	moon.radius = SCRN_HT / 2.0f;
 }
 
-void Night_Level::gfx_handler()
-{
-	//Dynamic Camera
-	glOrtho(Camera::edges.left, Camera::edges.right, Camera::edges.bottom, Camera::edges.top, -1, 1);
-
-	render();
-
-	map<unsigned int, unique_ptr<Player>>::iterator it;
-
-	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
-		if (it->second->stats.lifeState == ALIVE)
-			it->second->render();
-	}
-}
-
 void Night_Level::phys_handler()
 {
-	map<unsigned int, unique_ptr<Player>>::iterator it;
-
-	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
-		if (it->second->stats.lifeState != ELIMINATED)
-			it->second->update_position(platforms);
-
-		it->second->death_handler();
-	}
-
-	Camera::set_center(playerMap);
-	Camera::set_edges();
+	Level::phys_handler();
 }
 
 void Night_Level::render()
 {
-	blackVoid.render();
-	background.render();
+	Level::render();
 	stars.render();
 	moon.render();
 	platforms.render();
+	players.render();
 }
 
 Time_Level::Time_Level() : Level()
@@ -259,43 +191,16 @@ void Time_Level::transition_handler()
 		}
 }
 
-void Time_Level::gfx_handler()
+void Time_Level::phys_handler() 
 {
-	//Dynamic Camera
-	glOrtho(Camera::edges.left, Camera::edges.right, Camera::edges.bottom, Camera::edges.top, -1, 1);
-
-	render();
-
-	map<unsigned int, unique_ptr<Player>>::iterator it;
-	
-	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
-		if (it->second->stats.lifeState == ALIVE)
-			it->second->render();
-	}
-}
-
-void Time_Level::phys_handler()
-{
+	Level::phys_handler();
 	transition_handler();
-	
 	clouds.update();
-	
-	map<unsigned int, unique_ptr<Player>>::iterator it;
-
-	for (it = playerMap.begin(); it != playerMap.end(); ++it) {
-		if (it->second->stats.lifeState != ELIMINATED)
-			it->second->update_position(platforms);
-		it->second->death_handler();
-	}
-
-	Camera::set_center(playerMap);
-	Camera::set_edges();
 }
 
 void Time_Level::render()
 {
-	blackVoid.render();
-	background.render();
+	Level::render();
 
 	switch (timeOfDay)
 	{
@@ -310,8 +215,9 @@ void Time_Level::render()
 	}
 
 	clouds.render();
-
 	platforms.render();
+
+	players.render();
 }
 
 //changes color of background by factor of 1 each frame

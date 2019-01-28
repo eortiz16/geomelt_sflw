@@ -17,6 +17,7 @@ constexpr auto THICKNESS = 8;
 class Game;
 class Camera;
 class Player;
+class PlayerMap;
 
 enum Lvl { FIELD, NIGHT, TIME };
 enum TOD { DAY, AFTERNOON, EVENING, NITE, DNITE, MORNING };
@@ -34,12 +35,6 @@ private:
 	Color_Set my_color;
 
 	friend class Player;
-	friend class Ball;
-	friend class Boxy;
-	friend class Level;
-	friend class Field_Level;
-	friend class Night_Level;
-	friend class Time_Level;
 	friend class PlatformGroup;
 };
 
@@ -48,15 +43,9 @@ private:
 	vector<Platform> platforms;
 public:
 	void render();
-
 	PlatformGroup();
-	friend class Level;
-	friend class Field_Level;
-	friend class Night_Level;
-	friend class Time_Level;
+
 	friend class Player;
-	friend class Ball;
-	friend class Boxy;
 };
 
 class Level {
@@ -64,10 +53,11 @@ protected:
 	Background blackVoid;
 	Background background;
 	PlatformGroup platforms;
-	static map<unsigned int, unique_ptr<Player>> playerMap;
+	static PlayerMap players;
 
 	friend class CharacterSelectState;
 	friend class LevelState;
+	friend class LevelSelectState;
 	friend class JumpCommand;
 	friend class AttackCommand;
 	friend class MoveLeftCommand;
@@ -75,15 +65,13 @@ protected:
 	friend class StopCommand;
 	friend class ChangeCharacterCommand;
 	friend class AddCharacterCommand;
+	friend class RemoveCharacterCommand;
 	friend class PrevColorCommand;
 	friend class NextColorCommand;
 public:
-	virtual void render() = 0;
-	virtual void gfx_handler() = 0;
-	virtual void phys_handler() = 0;
-	void reset_level();
-	void purge_players();
-	void add_player(unsigned int joyID);
+	virtual void render();
+	virtual void gfx_handler();
+	virtual void phys_handler();
 	static unique_ptr<Level> make(Lvl lvl); //Factory Method
 
 	Level();
@@ -96,7 +84,6 @@ private:
 	geomelt::Circle sun;
 public:
 	void render();
-	void gfx_handler();
 	void phys_handler();
 
 	Field_Level();
@@ -109,7 +96,6 @@ private:
 	geomelt::Circle moon;
 public:
 	void render();
-	void gfx_handler();
 	void phys_handler();
 
 	Night_Level();
@@ -127,7 +113,6 @@ private:
 	Palette_BG bg_pal;
 public:
 	void render();
-	void gfx_handler();
 	void phys_handler();
 	void transition_handler();
 	void transition_to(geomelt::Color *clr);

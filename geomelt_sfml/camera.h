@@ -13,6 +13,7 @@ constexpr auto top_ortho = 0.75f * SCRN_HT;
 constexpr auto bottom_ortho = -0.75f * SCRN_HT;
 
 class Player;
+class PlayerMap;
 
 class Camera {
 private:
@@ -42,7 +43,7 @@ private:
 	friend class Pause;
 public:
 	// void update_value();
-	static void set_center(map<unsigned int, unique_ptr<Player>>& playerMap);
+	static void set_center();
 	static void set_edges();
 	static void transition();
 

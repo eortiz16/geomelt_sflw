@@ -52,39 +52,27 @@ void DenyCommand::execute(RState* state)
 /* Specific for all players */
 void JumpCommand::execute(RState* state)
 {
-	if (state->_context->level->playerMap.find(id) != state->_context->level->playerMap.end())
-		state->_context->level->playerMap[id]->jump();
+	state->_context->level->players.jump(this->id);
 }
 
 void AttackCommand::execute(RState* state)
 {
-	if (state->_context->level->playerMap.find(id) != state->_context->level->playerMap.end()) {
-		state->_context->level->playerMap[id]->toggle.attacking ^= 1;
-		state->_context->level->playerMap[id]->toggle.attackTimer.restart();
-	}
+	state->_context->level->players.attack(this->id);
 }
 
 void MoveLeftCommand::execute(RState* state)
 {
-	if (state->_context->level->playerMap.find(id) != state->_context->level->playerMap.end()) {
-		state->_context->level->playerMap[id]->toggle.walking = true;
-		state->_context->level->playerMap[id]->direction = LEFT;
-	}
+	state->_context->level->players.move(this->id, LEFT);
 }
 
 void MoveRightCommand::execute(RState* state)
 {
-	if (state->_context->level->playerMap.find(id) != state->_context->level->playerMap.end()) {
-		state->_context->level->playerMap[id]->toggle.walking = true;
-		state->_context->level->playerMap[id]->direction = RIGHT;
-	}
+	state->_context->level->players.move(this->id, RIGHT);
 }
 
 void StopCommand::execute(RState * state)
 {
-	if (state->_context->level->playerMap.find(id) != state->_context->level->playerMap.end()) {
-		state->_context->level->playerMap[id]->toggle.walking = false;
-	}
+	state->_context->level->players.stop(this->id);
 }
 
 void ExitCommand::execute(RState* state)
@@ -94,38 +82,28 @@ void ExitCommand::execute(RState* state)
 
 void AddCharacterCommand::execute(RState* state)
 {
-	state->_context->level->add_player(id);
+	state->_context->level->players.add(this->id);
 	static_cast<CharacterSelect&>(*static_cast<CharacterSelectState&>(*state).menu).selectBox[id].occupied = true;
 }
 
 void RemoveCharacterCommand::execute(RState* state)
 {
+	state->_context->level->players.purge(this->id);
 }
 
 void ChangeCharacterCommand::execute(RState* state)
 {
-	if (state->_context->level->playerMap.find(id) != state->_context->level->playerMap.end()) {
-		if (typeid(*state->_context->level->playerMap[id]).name() == typeid(Ball).name()) {
-			state->_context->level->playerMap[id].reset();
-			state->_context->level->playerMap[id] = unique_ptr<Player>(new Boxy);
-		}
-		else {
-			state->_context->level->playerMap[id].reset();
-			state->_context->level->playerMap[id] = unique_ptr<Player>(new Ball);
-		}
-	}
+	state->_context->level->players.transform(this->id);
 }
 
 void NextColorCommand::execute(RState* state)
 {
-	if (state->_context->level->playerMap.find(id) != state->_context->level->playerMap.end())
-		state->_context->level->playerMap[id].get()->change_color(NEXT);
+	state->_context->level->players.change_color(this->id, NEXT);
 }
 
 void PrevColorCommand::execute(RState* state)
 {
-	if (state->_context->level->playerMap.find(id) != state->_context->level->playerMap.end())
-		state->_context->level->playerMap[id].get()->change_color(PREV);
+	state->_context->level->players.change_color(this->id, PREV);
 }
 
 CommandLevel::CommandLevel(unsigned int id)

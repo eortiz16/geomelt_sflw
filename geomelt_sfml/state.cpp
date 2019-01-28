@@ -63,7 +63,7 @@ void GFXNet::loop()
 
 		_state->read_input();
 		
-		//Input via Command
+		//Input via Command, once executed release
 		if (command) {
 			command->execute(_state);
 			command.release();
@@ -232,14 +232,14 @@ void CharacterSelectState::next()
 
 void CharacterSelectState::prev()
 {
-	_context->level->playerMap.clear();
+	_context->level->players.clear();
 	_context->setState(new MainMenuState(_context));
 	_context->command = Command::create(_context->_state);
 }
 
 void CharacterSelectState::handler()
 {
-	static_cast<CharacterSelect&>(*menu).handler(_context->level->playerMap);
+	static_cast<CharacterSelect&>(*menu).handler(_context->level->players);
 }
 
 void CharacterSelectState::read_input()
@@ -288,7 +288,10 @@ void CharacterSelectState::read_input()
 				_context->command = unique_ptr<Command>(new ChangeCharacterCommand(event.joystickButton.joystickId));
 				break;
 			case xbox::B:
-				_context->command = unique_ptr<Command>(new DenyCommand);
+				if (_context->level->players.size() == 0)
+					_context->command = unique_ptr<Command>(new DenyCommand);
+				else
+					_context->command = unique_ptr<Command>(new RemoveCharacterCommand(event.joystickButton.joystickId));
 				break;
 			case xbox::SELECT:
 				_context->command = unique_ptr<Command>(new ConfirmCommand);
@@ -322,7 +325,7 @@ LevelSelectState::LevelSelectState(GFXNet* context)
 void LevelSelectState::next()
 {
 	_context->level = Level::make((Lvl)(std::distance(menu->cursor->icons->begin(), menu->cursor->selected)));
-	_context->level->reset_level();
+	_context->level->players.reset();
 	_context->setState(new LevelState(_context));
 	_context->command = Command::create(_context->_state);
 }
@@ -600,3 +603,4 @@ void PauseState::read_input()
 		}
 	}
 }
+

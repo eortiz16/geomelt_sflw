@@ -1,18 +1,13 @@
 #include "player.h"
+map<unsigned int, unique_ptr<Player>> PlayerMap::_map;
 
-unsigned int Player::count = 0;
 Player::Player()
 {
 	myID = extract_lowest_ID();
-	count++;
-
 	weight = 0.0f;
-
 	JUMP_MAX = 3;
 	jumpCount = 0;
-	
 	velocity = geomelt::Vec(0, 0, 0);
-
 	myColor = (CharColorOptions)myID;
 }
 
@@ -21,7 +16,6 @@ vector<int> Player::availableIDs = {0,1,2,3,4,5,6,7};
 unsigned int Player::extract_lowest_ID()
 {
 	int ID = 0;
-
 	std::sort(availableIDs.begin(), availableIDs.end());
 	ID = availableIDs.front();
 	std::swap(availableIDs.at(0), availableIDs.back());
@@ -33,7 +27,6 @@ unsigned int Player::extract_lowest_ID()
 Player::~Player()
 {
 	availableIDs.push_back(this->myID); //push to back
-	count--;
 }
 
 void Player::change_color(SelectColor option)
@@ -59,7 +52,6 @@ void Player::physics(PlatformGroup plat)
 	{
 		//This character is less affected by gravity
 		velocity.y -= weight;
-
 		body->center.y += velocity.y;
 		body->center.x += velocity.x;
 
@@ -494,4 +486,126 @@ Toggle::Toggle()
 	attacking = false;
 	walking = false;
 	on_ground = false;
+}
+
+void PlayerMap::add(unsigned int joyID)
+{
+	bool is_created_already = false;
+
+	if (_map.size() >= 0 && _map.size() < 8) {
+		map<unsigned int, unique_ptr<Player>>::iterator it;
+
+		for (it = _map.begin(); it != _map.end(); ++it) {
+			if (it->first == joyID) // If map exists
+				is_created_already = true; //Don't create
+		}
+
+		if (is_created_already == false) {
+			_map[joyID] = unique_ptr<Player>(new Ball());
+
+			Player *plyr = _map[joyID].get();
+			*plyr = Assets::characterPalette.traverse_colors[plyr->myColor];
+		}
+	}
+}
+
+void PlayerMap::purge(unsigned int id)
+{
+	_map.erase(id);
+}
+
+void PlayerMap::transform(unsigned int id)
+{
+	//if present
+	if (_map.find(id) != _map.end()) {
+		//check type
+		if (typeid(*_map[id]).name() == typeid(Ball).name()) {
+			_map[id].reset();
+			_map[id] = unique_ptr<Player>(new Boxy);
+		}
+		else {
+			_map[id].reset();
+			_map[id] = unique_ptr<Player>(new Ball);
+		}
+	}
+}
+
+void PlayerMap::attack(unsigned int id)
+{
+	if (_map.find(id) != _map.end()) {
+		_map[id]->toggle.attacking ^= 1;
+		_map[id]->toggle.attackTimer.restart();
+	}
+}
+
+void PlayerMap::jump(unsigned int id)
+{
+	if (_map.find(id) != _map.end())
+		_map[id]->jump();
+}
+
+void PlayerMap::move(unsigned int id, Direction dir)
+{
+	if (_map.find(id) != _map.end()) {
+		_map[id]->toggle.walking = true;
+		_map[id]->direction = dir;
+	}
+}
+
+void PlayerMap::change_color(unsigned int id, SelectColor dir)
+{
+	if (_map.find(id) != _map.end())
+		_map[id]->change_color(dir);
+}
+
+
+void PlayerMap::stop(unsigned int id)
+{
+	if (_map.find(id) != _map.end()) {
+		_map[id]->toggle.walking = false;
+	}
+}
+
+void PlayerMap::clear()
+{
+	_map.clear();
+}
+
+unsigned int PlayerMap::size()
+{
+	return _map.size();
+}
+
+void PlayerMap::render()
+{
+	for (map<unsigned int, unique_ptr<Player>>::iterator it = _map.begin(); it != _map.end(); ++it) {
+		if (it->second->stats.lifeState == ALIVE)
+			it->second->render();
+	}
+}
+
+void PlayerMap::options_render(vector<CharSelBox> selectBox)
+{
+	map<unsigned int, unique_ptr<Player>>::iterator it = _map.begin();
+
+	while (it != _map.end()) {
+		*it->second = Assets::characterPalette.traverse_colors[it->second->myColor];
+		it->second->body->center = selectBox[it->second->myID].box.center;
+		it->second->simple_update_menu();
+		it->second->render();
+
+		it++;
+	}
+}
+
+void PlayerMap::phys_handler(PlatformGroup plat)
+{
+	for (map<unsigned int, unique_ptr<Player>>::iterator it = _map.begin(); it != _map.end(); ++it) {
+		if (it->second->stats.lifeState != ELIMINATED)
+			it->second->update_position(plat);
+		else
+			_map.erase(it);
+
+		it->second->death_handler();
+	}
 }
