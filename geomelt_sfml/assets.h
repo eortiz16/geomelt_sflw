@@ -77,6 +77,9 @@ private:
 	friend class PlayerMap;
 	friend class CharacterSelect;
 	friend class LevelSelect;
+	friend class Satelite;
+	friend class Moon;
+	friend class Sun;
 public:
 	Palette();
 };
@@ -220,6 +223,9 @@ private:
 	friend class Boxy;
 	friend class PlayerMap;
 	friend class PlatformGroup;
+	friend class Satelite;
+	friend class Moon;
+	friend class Sun;
 public:
 	Assets();
 	~Assets() {}

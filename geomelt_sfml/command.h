@@ -21,14 +21,25 @@ public:
 };
 
 class ConfirmCommand : public Command {
+public:
+	void execute(RState* state);
+	ConfirmCommand() {}
+	~ConfirmCommand() {}
+
+	friend class MainMenuState;
+};
+
+class MouseConfirmCommand : public Command {
 private:
 	int x;
 	int y;
 public:
 	void execute(RState* state);
-	ConfirmCommand() {}
-	ConfirmCommand(int x, int y);
-	~ConfirmCommand() {}
+	MouseConfirmCommand() {}
+	MouseConfirmCommand(int x, int y);
+	~MouseConfirmCommand() {}
+
+	friend class MainMenuState;
 };
 
 class DenyCommand : public Command {

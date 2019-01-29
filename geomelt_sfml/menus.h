@@ -46,6 +46,7 @@ public:
 	friend class PrevCommand;
 	friend class NextCommand;
 	friend class ConfirmCommand;
+	friend class MouseConfirmCommand;
 	friend class DenyCommand;
 };
 
@@ -72,6 +73,7 @@ public:
 	friend class PrevCommand;
 	friend class NextCommand;
 	friend class ConfirmCommand;
+	friend class MouseConfirmCommand;
 	friend class DenyCommand;
 };
 
@@ -80,6 +82,7 @@ protected:
 	vector<unique_ptr<geomelt::Shape>> navigable;
 	unique_ptr<Cursor> cursor;
 public:
+	bool isWithin(int x, int y);
 	Menu() {}
 	~Menu() {}
 
@@ -90,6 +93,7 @@ public:
 	friend class PrevCommand;
 	friend class NextCommand;
 	friend class ConfirmCommand;
+	friend class MouseConfirmCommand;
 	friend class DenyCommand;
 };
 
@@ -99,7 +103,6 @@ private:
 	sf::Text text;
 public:
 	void handler(unique_ptr<Level>& level);
-	bool isWithin(int x, int y);
 	MainMenu();
 	~MainMenu() {}
 
@@ -107,6 +110,7 @@ public:
 	friend class PrevCommand;
 	friend class NextCommand;;
 	friend class ConfirmCommand;
+	friend class MouseConfirmCommand;
 	friend class DenyCommand;
 	friend class RemoveCharacterCommand;
 };
@@ -144,6 +148,7 @@ public:
 	friend class PrevCommand;
 	friend class NextCommand;
 	friend class ConfirmCommand;
+	friend class MouseConfirmCommand;
 	friend class DenyCommand;
 };
 

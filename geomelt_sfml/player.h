@@ -5,6 +5,7 @@
 #include "complex_shapes.h"
 #include "levels.h"
 #include "command.h"
+#include <set>
 
 constexpr auto JUMP_PARAM = 25.0f;
 enum PlayerState { ALIVE, DEAD, ELIMINATED };

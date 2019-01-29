@@ -208,7 +208,7 @@ Star::Star(unsigned int seed) : Star()
 
 	//Produces Randomly arranged stars
 	do {
-		int r1 = ((rand() % 400) - 800) * rnd();
+		int r1 = (int)(((rand() % 400) - 800) * rnd());
 		x = ((seed % 16 + 1) * horizonalPartition) - w / 2.0f - horizonalPartition / 2.0f + r1;
 		y = ((seed % 10 + 1) * verticalPartition) - h / 2.0f - verticalPartition / 2.0f + r1;
 	} while (x < (-w / 2.0f) || x > (w / 2.0f) || y < (-h / 2.0f) || y > (h / 2.0f));

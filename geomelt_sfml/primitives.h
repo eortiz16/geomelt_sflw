@@ -129,6 +129,8 @@ namespace geomelt
 		virtual void render();
 		Circle() {}
 		Circle(float w, float h, float r, Color clr, Vec v) : Shape(w, h, r, clr, v) {}
+		Circle(float r, Color clr, Vec v) : Shape(0, 0, r, clr, v) {}
+
 		~Circle() {}
 
 		friend class Star;

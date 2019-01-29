@@ -203,7 +203,7 @@ void MainMenuState::read_input()
 		case sf::Event::MouseButtonPressed:
 			switch (event.mouseButton.button) {
 			case sf::Mouse::Button::Left:
-				_context->command = unique_ptr<Command>(new ConfirmCommand(event.mouseMove.x, event.mouseMove.y));
+				_context->command = unique_ptr<Command>(new MouseConfirmCommand(sf::Mouse::getPosition(*_context->window).x, sf::Mouse::getPosition(*_context->window).y));
 				break;
 			default:
 				break;
@@ -386,7 +386,7 @@ void LevelSelectState::read_input()
 		case sf::Event::MouseButtonPressed:
 			switch (event.mouseButton.button) {
 			case sf::Mouse::Button::Left:
-				_context->command = unique_ptr<Command>(new ConfirmCommand(event.mouseMove.x, event.mouseMove.y));
+				_context->command = unique_ptr<Command>(new MouseConfirmCommand(sf::Mouse::getPosition(*_context->window).x, sf::Mouse::getPosition(*_context->window).y));
 				break;
 			default:
 				break;

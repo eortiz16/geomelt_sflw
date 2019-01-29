@@ -32,16 +32,7 @@ void NextCommand::execute(RState* state)
 
 void ConfirmCommand::execute(RState* state)
 {
-	if (typeid(state).name() != typeid(MainMenuState).name())
-		state->next();
-	else if (static_cast<MainMenu&>(*static_cast<MainMenuState&>(*state).menu).isWithin(x,y))
-		state->next();
-}
-
-ConfirmCommand::ConfirmCommand(int x, int y)
-{
-	this->x = x;
-	this->y = y;
+	state->next();
 }
 
 void DenyCommand::execute(RState* state)
@@ -109,4 +100,16 @@ void PrevColorCommand::execute(RState* state)
 CommandLevel::CommandLevel(unsigned int id)
 {
 	this->id = id;
+}
+
+void MouseConfirmCommand::execute(RState* state)
+{
+	if (static_cast<Menu&>(*static_cast<MenuState&>(*state).menu).isWithin(x, y)) 
+		state->next();
+}
+
+MouseConfirmCommand::MouseConfirmCommand(int x, int y)
+{
+	this->x = x;
+	this->y = y;
 }

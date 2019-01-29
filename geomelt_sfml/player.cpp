@@ -609,3 +609,22 @@ void PlayerMap::phys_handler(PlatformGroup plat)
 		it->second->death_handler();
 	}
 }
+
+void PlayerMap::reset()
+{
+	for (map<unsigned int, unique_ptr<Player>>::iterator it = _map.begin(); it != _map.end(); ++it) {
+		it->second->body->height = 100;
+		it->second->body->width = 100;
+		it->second->body->radius = 50;
+		it->second->body->boundary_assignment();
+		it->second->toggle.on_ground = true;
+		it->second->update_reflection_x();
+		it->second->simple_update();
+
+		if (it->second->myID % 2 == 0)
+			it->second->body->center = geomelt::Vec(500.0f, 500.0f, 0);
+		else
+			it->second->body->center = geomelt::Vec(-500.0f, 500.0f, 0);
+
+	}
+}

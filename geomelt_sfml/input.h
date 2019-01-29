@@ -44,6 +44,6 @@ enum ActionType { JUMP, ATTACK, SPECIAL };
 
 class Input {
 public:
-	static int translateX(int x);
-	static int translateY(int y);
+	static int translateX(int& x);
+	static int translateY(int& y);
 };

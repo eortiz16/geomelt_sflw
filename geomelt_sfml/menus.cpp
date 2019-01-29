@@ -85,8 +85,7 @@ void MainMenu::handler(unique_ptr<Level>& level)
 	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1);
 	glClear(1);
 
-	//draw level
-	level->phys_handler();
+	level->phys_handler(); //movement of clouds and other scenery
 	level->render();
 
 	title.render();
@@ -98,12 +97,11 @@ void MainMenu::handler(unique_ptr<Level>& level)
 	
 }
 
-bool MainMenu::isWithin(int x, int y)
+bool Menu::isWithin(int x, int y)
 {
-	if (navigable[PLAY]->boundary.isWithin(Input::translateX(x), Input::translateY(y))
-		|| navigable[OPTIONS]->boundary.isWithin(Input::translateX(x), Input::translateY(y))
-		|| navigable[EXIT]->boundary.isWithin(Input::translateX(x), Input::translateY(y))) {
-		return true;
+	for (vector<unique_ptr<geomelt::Shape>>::iterator it = navigable.begin(); it != navigable.end(); ++it) {
+		if (it->get()->boundary.isWithin(Input::translateX(x), Input::translateY(y)))
+			return true;
 	}
 
 	return false;
@@ -112,7 +110,6 @@ bool MainMenu::isWithin(int x, int y)
 CharacterSelect::CharacterSelect()
 {
 	//Background Attribute Assignment
-	//Shape(w, h, r, clr, v)
 	background.body = geomelt::Quad(2.0f * SCRN_WD, 2.0f * SCRN_HT, 0.0f, Assets::palette.lightGrey, geomelt::Vec(0, 0, 0));
 	background.set_color(Assets::backgroundPalette.overcast);
 
@@ -140,7 +137,6 @@ CharacterSelect::CharacterSelect()
 		sb.start_icon.center = geomelt::Vec(wSpace - (1.5f / 4.0f  * sb.box.width), -SCRN_HT / 2.5f, 0);
 
 		selectBox.push_back(sb);
-
 		wSpace += SCRN_WD / 2.0f;
 	}
 }

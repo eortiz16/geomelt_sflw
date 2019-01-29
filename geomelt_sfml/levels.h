@@ -5,6 +5,7 @@
 #include "assets.h"
 #include "complex_shapes.h"
 #include "camera.h"
+#include "scenery.h"
 
 #define sm_rnd() (rand() - 0.5f) / 255
 constexpr auto GRAVITY = 1.0f;
@@ -54,6 +55,7 @@ protected:
 	Background background;
 	PlatformGroup platforms;
 	static PlayerMap players;
+	unique_ptr<SceneryGroup> scenery;
 
 	friend class CharacterSelectState;
 	friend class LevelState;
@@ -79,9 +81,6 @@ public:
 };
 
 class Field_Level : public Level {
-private:
-	CloudGroup clouds;
-	geomelt::Circle sun;
 public:
 	void render();
 	void phys_handler();
@@ -91,9 +90,6 @@ public:
 };
 
 class Night_Level : public Level {
-private:
-	StarGroup stars;
-	geomelt::Circle moon;
 public:
 	void render();
 	void phys_handler();
@@ -106,10 +102,10 @@ class Time_Level : public Level {
 private:
 	TOD timeOfDay;
 	bool transition;
-	geomelt::Circle sun;
-	geomelt::Circle moon;
-	StarGroup stars; //change opacity during day
-	CloudGroup clouds;
+	//geomelt::Circle sun;
+	//geomelt::Circle moon;
+	//StarGroup stars; //change opacity during day
+	//CloudGroup clouds;
 	Palette_BG bg_pal;
 public:
 	void render();

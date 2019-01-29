@@ -48,6 +48,7 @@ public:
 	friend class PrevCommand;
 	friend class NextCommand;
 	friend class ConfirmCommand;
+	friend class MouseConfirmCommand;
 	friend class DenyCommand;
 	friend class ExitCommand;
 
@@ -63,6 +64,7 @@ public:
 	friend class AddCharacterCommand;
 	friend class PrevColorCommand;
 	friend class NextColorCommand;
+	friend class MouseConfirmCommand;
 };
 
 class RState {
@@ -92,6 +94,7 @@ public:
 	friend class StopCommand;
 	friend class CommandLevel;
 	friend class ConfirmCommand;
+	friend class MouseConfirmCommand;
 	friend class DenyCommand;
 	friend class ExitCommand;
 
@@ -100,6 +103,7 @@ public:
 	friend class RemoveCharacterCommand;
 	friend class PrevColorCommand;
 	friend class NextColorCommand;
+	friend class MouseConfirmCommand;
 };
 
 class MenuState : public RState {
@@ -123,6 +127,7 @@ public:
 	friend class PrevCommand;
 	friend class NextCommand;
 	friend class ConfirmCommand;
+	friend class MouseConfirmCommand;
 	friend class DenyCommand;
 
 	friend class AddCharacterCommand;

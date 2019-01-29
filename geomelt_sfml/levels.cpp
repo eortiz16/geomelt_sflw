@@ -24,6 +24,7 @@ void Level::render()
 {
 	blackVoid.render();
 	background.render();
+	scenery->render();
 }
 
 void Level::gfx_handler()
@@ -38,26 +39,7 @@ void Level::phys_handler()
 	players.phys_handler(platforms);
 	Camera::set_center();
 	Camera::set_edges();
-}
-
-void PlayerMap::reset()
-{
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = _map.begin(); it != _map.end(); ++it) {
-		it->second->body->height = 100;
-		it->second->body->width = 100;
-		it->second->body->radius = 50;
-		it->second->body->boundary_assignment();
-		it->second->toggle.on_ground = true;
-		it->second->update_reflection_x();
-		it->second->simple_update();
-
-		if (it->second->myID % 2 == 0) 
-			it->second->body->center = geomelt::Vec(500.0f, 500.0f, 0);
-		else
-			it->second->body->center = geomelt::Vec(-500.0f, 500.0f, 0);
-		
-	}
-}          
+}       
 
 Level::Level()
 {
@@ -79,24 +61,18 @@ Field_Level::Field_Level() : Level()
 	background.body.height = 5.0f * SCRN_HT;
 	background.set_color(Assets::backgroundPalette.day);
 
-	//Sun Attributes
-	sun.radius = (GLfloat)SCRN_HT;
-	sun.color = Assets::palette.sun;
-	sun.center.x = (GLfloat)SCRN_WD;
-	sun.center.y = (GLfloat)SCRN_HT;
+	scenery = unique_ptr<SceneryGroup>(new FieldScenery);
 }
 
 void Field_Level::phys_handler()
 {
 	Level::phys_handler();
-	clouds.update();
+	scenery->physics();
 }
 
 void Field_Level::render()
 {
 	Level::render();
-	sun.render();
-	clouds.render();
 	platforms.render();
 	players.render();
 }
@@ -108,15 +84,9 @@ Night_Level::Night_Level() : Level()
 	background.body.center.y = 0;
 	background.body.width = 4.0f * SCRN_WD;
 	background.body.height = 5.0f * SCRN_HT;
-
-	//Color assignment
 	background.set_color(Assets::backgroundPalette.night);
 
-	//Moon Attributes
-	moon.color = Assets::palette.moon;
-	moon.center.x = SCRN_WD / 2.0f;
-	moon.center.y = SCRN_HT / 2.0f;
-	moon.radius = SCRN_HT / 2.0f;
+	scenery = unique_ptr<SceneryGroup>(new NightScenery);
 }
 
 void Night_Level::phys_handler()
@@ -127,8 +97,6 @@ void Night_Level::phys_handler()
 void Night_Level::render()
 {
 	Level::render();
-	stars.render();
-	moon.render();
 	platforms.render();
 	players.render();
 }
@@ -143,25 +111,12 @@ Time_Level::Time_Level() : Level()
 	background.body.center.y = 0;
 	background.body.width = 4.0f * SCRN_WD;
 	background.body.height = 5.0f * SCRN_HT;
-
 	bg_pal = Assets::backgroundPalette;
-
 	transition = false;
-
 	//Initialize Background
 	background.set_color(Assets::backgroundPalette.evening);
-
-	//Sun Attributes
-	sun.radius = (GLfloat)SCRN_HT;
-	sun.color = Assets::palette.sun;
-	sun.center.x = (GLfloat)SCRN_WD;
-	sun.center.y = (GLfloat)SCRN_HT;
-
-	//Moon Attributes
-	moon.color = Assets::palette.moon;
-	moon.center.x = SCRN_WD / 2.0f;
-	moon.center.y = SCRN_HT / 2.0f;
-	moon.radius = SCRN_HT / 2.0f;
+	
+	scenery = unique_ptr<SceneryGroup>(new TimeScenery);
 }
 
 /* Great Candidate for State Design Pattern */
@@ -195,13 +150,14 @@ void Time_Level::phys_handler()
 {
 	Level::phys_handler();
 	transition_handler();
-	clouds.update();
+	scenery->physics();
 }
 
 void Time_Level::render()
 {
 	Level::render();
 
+	/*
 	switch (timeOfDay)
 	{
 	case DAY:
@@ -213,10 +169,9 @@ void Time_Level::render()
 		moon.render();
 		break;
 	}
+	*/
 
-	clouds.render();
 	platforms.render();
-
 	players.render();
 }
 
