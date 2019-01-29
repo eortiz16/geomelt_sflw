@@ -104,3 +104,20 @@ geomelt::Vec::Vec(float x, float y, float z)
 	this->y = y;
 	this->z = z;
 }
+
+geomelt::Color::Color(int r, int g, int b, int a)
+{
+	this->r = r;
+	this->g = g;
+	this->b = b;
+	this->alpha = a;
+}
+
+geomelt::Color & geomelt::Color::operator=(const Color & clr)
+{
+	r = clr.r;
+	g = clr.g;
+	b = clr.b;
+	alpha = clr.alpha;
+	return *this;
+}

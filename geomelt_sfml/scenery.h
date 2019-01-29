@@ -9,13 +9,20 @@ public:
 	virtual void physics() = 0;
 };
 
-class Sky : public Scenery {
+
+class Background : public Scenery {
+private:
+	geomelt::Quad body;
+	vector<geomelt::Color> color;
+	vector<bool> transition_done;
 public:
 	void render();
 	void physics();
-	Sky();
-};
+	Background();
+	Background(geomelt::Color * clr, geomelt::Quad qd);
 
+	friend class SceneryGroup;
+};
 
 class Satelite : public Scenery {
 protected:
@@ -70,6 +77,7 @@ public:
 	virtual void render();
 	virtual void physics();
 	void addObject(unique_ptr<Scenery>& obj);
+	SceneryGroup();
 };
 
 /* Potential trajectort Below */

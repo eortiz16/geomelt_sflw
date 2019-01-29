@@ -22,9 +22,9 @@ unique_ptr<Level> Level::make(Lvl lvl)
 
 void Level::render()
 {
-	blackVoid.render();
-	background.render();
 	scenery->render();
+	platforms.render();
+	players.render();
 }
 
 void Level::gfx_handler()
@@ -37,186 +37,33 @@ void Level::gfx_handler()
 void Level::phys_handler()
 {
 	players.phys_handler(platforms);
+	scenery->physics();
 	Camera::set_center();
 	Camera::set_edges();
 }       
 
 Level::Level()
 {
-	blackVoid.set_color(Assets::backgroundPalette.black);
-	blackVoid.body.center.x = 0;
-	blackVoid.body.center.y = 0;
-	blackVoid.body.width = 10.0f * SCRN_WD;
-	blackVoid.body.height = 10.0f * SCRN_HT;
 }
 
 Field_Level::Field_Level() : Level()
 {
-	srand((unsigned int)time(NULL));
-
-	//Background Color Assignment
-	background.body.center.x = 0;
-	background.body.center.y = 0;
-	background.body.width = 4.0f * SCRN_WD;
-	background.body.height = 5.0f * SCRN_HT;
-	background.set_color(Assets::backgroundPalette.day);
-
 	scenery = unique_ptr<SceneryGroup>(new FieldScenery);
-}
-
-void Field_Level::phys_handler()
-{
-	Level::phys_handler();
-	scenery->physics();
-}
-
-void Field_Level::render()
-{
-	Level::render();
-	platforms.render();
-	players.render();
 }
 
 Night_Level::Night_Level() : Level()
 {
-	//Background Attributes
-	background.body.center.x = 0;
-	background.body.center.y = 0;
-	background.body.width = 4.0f * SCRN_WD;
-	background.body.height = 5.0f * SCRN_HT;
-	background.set_color(Assets::backgroundPalette.night);
-
 	scenery = unique_ptr<SceneryGroup>(new NightScenery);
-}
-
-void Night_Level::phys_handler()
-{
-	Level::phys_handler();
-}
-
-void Night_Level::render()
-{
-	Level::render();
-	platforms.render();
-	players.render();
 }
 
 Time_Level::Time_Level() : Level()
 {
-	srand((unsigned int)time(NULL));
-
-	//Background Attribute Assignment
 	timeOfDay = EVENING;
-	background.body.center.x = 0;
-	background.body.center.y = 0;
-	background.body.width = 4.0f * SCRN_WD;
-	background.body.height = 5.0f * SCRN_HT;
+
 	bg_pal = Assets::backgroundPalette;
 	transition = false;
-	//Initialize Background
-	background.set_color(Assets::backgroundPalette.evening);
-	
+
 	scenery = unique_ptr<SceneryGroup>(new TimeScenery);
-}
-
-/* Great Candidate for State Design Pattern */
-void Time_Level::transition_handler()
-{
-	if (transition == true)
-		switch (timeOfDay)
-		{
-			case DAY:
-				transition_to(Assets::backgroundPalette.afternoon);
-				break;
-			case AFTERNOON:
-				transition_to(Assets::backgroundPalette.evening);
-				break;
-			case EVENING:
-				transition_to(Assets::backgroundPalette.night);
-				break;
-			case NITE:
-				transition_to(Assets::backgroundPalette.dark_night);
-				break;
-			case DNITE:
-				transition_to(Assets::backgroundPalette.morning);
-				break;
-			case MORNING:
-				transition_to(Assets::backgroundPalette.day);
-				break;
-		}
-}
-
-void Time_Level::phys_handler() 
-{
-	Level::phys_handler();
-	transition_handler();
-	scenery->physics();
-}
-
-void Time_Level::render()
-{
-	Level::render();
-
-	/*
-	switch (timeOfDay)
-	{
-	case DAY:
-	case AFTERNOON:
-		sun.render();
-		break;
-	default:
-		stars.render();
-		moon.render();
-		break;
-	}
-	*/
-
-	platforms.render();
-	players.render();
-}
-
-//changes color of background by factor of 1 each frame
-void Time_Level::transition_to(geomelt::Color *clr)
-{
-	//Transition from bg to clr
-	geomelt::Color *bg;
-
-	//Adjust Color of Corners
-	for (int i = 0; i < 4; i++)	{
-		bg = &background.color[i];
-
-		//Update RED
-		if (bg->r < clr[i].r)
-			bg->r += TRANSITION_RATE_TOD;
-		else if (bg->r > clr[i].r)
-			bg->r -= TRANSITION_RATE_TOD;
-
-		//Update GREEN
-		if (bg->g < clr[i].g)
-			bg->g += TRANSITION_RATE_TOD;
-		else if (bg->g > clr[i].g)
-			bg->g -= TRANSITION_RATE_TOD;
-
-		//Update BLUE
-		if (bg->b < clr[i].b)
-			bg->b += TRANSITION_RATE_TOD;
-		else if (bg->b > clr[i].b)
-			bg->b -= TRANSITION_RATE_TOD;
-
-		//If all corners are done updating
-		if (bg->r == clr[i].r && bg->g == clr[i].g && bg->b == clr[i].b)
-			background.transition_done[i] = true;
-	}
-
-	if (background.transition_done[0] == true && background.transition_done[1] == true
-		&& background.transition_done[2] == true && background.transition_done[3] == true) {
-		//Transition is Done, Reset Attributes
-		for (int i = 0; i < CORNERS; i++)
-			background.transition_done[i] = false;
-
-		transition = false;
-		timeOfDay++;
-	}
 }
 
 void PlatformGroup::render()
@@ -262,9 +109,6 @@ PlatformGroup::PlatformGroup()
 	platforms.push_back(p3);
 
 	for (vector<Platform>::iterator it = platforms.begin(); it != platforms.end(); ++it) {
-		//Floor Boundaries - For Physics
-		it->body.boundary_assignment();
-
 		//outline centered at body
 		it->outline.center = it->body.center;
 
@@ -279,3 +123,76 @@ PlatformGroup::PlatformGroup()
 		it->body.boundary_assignment();
 	}
 }
+
+/* Great Candidate for State Design Pattern */
+/*
+void Time_Level::transition_handler()
+{
+	if (transition == true)
+		switch (timeOfDay)
+		{
+			case DAY:
+				transition_to(Assets::backgroundPalette.afternoon);
+				break;
+			case AFTERNOON:
+				transition_to(Assets::backgroundPalette.evening);
+				break;
+			case EVENING:
+				transition_to(Assets::backgroundPalette.night);
+				break;
+			case NITE:
+				transition_to(Assets::backgroundPalette.dark_night);
+				break;
+			case DNITE:
+				transition_to(Assets::backgroundPalette.morning);
+				break;
+			case MORNING:
+				transition_to(Assets::backgroundPalette.day);
+				break;
+		}
+}
+
+//changes color of background by factor of 1 each frame
+void Time_Level::transition_to(geomelt::Color *clr)
+{
+	//Transition from bg to clr
+	geomelt::Color *bg;
+
+	//Adjust Color of Corners
+	for (int i = 0; i < 4; i++)	{
+		bg = &background.color[i];
+
+		//Update RED
+		if (bg->r < clr[i].r)
+			bg->r += TRANSITION_RATE_TOD;
+		else if (bg->r > clr[i].r)
+			bg->r -= TRANSITION_RATE_TOD;
+
+		//Update GREEN
+		if (bg->g < clr[i].g)
+			bg->g += TRANSITION_RATE_TOD;
+		else if (bg->g > clr[i].g)
+			bg->g -= TRANSITION_RATE_TOD;
+
+		//Update BLUE
+		if (bg->b < clr[i].b)
+			bg->b += TRANSITION_RATE_TOD;
+		else if (bg->b > clr[i].b)
+			bg->b -= TRANSITION_RATE_TOD;
+
+		//If all corners are done updating
+		if (bg->r == clr[i].r && bg->g == clr[i].g && bg->b == clr[i].b)
+			background.transition_done[i] = true;
+	}
+
+	if (background.transition_done[0] == true && background.transition_done[1] == true
+		&& background.transition_done[2] == true && background.transition_done[3] == true) {
+		//Transition is Done, Reset Attributes
+		for (int i = 0; i < CORNERS; i++)
+			background.transition_done[i] = false;
+
+		transition = false;
+		timeOfDay++;
+	}
+}
+*/

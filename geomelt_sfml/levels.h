@@ -33,7 +33,7 @@ class Platform {
 private:
 	geomelt::Quad body;
 	geomelt::Quad outline;
-	Color_Set my_color;
+	ColorSet my_color;
 
 	friend class Player;
 	friend class PlatformGroup;
@@ -51,8 +51,6 @@ public:
 
 class Level {
 protected:
-	Background blackVoid;
-	Background background;
 	PlatformGroup platforms;
 	static PlayerMap players;
 	unique_ptr<SceneryGroup> scenery;
@@ -82,18 +80,12 @@ public:
 
 class Field_Level : public Level {
 public:
-	void render();
-	void phys_handler();
-
 	Field_Level();
 	~Field_Level() {}
 };
 
 class Night_Level : public Level {
 public:
-	void render();
-	void phys_handler();
-
 	Night_Level();
 	~Night_Level() {}
 };
@@ -102,17 +94,8 @@ class Time_Level : public Level {
 private:
 	TOD timeOfDay;
 	bool transition;
-	//geomelt::Circle sun;
-	//geomelt::Circle moon;
-	//StarGroup stars; //change opacity during day
-	//CloudGroup clouds;
-	Palette_BG bg_pal;
+	BackgroundPalette bg_pal;
 public:
-	void render();
-	void phys_handler();
-	void transition_handler();
-	void transition_to(geomelt::Color *clr);
-
 	Time_Level();
 	~Time_Level() {}
 };

@@ -1,26 +1,5 @@
 #include "complex_shapes.h"
 
-void Background::render()
-{
-	glBegin(GL_QUADS);
-		glColor4ub((GLubyte)color[0].r, (GLubyte)color[0].g, (GLubyte)color[0].b, 255);
-		glVertex2f(body.center.x - body.width / 2, body.center.y - body.height / 2);
-		glColor4ub((GLubyte)color[1].r, (GLubyte)color[1].g, (GLubyte)color[1].b, 255);
-		glVertex2f(body.center.x - body.width / 2, body.center.y + body.height / 2);
-		glColor4ub((GLubyte)color[2].r, (GLubyte)color[2].g, (GLubyte)color[2].b, 255);
-		glVertex2f(body.center.x + body.width / 2, body.center.y + body.height / 2);
-		glColor4ub((GLubyte)color[3].r, (GLubyte)color[3].g, (GLubyte)color[3].b, 255);
-		glVertex2f(body.center.x + body.width / 2, body.center.y - body.height / 2);
-	glEnd();
-}
-
-//Accepts a gradient, Color is and Array of 4
-void Background::set_color(geomelt::Color *clr)
-{
-	for (int i = 0; i < CORNERS; i++)
-		color[i] = clr[i];
-}
-
 void RoundCornerBox::render()
 {
 	vRectangle.render();
@@ -124,7 +103,7 @@ Cloud Cloud::make_cloud(Direction dir)
 	// level assigns a Y coor for the cloud object to travel
 
 	Cloud cloud;
-	float color = (float)(rand() % 55 + 200);
+	int color = rand() % 55 + 200;
 	GLfloat size = (GLfloat)(rand() % CLOUD_RANGE) + CLOUD_START;
 
 	// Define one uniform cloud subshape
@@ -187,11 +166,11 @@ void Star::change_color()
 	//Stars Flicker in the Night Sky
 	if (rand() % 2 == 0) {
 		body->color.r = 255;
-		body->color.g = (float)(rand() % (255 - 0));
+		body->color.g = rand() % 255;
 		body->color.b = 215;
 	}
 	else {
-		body->color.r = (float)(rand() % (255 - 0));
+		body->color.r = rand() % 255;
 		body->color.g = 215;
 		body->color.b = 255;
 	}

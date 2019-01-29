@@ -117,23 +117,6 @@ public:
 	CharSelBox() { occupied = false; }
 };
 
-class Background {
-private:
-	geomelt::Quad body;
-	geomelt::Color color[4];
-	bool transition_done[4];
 
-	friend class GradientBG;
-	friend class Level;
-	friend class Field_Level;
-	friend class Night_Level;
-	friend class Time_Level;
-	friend class LevelSelect;
-	friend class CharacterSelect;
-public:
-	void render();
-	void set_color(geomelt::Color *clr);
-	Background() {}
-};
 
 

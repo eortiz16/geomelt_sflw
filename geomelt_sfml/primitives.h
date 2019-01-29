@@ -42,17 +42,11 @@ namespace geomelt
 
 	class Color {
 	public:
-		float r, g, b, alpha;
+		int r, g, b, alpha;
 	
 		Color() {}
-		Color& operator = (const Color &clr)
-		{
-			r = clr.r;
-			g = clr.g;
-			b = clr.b;
-			alpha = clr.alpha;
-			return *this;
-		}
+		Color(int r, int g, int b, int a);
+		Color& operator = (const Color &clr);
 
 		friend class Line;
 		friend class Shape;
@@ -111,7 +105,7 @@ namespace geomelt
 		Vec center;
 	
 		void boundary_assignment();
-		virtual void render() = 0; // <--- Abstract class
+		virtual void render() = 0;
 		Shape() {}
 		Shape(float w, float h, float r, Color clr, Vec v);
 		~Shape() {}

@@ -109,9 +109,10 @@ bool Menu::isWithin(int x, int y)
 
 CharacterSelect::CharacterSelect()
 {
-	//Background Attribute Assignment
-	background.body = geomelt::Quad(2.0f * SCRN_WD, 2.0f * SCRN_HT, 0.0f, Assets::palette.lightGrey, geomelt::Vec(0, 0, 0));
-	background.set_color(Assets::backgroundPalette.overcast);
+	background = Background(
+		Assets::backgroundPalette.overcast,
+		geomelt::Quad(2.0f * SCRN_WD, 2.0f * SCRN_HT, 0.0f, Assets::palette.lightGrey, geomelt::Vec(0, 0, 0))
+	);
 
 	//assign center of each char select box
 	float wSpace = -3.0f * SCRN_WD / 4.0f;
@@ -162,12 +163,10 @@ void CharacterSelect::handler(PlayerMap players)
 
 LevelSelect::LevelSelect()
 {	
-	background.body.center = geomelt::Vec(0, 0, 0);
-	background.body.width = 2.0f * SCRN_WD;
-	background.body.height = 2.0f * SCRN_HT;
-
-	for (int i = 0; i < CORNERS; i++) 
-		background.color[i] = Assets::palette.lightGrey;
+	background = Background(
+		Assets::backgroundPalette.overcast,
+		geomelt::Quad(10.0f * SCRN_WD, 10.0f * SCRN_HT, 0.0f, Assets::palette.black, geomelt::Vec(0, 0, 0))
+	);
 
 	TexturedQuad level1, level2, level3;
 
@@ -220,7 +219,6 @@ void LevelSelect::handler()
 	glClear(1);
 
 	background.render();
-
 	cursor->render();
 
 	for (vector<unique_ptr<geomelt::Shape>>::iterator it = navigable.begin(); it != navigable.end(); ++it)

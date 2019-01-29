@@ -1,252 +1,53 @@
 #include "assets.h"
 
-/*
-sf::Font Assets::font;
-sf::Texture Assets::backgroundTexture;
-sf::Texture Assets::texture;
-sf::Sprite Assets::background;
-*/
 Textures Assets::textures;
 Palette Assets::palette;
-Palette_BG Assets::backgroundPalette;
-Palette_CHAR Assets::characterPalette;
-Palette_PLAT Assets::platformPalette = Palette_PLAT(palette);
+BackgroundPalette Assets::backgroundPalette;
+CharacterPalette Assets::characterPalette;
+const geomelt::Color Palette::sun = geomelt::Color(255, 255, 100, 255);
+const geomelt::Color Palette::moon = geomelt::Color(225, 225, 215, 255);
+const geomelt::Color Palette::platform = geomelt::Color(99, 160, 0, 255);
+const geomelt::Color Palette::black = geomelt::Color(0, 0, 0, 255);
+const geomelt::Color Palette::grey = geomelt::Color(150, 150, 150, 255);
+const geomelt::Color Palette::darkGrey = geomelt::Color(25, 25, 25, 255);
+const geomelt::Color Palette::lightGrey = geomelt::Color(210, 210, 210, 255);
+const geomelt::Color Palette::white = geomelt::Color(255, 255, 255, 255);
+const geomelt::Color Palette::red = geomelt::Color(255, 0, 0, 255);
+const geomelt::Color Palette::darkRed = geomelt::Color(150, 0, 0, 255);
+const geomelt::Color Palette::green = geomelt::Color(0, 255, 0, 255);
+const geomelt::Color Palette::darkGreen = geomelt::Color(0, 150, 0, 255);
+const geomelt::Color Palette::blue = geomelt::Color(0, 0, 255, 255);
+const geomelt::Color Palette::darkBlue = geomelt::Color(0, 0, 150, 255);
+const ColorSet PlatformPalette::grass = ColorSet(Palette::platform, Palette::black);
+const map<CharColorOptions, CharacterColorSet> CharacterPalette::colors = CharacterPalette::init();
+const sf::Texture Textures::field = setTexture("resources/textures/field.png");
+const sf::Texture Textures::night = setTexture("resources/textures/night.png");
+const sf::Texture Textures::time = setTexture("resources/textures/time.png");
+const sf::Texture Textures::title = setTexture("resources/textures/title.png");
+const sf::Texture Textures::play = setTexture("resources/textures/play_u.png");
+const sf::Texture Textures::playSelected = setTexture("resources/textures/play_s.png");
+const sf::Texture Textures::options = setTexture("resources/textures/options_u.png");
+const sf::Texture Textures::optionsSelected = setTexture("resources/textures/options_s.png");
+const sf::Texture Textures::exit = setTexture("resources/textures/exit_u.png");
+const sf::Texture Textures::exitSelected = setTexture("resources/textures/exit_s.png");
+const sf::Texture Textures::button_A = setTexture("resources/textures/controls/button_A.png");
+const sf::Texture Textures::button_B = setTexture("resources/textures/controls/button_B.png");
+const sf::Texture Textures::button_X = setTexture("resources/textures/controls/button_X.png");
+const sf::Texture Textures::button_Y = setTexture("resources/textures/controls/button_Y.png");
+const sf::Texture Textures::button_LB = setTexture("resources/textures/controls/button_LB.png");
+const sf::Texture Textures::button_RB = setTexture("resources/textures/controls/button_RB.png");
+const sf::Texture Textures::button_LS = setTexture("resources/textures/controls/button_LS.png");
+const sf::Texture Textures::button_RS = setTexture("resources/textures/controls/button_RS.png");
+const sf::Texture Textures::button_LT = setTexture("resources/textures/controls/button_LT.png");
+const sf::Texture Textures::button_RT = setTexture("resources/textures/controls/button_RT.png");
+const sf::Texture Textures::button_Back = setTexture("resources/textures/controls/button_Back.png");
+const sf::Texture Textures::button_Start = setTexture("resources/textures/controls/button_Start.png");
+const sf::Texture Textures::button_Left = setTexture("resources/textures/controls/button_Left.png");
+const sf::Texture Textures::button_Right = setTexture("resources/textures/controls/button_Right.png");
+const sf::Texture Textures::button_Down = setTexture("resources/textures/controls/button_Down.png");
+const sf::Texture Textures::button_Up = setTexture("resources/textures/controls/button_Up.png");
 
-Assets::Assets()
-{
-	/*
-	if (!font.loadFromFile("resources/sansation.ttf"))
-		cout << "font failed to load\n";
-
-	backgroundTexture.setSrgb(false); //srgb false
-	backgroundTexture.loadFromFile("resources/background.jpg");
-	texture.loadFromFile("resources/texture.jpg");
-
-	sf::Sprite temp(backgroundTexture);
-	background = temp;
-	*/
-}
-
-Palette::Palette()
-{
-	sun.r = 255;
-	sun.g = 255;
-	sun.b = 100;
-	sun.alpha = 255;
-
-	moon.r = 225;
-	moon.g = 225;
-	moon.b = 215;
-	moon.alpha = 255;
-
-	platform.r = 99;
-	platform.g = 160;
-	platform.b = 0;
-	platform.alpha = 255;
-
-	black.r = 0;
-	black.g = 0;
-	black.b = 0;
-	black.alpha = 255;
-
-	grey.r = 150;
-	grey.g = 150;
-	grey.b = 150;
-	grey.alpha = 255;
-
-	darkGrey.r = 25;
-	darkGrey.g = 25;
-	darkGrey.b = 25;
-	darkGrey.alpha = 255;
-
-	lightGrey.r = 210;
-	lightGrey.g = 210;
-	lightGrey.b = 210;
-	lightGrey.alpha = 255;
-
-	white.r = 255;
-	white.g = 255;
-	white.b = 255;
-	white.alpha = 255;
-
-	red.r = 255;
-	red.g = 0;
-	red.b = 0;
-	red.alpha = 255;
-
-	darkRed.r = 150;
-	darkRed.g = 0;
-	darkRed.b = 0;
-	darkRed.alpha = 255;
-
-	green.r = 0;
-	green.g = 255;
-	green.b = 0;
-	green.alpha = 255;
-
-	darkGreen.r = 0;
-	darkGreen.g = 150;
-	darkGreen.b = 0;
-	darkGreen.alpha = 255;
-
-	blue.r = 0;
-	blue.g = 0;
-	blue.b = 255;
-	blue.alpha = 255;
-
-	darkBlue.r = 0;
-	darkBlue.g = 0;
-	darkBlue.b = 150;
-	darkBlue.alpha = 255;
-}
-
-Palette_PLAT::Palette_PLAT(Palette pal)
-{
-	grass.body = pal.platform;
-	grass.outline = pal.black;
-}
-
-Palette_CHAR::Palette_CHAR()
-{
-	red.body.r = 255;
-	red.body.g = 75;
-	red.body.b = 75;
-	red.body.alpha = 255;
-
-	red.reflection.r = 255;
-	red.reflection.g = 125;
-	red.reflection.b = 125;
-	red.reflection.alpha = 255;
-
-	red.outline.r = 0;
-	red.outline.g = 0;
-	red.outline.b = 0;
-	red.outline.alpha = 255;
-
-	traverse_colors[RED] = red;
-
-	green.body.r = 75;
-	green.body.g = 255;
-	green.body.b = 75;
-	green.body.alpha = 255;
-
-	green.reflection.r = 150;
-	green.reflection.g = 255;
-	green.reflection.b = 150;
-	green.reflection.alpha = 255;
-
-	green.outline.r = 0;
-	green.outline.g = 0;
-	green.outline.b = 0;
-	green.outline.alpha = 255;
-
-	traverse_colors[GREEN] = green;
-
-	blue.body.r = 150;
-	blue.body.g = 150;
-	blue.body.b = 255;
-	blue.body.alpha = 255;
-
-	blue.reflection.r = 180;
-	blue.reflection.g = 180;
-	blue.reflection.b = 255;
-	blue.reflection.alpha = 255;
-
-	blue.outline.r = 0;
-	blue.outline.g = 0;
-	blue.outline.b = 0;
-	blue.outline.alpha = 255;
-
-	traverse_colors[BLUE] = blue;
-
-	yellow.body.r = 255;
-	yellow.body.g = 225;
-	yellow.body.b = 0;
-	yellow.body.alpha = 255;
-
-	yellow.reflection.r = 255;
-	yellow.reflection.g = 250;
-	yellow.reflection.b = 0;
-	yellow.reflection.alpha = 255;
-	
-	yellow.outline.r = 0;
-	yellow.outline.g = 0;
-	yellow.outline.b = 0;
-	yellow.outline.alpha = 255;
-
-	traverse_colors[YELLOW] = yellow;
-
-	pink.body.r = 255;
-	pink.body.g = 150;
-	pink.body.b = 150;
-	pink.body.alpha = 255;
-
-	pink.reflection.r = 255;
-	pink.reflection.g = 180;
-	pink.reflection.b = 180;
-	pink.reflection.alpha = 255;
-
-	pink.outline.r = 0;
-	pink.outline.g = 0;
-	pink.outline.b = 0;
-	pink.outline.alpha = 255;
-
-	traverse_colors[PINK] = pink;
-
-	purple.body.r = 85;
-	purple.body.g = 35;
-	purple.body.b = 160;
-	purple.body.alpha = 255;
-
-	purple.reflection.r = 100;
-	purple.reflection.g = 50;
-	purple.reflection.b = 175;
-	purple.reflection.alpha = 255;
-
-	purple.outline.r = 0;
-	purple.outline.g = 0;
-	purple.outline.b = 0;
-	purple.outline.alpha = 255;
-
-	traverse_colors[PURPLE] = purple;
-
-	white.body.r = 225;
-	white.body.g = 225;
-	white.body.b = 225;
-	white.body.alpha = 255;
-
-	white.reflection.r = 255;
-	white.reflection.g = 255;
-	white.reflection.b = 255;
-	white.reflection.alpha = 255;
-	
-	white.outline.r = 0;
-	white.outline.g = 0;
-	white.outline.b = 0;
-	white.outline.alpha = 255;
-
-	traverse_colors[WHITE] = white;
-
-	black.body.r = 75;
-	black.body.g = 75;
-	black.body.b = 75;
-	black.body.alpha = 255;
-
-	black.reflection.r = 125;
-	black.reflection.g = 125;
-	black.reflection.b = 125;
-	black.reflection.alpha = 255;
-
-	black.outline.r = 0;
-	black.outline.g = 0;
-	black.outline.b = 0;
-	black.outline.alpha = 255;
-
-	traverse_colors[BLACK] = black;
-}
-
-
-Palette_BG::Palette_BG()
+BackgroundPalette::BackgroundPalette()
 {
 	enum TOD { DAY, AFTERNOON, EVENING, NITE, DNITE, MORNING };
 
@@ -319,32 +120,92 @@ Palette_BG::Palette_BG()
 	}
 }
 
-Textures::Textures()
+ColorSet & ColorSet::operator=(const ColorSet & clr)
 {
-	field.loadFromFile("resources/textures/field.png");
-	night.loadFromFile("resources/textures/night.png");
-	time.loadFromFile("resources/textures/time.png");
-	title.loadFromFile("resources/textures/title.png");
-	play.loadFromFile("resources/textures/play_u.png");
-	playSelected.loadFromFile("resources/textures/play_s.png");
-	options.loadFromFile("resources/textures/options_u.png");
-	optionsSelected.loadFromFile("resources/textures/options_s.png");
-	exit.loadFromFile("resources/textures/exit_u.png");
-	exitSelected.loadFromFile("resources/textures/exit_s.png");
-	button_A.loadFromFile("resources/textures/controls/button_A.png");
-	button_B.loadFromFile("resources/textures/controls/button_B.png");
-	button_X.loadFromFile("resources/textures/controls/button_X.png");
-	button_Y.loadFromFile("resources/textures/controls/button_Y.png");
-	button_LB.loadFromFile("resources/textures/controls/button_LB.png");
-	button_RB.loadFromFile("resources/textures/controls/button_RB.png");
-	button_LS.loadFromFile("resources/textures/controls/button_LS.png");
-	button_RS.loadFromFile("resources/textures/controls/button_RS.png");
-	button_LT.loadFromFile("resources/textures/controls/button_LT.png");
-	button_RT.loadFromFile("resources/textures/controls/button_RT.png");
-	button_Back.loadFromFile("resources/textures/controls/button_Back.png");
-	button_Start.loadFromFile("resources/textures/controls/button_Start.png");
-	button_Left.loadFromFile("resources/textures/controls/button_Left.png");
-	button_Right.loadFromFile("resources/textures/controls/button_Right.png");
-	button_Down.loadFromFile("resources/textures/controls/button_Down.png");
-	button_Up.loadFromFile("resources/textures/controls/button_Up.png");
+	body = clr.body;
+	outline = clr.outline;
+	return *this;
+}
+
+ColorSet::ColorSet(geomelt::Color body, geomelt::Color outline)
+{
+	this->body = body;
+	this->outline = outline;
+}
+
+CharacterColorSet & CharacterColorSet::operator=(const CharacterColorSet & clr)
+{
+	body = clr.body;
+	outline = clr.outline;
+	reflection = clr.reflection;
+	return *this;
+}
+
+CharacterColorSet::CharacterColorSet(geomelt::Color body, geomelt::Color reflection, geomelt::Color outline)
+{
+	this->body = body;
+	this->reflection = reflection;
+	this->outline = outline;
+}
+
+map<CharColorOptions, CharacterColorSet> CharacterPalette::init()
+{
+	map<CharColorOptions, CharacterColorSet> palette;
+
+	palette[RED] = CharacterColorSet(
+			geomelt::Color(255, 75, 75, 255),
+			geomelt::Color(255, 125, 125, 255),
+			Palette::black
+	);
+
+	palette[GREEN] = CharacterColorSet(
+		geomelt::Color(75, 255, 75, 255),
+		geomelt::Color(150, 255, 150, 255),
+		Palette::black
+	);
+
+	palette[BLUE] = CharacterColorSet(
+		geomelt::Color(150, 150, 255, 255),
+		geomelt::Color(180, 180, 255, 255),
+		Palette::black
+	);
+
+	palette[YELLOW] = CharacterColorSet(
+		geomelt::Color(255, 225, 0, 255),
+		geomelt::Color(255, 250, 0, 255),
+		Palette::black
+	);
+
+	palette[PINK] = CharacterColorSet(
+		geomelt::Color(255, 150, 150, 255),
+		geomelt::Color(255, 180, 180, 255),
+		Palette::black
+	);
+
+	palette[PURPLE] = CharacterColorSet(
+		geomelt::Color(85, 35, 160, 255),
+		geomelt::Color(100, 50, 175, 255),
+		Palette::black
+	);
+
+	palette[WHITE] = CharacterColorSet(
+		geomelt::Color(225, 225, 225, 255),
+		geomelt::Color(255, 255, 255, 255),
+		Palette::black
+	);
+
+	palette[BLACK] = CharacterColorSet(
+		geomelt::Color(75, 75, 75, 255),
+		geomelt::Color(125, 125, 125, 255),
+		Palette::black
+	);
+
+	return palette;
+}
+
+sf::Texture Textures::setTexture(string path)
+{
+	sf::Texture texture;
+	texture.loadFromFile(path);
+	return texture;
 }

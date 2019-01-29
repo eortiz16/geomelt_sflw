@@ -88,6 +88,15 @@ void Player::physics(PlatformGroup plat)
 	}
 }
 
+Player & Player::operator=(const CharacterColorSet & clr)
+{
+	body->color = clr.body;
+	outline->color = clr.outline;
+	reflection->color = clr.reflection;
+	arm.color = clr.body;
+	return *this;
+}
+
 /*Takes the width resolution and scales down to a factor controls reflection of character*/
 void Player::update_reflection_x()
 {
@@ -504,7 +513,7 @@ void PlayerMap::add(unsigned int joyID)
 			_map[joyID] = unique_ptr<Player>(new Ball());
 
 			Player *plyr = _map[joyID].get();
-			*plyr = Assets::characterPalette.traverse_colors[plyr->myColor];
+			*plyr = Assets::characterPalette.colors.at(plyr->myColor);
 		}
 	}
 }
@@ -589,7 +598,7 @@ void PlayerMap::options_render(vector<CharSelBox> selectBox)
 	map<unsigned int, unique_ptr<Player>>::iterator it = _map.begin();
 
 	while (it != _map.end()) {
-		*it->second = Assets::characterPalette.traverse_colors[it->second->myColor];
+		*it->second = Assets::characterPalette.colors.at(it->second->myColor);
 		it->second->body->center = selectBox[it->second->myID].box.center;
 		it->second->simple_update_menu();
 		it->second->render();

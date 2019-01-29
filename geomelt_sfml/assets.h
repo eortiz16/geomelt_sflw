@@ -6,7 +6,7 @@
 
 constexpr auto CLR_OPT_CARDINALITY = 8;
 
-class Color_Set {
+class ColorSet {
 private:
 	geomelt::Color body;
 	geomelt::Color outline;
@@ -15,76 +15,52 @@ private:
 	friend class Field_Level;
 	friend class Night_Level;
 	friend class Time_Level;
-	friend class Char_Color_Set;
-	friend class Palette_PLAT;
-	friend class Palette_CHAR;
+	friend class CharacterColorSet;
+	friend class PlatformPalette;
+	friend class CharacterPalette;
 	friend class Player;
 	friend class Ball;
 	friend class Boxy;
 	friend class PlayerMap;
 	friend class PlatformGroup;
 public:
-	Color_Set& operator = (const Color_Set &clr)
-	{
-		body = clr.body;
-		outline = clr.outline;
-		return *this;
-	}
+	ColorSet() {}
+	ColorSet& operator = (const ColorSet &clr);
+	ColorSet(geomelt::Color, geomelt::Color);
 };
 
-class Char_Color_Set : public Color_Set {
+class CharacterColorSet : public ColorSet {
 private:
 	geomelt::Color reflection;
 	
-	friend class Palette_CHAR;
+	friend class CharacterPalette;
 	friend class Player;
 	friend class PlayerMap;
 public:
-	Char_Color_Set& operator = (const Char_Color_Set &clr)
-	{
-		body = clr.body;
-		outline = clr.outline;
-		reflection = clr.reflection;
-		return *this;
-	}
+	CharacterColorSet() {}
+	CharacterColorSet& operator = (const CharacterColorSet &clr);
+	CharacterColorSet(geomelt::Color, geomelt::Color, geomelt::Color);
 };
 
 class Palette {
-private:
-	geomelt::Color sun;
-	geomelt::Color moon;
-	geomelt::Color platform;
-	geomelt::Color black;
-	geomelt::Color grey;
-	geomelt::Color darkGrey;
-	geomelt::Color lightGrey;
-	geomelt::Color white;
-	geomelt::Color red;
-	geomelt::Color darkRed;
-	geomelt::Color green;
-	geomelt::Color darkGreen;
-	geomelt::Color blue;
-	geomelt::Color darkBlue;
-
-	friend class Level;
-	friend class Field_Level;
-	friend class Night_Level;
-	friend class Time_Level;
-	friend class Palette_PLAT;
-	friend class Palette_CHAR;
-	friend class Ball;
-	friend class Boxy;
-	friend class PlayerMap;
-	friend class CharacterSelect;
-	friend class LevelSelect;
-	friend class Satelite;
-	friend class Moon;
-	friend class Sun;
 public:
-	Palette();
+	const static geomelt::Color sun;
+	const static geomelt::Color moon;
+	const static geomelt::Color platform;
+	const static geomelt::Color black;
+	const static geomelt::Color grey;
+	const static geomelt::Color darkGrey;
+	const static geomelt::Color lightGrey;
+	const static geomelt::Color white;
+	const static geomelt::Color red;
+	const static geomelt::Color darkRed;
+	const static geomelt::Color green;
+	const static geomelt::Color darkGreen;
+	const static geomelt::Color blue;
+	const static geomelt::Color darkBlue;
 };
 
-class Palette_BG {
+class BackgroundPalette {
 private:
 	geomelt::Color day[CORNERS];
 	geomelt::Color afternoon[CORNERS];
@@ -100,21 +76,18 @@ private:
 	friend class Night_Level;
 	friend class Time_Level;
 	friend class CharacterSelect;
+	friend class SceneryGroup;
+	friend class FieldScenery;
+	friend class NightScenery;
+	friend class TimeScenery;
+	friend class LevelSelect;
 public:
-	Palette_BG();
+	BackgroundPalette();
 };
 
-class Palette_PLAT {
-private:
-	Color_Set grass;
-
-	friend class Level;
-	friend class Field_Level;
-	friend class Night_Level;
-	friend class Time_Level;
-	friend class PlatformGroup;
+class PlatformPalette {
 public:
-	Palette_PLAT(Palette pal);
+	const static ColorSet grass; 
 };
 
 enum CharColorOptions { RED, GREEN, BLUE, YELLOW, PINK, PURPLE, WHITE, BLACK };
@@ -133,100 +106,51 @@ inline void operator--(CharColorOptions &ti, int)
 		ti = static_cast<CharColorOptions> (CLR_OPT_CARDINALITY - 1);
 }
 
-class Palette_CHAR {
-private:
-	//IF add color, change cardinality of this set
-	Char_Color_Set red;
-	Char_Color_Set green;
-	Char_Color_Set blue;
-	Char_Color_Set yellow;
-	Char_Color_Set pink;
-	Char_Color_Set purple;
-	Char_Color_Set white;
-	Char_Color_Set black;
-
-	map <CharColorOptions, Char_Color_Set> traverse_colors;
-
-	friend class Player;
-	friend class PlayerMap;
-	friend class CharacterSelect;
-	friend class Level;
+class CharacterPalette {
 public:
-	Palette_CHAR();
+	const static map <CharColorOptions, CharacterColorSet> colors;
+	static map <CharColorOptions, CharacterColorSet> init();
+	CharacterPalette() {}
 };
 
 class Textures {
-private:
-	sf::Texture field;
-	sf::Texture night;
-	sf::Texture time;
-	sf::Texture polluted;
-
-	sf::Texture title;
-	sf::Texture play;
-	sf::Texture playSelected;
-	sf::Texture options;
-	sf::Texture optionsSelected;
-	sf::Texture exit;
-	sf::Texture exitSelected;
-
-	sf::Texture button_A;
-	sf::Texture button_B;
-	sf::Texture button_X;
-	sf::Texture button_Y;
-	sf::Texture button_LB;
-	sf::Texture button_RB;
-	sf::Texture button_LS;
-	sf::Texture button_RS;
-	sf::Texture button_LT;
-	sf::Texture button_RT;
-	sf::Texture button_Back;
-	sf::Texture button_Start;
-	sf::Texture button_Left;
-	sf::Texture button_Right;
-	sf::Texture button_Down;
-	sf::Texture button_Up;
-
-	friend class MainMenu;
-	friend class MainMenuState;
-	friend class CharacterSelect;
-	friend class LevelSelect;
 public:
-	Textures();
+	const static sf::Texture field;
+	const static sf::Texture night;
+	const static sf::Texture time;
+	const static sf::Texture polluted;
+	const static sf::Texture title;
+	const static sf::Texture play;
+	const static sf::Texture playSelected;
+	const static sf::Texture options;
+	const static sf::Texture optionsSelected;
+	const static sf::Texture exit;
+	const static sf::Texture exitSelected;
+	const static sf::Texture button_A;
+	const static sf::Texture button_B;
+	const static sf::Texture button_X;
+	const static sf::Texture button_Y;
+	const static sf::Texture button_LB;
+	const static sf::Texture button_RB;
+	const static sf::Texture button_LS;
+	const static sf::Texture button_RS;
+	const static sf::Texture button_LT;
+	const static sf::Texture button_RT;
+	const static sf::Texture button_Back;
+	const static sf::Texture button_Start;
+	const static sf::Texture button_Left;
+	const static sf::Texture button_Right;
+	const static sf::Texture button_Down;
+	const static sf::Texture button_Up;
+
+	static sf::Texture setTexture(string);
 };
 
 class Assets {
-private:
-	/*
-	static sf::Font font;
-	static sf::Texture backgroundTexture;
-	static sf::Texture texture;
-	static sf::Sprite sprite;
-	*/
-
+public:
 	static Textures textures;
 	static Palette palette;
-	static Palette_BG backgroundPalette;
-	static Palette_CHAR characterPalette;
-	static Palette_PLAT platformPalette;
-
-	friend class MainMenu;
-	friend class CharacterSelect;
-	friend class CharSelState;
-	friend class LevelSelect;
-	friend class Level;
-	friend class MainMenuState;
-	friend class Field_Level;
-	friend class Night_Level;
-	friend class Time_Level;
-	friend class Ball;
-	friend class Boxy;
-	friend class PlayerMap;
-	friend class PlatformGroup;
-	friend class Satelite;
-	friend class Moon;
-	friend class Sun;
-public:
-	Assets();
-	~Assets() {}
+	static BackgroundPalette backgroundPalette;
+	static CharacterPalette characterPalette;
+	static PlatformPalette platformPalette;
 };

@@ -1,15 +1,37 @@
 #include "scenery.h"
 
-void Sky::render()
+void Background::render()
+{
+	glBegin(GL_QUADS);
+	glColor4ub((GLubyte)color[0].r, (GLubyte)color[0].g, (GLubyte)color[0].b, 255);
+	glVertex2f(body.center.x - body.width / 2, body.center.y - body.height / 2);
+	glColor4ub((GLubyte)color[1].r, (GLubyte)color[1].g, (GLubyte)color[1].b, 255);
+	glVertex2f(body.center.x - body.width / 2, body.center.y + body.height / 2);
+	glColor4ub((GLubyte)color[2].r, (GLubyte)color[2].g, (GLubyte)color[2].b, 255);
+	glVertex2f(body.center.x + body.width / 2, body.center.y + body.height / 2);
+	glColor4ub((GLubyte)color[3].r, (GLubyte)color[3].g, (GLubyte)color[3].b, 255);
+	glVertex2f(body.center.x + body.width / 2, body.center.y - body.height / 2);
+	glEnd();
+}
+
+void Background::physics()
 {
 }
 
-void Sky::physics()
+Background::Background()
 {
+	for (int i = 0; i < CORNERS; i++) {
+		color.push_back(geomelt::Color());
+		transition_done.push_back(false);
+	}
 }
 
-Sky::Sky()
+Background::Background(geomelt::Color * clr, geomelt::Quad qd) : Background()
 {
+	body = qd;
+
+	for (int i = 0; i < CORNERS; i++)
+		color[i] = clr[i];
 }
 
 void Satelite::render()
@@ -98,7 +120,31 @@ void SceneryGroup::addObject(unique_ptr<Scenery>& obj)
 	scenery.push_back(move(obj));
 }
 
-FieldScenery::FieldScenery() {
+SceneryGroup::SceneryGroup()
+{
+	unique_ptr<Scenery> blackVoid = unique_ptr<Scenery>(
+		new Background(
+			Assets::backgroundPalette.black,
+			geomelt::Quad(10.0f * SCRN_WD, 10.0f * SCRN_HT, 0.0f, Assets::palette.black, geomelt::Vec(0, 0, 0))
+		)
+	);
+
+	addObject(blackVoid);
+	blackVoid.release();
+}
+
+FieldScenery::FieldScenery() : SceneryGroup() 
+{
+	unique_ptr<Scenery> background = unique_ptr<Scenery>(
+		new Background(
+			Assets::backgroundPalette.day,
+			geomelt::Quad(4.0f * SCRN_WD, 5.0f * SCRN_HT, 0.0f, Assets::palette.black, geomelt::Vec(0, 0, 0))
+		)
+	);
+
+	addObject(background);
+	background.release();
+
 	unique_ptr<Scenery> sun = unique_ptr<Scenery>(new Sun);
 	addObject(sun);
 	sun.release();
@@ -108,7 +154,17 @@ FieldScenery::FieldScenery() {
 	clouds.release();
 }
 
-NightScenery::NightScenery() {
+NightScenery::NightScenery() : SceneryGroup() {
+	unique_ptr<Scenery> background = unique_ptr<Scenery>(
+		new Background(
+			Assets::backgroundPalette.night,
+			geomelt::Quad(4.0f * SCRN_WD, 5.0f * SCRN_HT, 0.0f, Assets::palette.black, geomelt::Vec(0, 0, 0))
+		)
+	);
+
+	addObject(background);
+	background.release();
+
 	unique_ptr<Scenery> stars = unique_ptr<Scenery>(new Stars);
 	addObject(stars);
 	stars.release();
@@ -118,7 +174,16 @@ NightScenery::NightScenery() {
 	moon.release();
 }
 
-TimeScenery::TimeScenery() {
+TimeScenery::TimeScenery() : SceneryGroup() {
+	unique_ptr<Scenery> background = unique_ptr<Scenery>(
+		new Background(
+			Assets::backgroundPalette.evening,
+			geomelt::Quad(4.0f * SCRN_WD, 5.0f * SCRN_HT, 0.0f, Assets::palette.black, geomelt::Vec(0, 0, 0))
+		)
+	);
+
+	addObject(background);
+	background.release();
 
 	unique_ptr<Scenery> stars = unique_ptr<Scenery>(new Stars);
 	addObject(stars);

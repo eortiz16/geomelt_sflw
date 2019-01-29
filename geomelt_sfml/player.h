@@ -108,19 +108,10 @@ public:
 	void move(Direction dir);
 	void reset_attributes();
 	virtual void render(void) = 0;
-
 	virtual void update_position(PlatformGroup plat) = 0;
 	virtual void physics(PlatformGroup plat);
 	
-	Player& operator = (const Char_Color_Set &clr)
-	{
-		body->color = clr.body;
-		outline->color = clr.outline;
-		reflection->color = clr.reflection;
-		arm.color = clr.body;
-		return *this;
-	}
-
+	Player& operator = (const CharacterColorSet &clr);
 	explicit Player();
 	Player(const Player&) = delete;
 	Player& operator=(const Player&) = delete;
