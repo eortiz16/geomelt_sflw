@@ -8,9 +8,6 @@
 #include "input.h"
 #include "command.h"
 
-constexpr auto FPS = 60;
-constexpr auto MS_PER_UPDATE() { return 1000.0f / (float)FPS; }
-
 class RState;
 class Command;
 class Menu;
@@ -35,14 +32,12 @@ public:
 	~GFXNet() {}
 
 	friend class Input;
-
 	friend class RState;
 	friend class MainMenuState;
 	friend class CharacterSelectState;
 	friend class LevelSelectState;
 	friend class LevelState;
 	friend class PauseState;
-	
 	friend class Command;
 	friend class CommandMainMenu;
 	friend class PrevCommand;
@@ -51,7 +46,6 @@ public:
 	friend class MouseConfirmCommand;
 	friend class DenyCommand;
 	friend class ExitCommand;
-
 	friend class JumpCommand;
 	friend class AttackCommand;
 	friend class MoveLeftCommand;
@@ -59,7 +53,6 @@ public:
 	friend class StopCommand;
 	friend class CommandLevel;
 	friend class RemoveCharacterCommand;
-
 	friend class ChangeCharacterCommand;
 	friend class AddCharacterCommand;
 	friend class PrevColorCommand;
@@ -81,7 +74,6 @@ public:
 	virtual ~RState() {}
 	
 	friend class Input;
-
 	friend class MainMenuState;
 	friend class CharacterSelectState;
 	friend class LevelSelectState;
@@ -97,7 +89,6 @@ public:
 	friend class MouseConfirmCommand;
 	friend class DenyCommand;
 	friend class ExitCommand;
-
 	friend class ChangeCharacterCommand;
 	friend class AddCharacterCommand;
 	friend class RemoveCharacterCommand;
@@ -129,7 +120,6 @@ public:
 	friend class ConfirmCommand;
 	friend class MouseConfirmCommand;
 	friend class DenyCommand;
-
 	friend class AddCharacterCommand;
 	friend class RemoveCharacterCommand;
 	friend class PrevColorCommand;

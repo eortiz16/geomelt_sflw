@@ -3,12 +3,13 @@
 #include "primitives.h"
 #include "complex_shapes.h"
 
+enum LevelType { FIELD, NIGHT, TIME };
+
 class Scenery {
 public:
 	virtual void render() = 0;
 	virtual void physics() = 0;
 };
-
 
 class Background : public Scenery {
 private:
@@ -77,6 +78,8 @@ public:
 	virtual void render();
 	virtual void physics();
 	void addObject(unique_ptr<Scenery>& obj);
+	static unique_ptr<SceneryGroup> create(LevelType lvl);
+
 	SceneryGroup();
 };
 
@@ -84,17 +87,17 @@ public:
 class FieldScenery : public SceneryGroup {
 	FieldScenery();
 
-	friend class Field_Level;
+	friend class SceneryGroup;
 };
 
 class NightScenery : public SceneryGroup {
 	NightScenery();
 
-	friend class Night_Level;
+	friend class SceneryGroup;
 };
 
 class TimeScenery : public SceneryGroup {
 	TimeScenery();
 
-	friend class Time_Level;
+	friend class SceneryGroup;
 };

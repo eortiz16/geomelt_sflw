@@ -15,8 +15,6 @@ private:
 	vector<unique_ptr<geomelt::Circle>> body;
 	int speed;
 	bool offScreen;
-	friend class Field_Level;
-	friend class Time_Level;
 public:
 	void update(Direction dir);
 	void render();
@@ -50,8 +48,6 @@ public:
 class StarGroup {
 private:
 	vector<Star> star;
-	friend class Night_Level;
-	friend class Time_Level;
 public:
 	void render();
 	void update();
@@ -67,6 +63,12 @@ private:
 class TexturedQuad : public geomelt::Shape {
 private:
 	sf::Texture myTexture;
+public:
+	void set_texture_attributes(sf::Texture asset);
+	void render();
+
+	TexturedQuad() {}
+	~TexturedQuad() {}
 
 	friend class MainMenu;
 	friend class MainMenuState;
@@ -75,12 +77,6 @@ private:
 	friend class LevelSelectState;
 	friend class LevelSelect;
 	friend class Cursor;
-public:
-	void set_texture_attributes(sf::Texture asset);
-	void render();
-
-	TexturedQuad() {}
-	~TexturedQuad() {}
 };
 
 class RoundCornerBox {
@@ -89,15 +85,15 @@ private:
 	geomelt::Vec center;
 	geomelt::Circle corner[CORNERS];
 	geomelt::Quad vRectangle, hRectangle; //vertical, horizontal
-
-	friend class CharacterSelect;
-	friend class PlayerMap;
 public:
 	void set_color(geomelt::Color clr);
 	void build();
 	void render();
 
 	RoundCornerBox();
+
+	friend class CharacterSelect;
+	friend class PlayerMap;
 };
 
 class CharSelBox {
@@ -107,14 +103,14 @@ private:
 	RoundCornerBox box;
 	RoundCornerBox outline;
 	GLfloat stroke;
+public:
+	CharSelBox() { occupied = false; }
 
 	friend class CharacterSelect;
 	friend class CharacterSelectState;
 	friend class AddCharacterCommand;
 	friend class RemoveCharacterCommand;
 	friend class PlayerMap;
-public:
-	CharSelBox() { occupied = false; }
 };
 
 

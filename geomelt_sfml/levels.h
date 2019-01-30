@@ -19,8 +19,8 @@ class Game;
 class Camera;
 class Player;
 class PlayerMap;
+class SceneryGroup;
 
-enum Lvl { FIELD, NIGHT, TIME };
 enum TOD { DAY, AFTERNOON, EVENING, NITE, DNITE, MORNING };
 
 inline void operator++(TOD &ti, int)
@@ -72,30 +72,8 @@ public:
 	virtual void render();
 	virtual void gfx_handler();
 	virtual void phys_handler();
-	static unique_ptr<Level> make(Lvl lvl); //Factory Method
+	void setScenery(SceneryGroup scenery);
 
-	Level();
+	explicit Level();
 	virtual ~Level() {}
-};
-
-class Field_Level : public Level {
-public:
-	Field_Level();
-	~Field_Level() {}
-};
-
-class Night_Level : public Level {
-public:
-	Night_Level();
-	~Night_Level() {}
-};
-
-class Time_Level : public Level {
-private:
-	TOD timeOfDay;
-	bool transition;
-	BackgroundPalette bg_pal;
-public:
-	Time_Level();
-	~Time_Level() {}
 };

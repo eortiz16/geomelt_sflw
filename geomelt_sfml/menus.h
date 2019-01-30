@@ -4,8 +4,8 @@
 #include "assets.h"
 #include "complex_shapes.h"
 #include "input.h"
-#include "levels.h"
 #include "scenery.h"
+#include "player.h"
 
 constexpr auto SELECTED_CARDINALITY = 3;
 enum Selected { PLAY, OPTIONS, EXIT };

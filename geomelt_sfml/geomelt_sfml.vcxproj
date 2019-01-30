@@ -142,7 +142,6 @@
     <ClInclude Include="command.h" />
     <ClInclude Include="complex_shapes.h" />
     <ClInclude Include="camera.h" />
-    <ClInclude Include="generic.h" />
     <ClInclude Include="assets.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="scenery.h" />

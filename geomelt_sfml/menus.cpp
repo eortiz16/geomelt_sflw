@@ -73,7 +73,6 @@ void Cursor::render()
 	selected->get()->render();
 }
 
-
 Navigable::Navigable(vector<unique_ptr<geomelt::Shape>>& vec)
 {
 	textures.insert(textures.end(), std::make_move_iterator(vec.begin()), std::make_move_iterator(vec.end()));
@@ -85,7 +84,7 @@ void MainMenu::handler(unique_ptr<Level>& level)
 	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1);
 	glClear(1);
 
-	level->phys_handler(); //movement of clouds and other scenery
+	level->phys_handler(); 
 	level->render();
 
 	title.render();

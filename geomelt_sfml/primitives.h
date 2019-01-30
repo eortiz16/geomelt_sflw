@@ -42,10 +42,10 @@ namespace geomelt
 
 	class Color {
 	public:
-		int r, g, b, alpha;
+		uint8_t r, g, b, alpha;
 	
 		Color() {}
-		Color(int r, int g, int b, int a);
+		Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 		Color& operator = (const Color &clr);
 
 		friend class Line;
@@ -91,9 +91,6 @@ namespace geomelt
 		friend class Ball;
 		friend class Boxy;
 		friend class Level;
-		friend class Field_Level;
-		friend class Night_Level;
-		friend class Time_Level;
 		friend class GFXNet;
 	};
 

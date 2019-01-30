@@ -1,7 +1,6 @@
 #pragma once
 
 #include "headers.h"
-#include "generic.h"
 #include "command.h"
 
 //sf::Joystick::getIdentification(event.joystickButton.joystickId).vendorId

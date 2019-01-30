@@ -22,9 +22,7 @@ GFXNet::GFXNet()
 
 	// Default to Main Menu
 	_state = new MainMenuState(this);
-
-	// To draw the back ground
-	level = Level::make((Lvl)(rand() % 3)); //random level to draw
+	level = unique_ptr<Level>(new Level);
 
 	window = unique_ptr<sf::RenderWindow>(new sf::RenderWindow(sf::VideoMode(SCRN_WD, SCRN_HT), "Geometric Meltdown", sf::Style::Default, contextSettings));
 	//window = unique_ptr<sf::RenderWindow> (new sf::RenderWindow(sf::VideoMode(SCRN_WD, SCRN_HT), "Geometric Meltdown", sf::Style::Fullscreen, contextSettings));
@@ -32,9 +30,7 @@ GFXNet::GFXNet()
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FPS);
 
-	// Active for OPENGL
-	window->setActive(true);
-
+	window->setActive(true);// Active for OPENGL
 	glShadeModel(GL_SMOOTH);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
@@ -56,11 +52,7 @@ void GFXNet::loop()
 {
 	while (window->isOpen())
 	{
-		sync.current = sync.game_clock.getElapsedTime().asMilliseconds();
-		sync.elapsed = sync.current - sync.previous;
-		sync.previous = sync.current;
-		sync.lag += sync.elapsed;
-
+		sync.update();
 		_state->read_input();
 		
 		//Input via Command, once executed release
@@ -69,26 +61,13 @@ void GFXNet::loop()
 			command.release();
 		}
 
-		while (sync.lag >= MS_PER_UPDATE()) {
-			//if (typeid(*_state) == typeid(LevelState))
-				//level->phys_handler();
-
-			sync.lag -= MS_PER_UPDATE();
-		}
-
+		sync.catch_up();
 		window->setActive(true);
-
-		//Render
-		_state->handler();
-
+		_state->handler(); //Render
 		glClear(GL_DEPTH_BUFFER_BIT);
-
-		// Transformations
-		glMatrixMode(GL_MODELVIEW);
+		glMatrixMode(GL_MODELVIEW);// Transformations
 		glLoadIdentity();
-
 		window->setActive(false);
-
 		window->display();
 	}
 }
@@ -324,7 +303,7 @@ LevelSelectState::LevelSelectState(GFXNet* context)
 
 void LevelSelectState::next()
 {
-	_context->level = Level::make((Lvl)(std::distance(menu->cursor->icons->begin(), menu->cursor->selected)));
+	_context->level->scenery = move(SceneryGroup::create((LevelType)(distance(menu->cursor->icons->begin(), menu->cursor->selected))));
 	_context->level->players.reset();
 	_context->setState(new LevelState(_context));
 	_context->command = Command::create(_context->_state);

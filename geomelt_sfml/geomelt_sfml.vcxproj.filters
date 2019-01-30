@@ -74,9 +74,6 @@
     <ClInclude Include="complex_shapes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="generic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="assets.h">
       <Filter>Header Files</Filter>
     </ClInclude>

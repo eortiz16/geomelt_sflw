@@ -18,20 +18,14 @@ private:
 	float health;
 	int lifeCount;
 	PlayerState lifeState;
+public:
+	Attributes();
 
 	friend class Player;
 	friend class Ball;
 	friend class Boxy;
 	friend class PlayerMap;
-
-	friend class Level;
-	friend class Field_Level;
-	friend class Night_Level;
-	friend class Time_Level;
 	friend class Camera;
-	friend class CharacterSelect;
-public:
-	Attributes();
 };
 
 class Toggle {
@@ -42,21 +36,17 @@ private:
 	bool on_ground;
 	sf::Clock deathTimer;
 	sf::Clock attackTimer;
+public:
+	Toggle();
 
 	friend class Player;
 	friend class Ball;
 	friend class Boxy;
 	friend class PlayerMap;
-
-	friend class Level;
-	friend class Command;
-	friend class CommandPlayer;
 	friend class AttackCommand;
 	friend class MoveLeftCommand;
 	friend class MoveRightCommand;
 	friend class StopCommand;
-public:
-	Toggle();
 };
 
 class Player {
@@ -79,21 +69,6 @@ protected:
 	geomelt::Quad armOutline;
 	geomelt::Circle eye;
 	CharColorOptions myColor;
-
-	friend class Level;
-	friend class Field_Level;
-	friend class Time_Level;
-	friend class Night_Level;
-	friend class CharacterSelect;
-	friend class PlayerMap;
-	friend class Camera;
-	friend class LevelState;
-	friend class Command;
-	friend class CommandPlayer;
-	friend class AttackCommand;
-	friend class MoveLeftCommand;
-	friend class MoveRightCommand;
-	friend class StopCommand;
 public:
 	void simple_update();
 	void simple_update_menu();
@@ -116,6 +91,9 @@ public:
 	Player(const Player&) = delete;
 	Player& operator=(const Player&) = delete;
 	virtual ~Player();
+
+	friend class PlayerMap;
+	friend class Camera;
 };
 
 class Ball : public Player {
@@ -130,10 +108,6 @@ public:
 	Ball(const Ball&) = delete;
 	Ball& operator=(const Ball&) = delete;
 	~Ball() {}
-
-	friend class LevelState;
-	friend class MoveLeftCommand;
-	friend class MoveRightCommand;
 };
 
 class Boxy : public Player {
@@ -147,8 +121,6 @@ public:
 	Boxy(const Boxy&) = delete;
 	Boxy& operator=(const Boxy&) = delete;
 	~Boxy() {}
-
-	friend class LevelState;
 };
 
 class PlayerMap {
@@ -171,5 +143,4 @@ public:
 	void reset();
 
 	friend class Camera;
-	friend class LevelSelectState;
 };

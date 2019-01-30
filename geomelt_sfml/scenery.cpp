@@ -120,6 +120,24 @@ void SceneryGroup::addObject(unique_ptr<Scenery>& obj)
 	scenery.push_back(move(obj));
 }
 
+unique_ptr<SceneryGroup> SceneryGroup::create(LevelType lvl)
+{
+	switch (lvl) {
+	case FIELD:
+		return unique_ptr<SceneryGroup>(new FieldScenery);
+		break;
+	case NIGHT:
+		return unique_ptr<SceneryGroup>(new NightScenery);
+		break;
+	case TIME:
+		return unique_ptr<SceneryGroup>(new TimeScenery);
+		break;
+	default:
+		return NULL;
+		break;
+	}
+}
+
 SceneryGroup::SceneryGroup()
 {
 	unique_ptr<Scenery> blackVoid = unique_ptr<Scenery>(

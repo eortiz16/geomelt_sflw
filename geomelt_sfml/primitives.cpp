@@ -105,7 +105,7 @@ geomelt::Vec::Vec(float x, float y, float z)
 	this->z = z;
 }
 
-geomelt::Color::Color(int r, int g, int b, int a)
+geomelt::Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
 	this->r = r;
 	this->g = g;

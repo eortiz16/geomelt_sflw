@@ -2,22 +2,9 @@
 
 PlayerMap Level::players;
 
-unique_ptr<Level> Level::make(Lvl lvl)
+Level::Level()
 {
-	switch (lvl) {
-	case FIELD:
-		return unique_ptr<Level>(new Field_Level);
-		break;
-	case NIGHT:
-		return unique_ptr<Level>(new Night_Level);
-		break;
-	case TIME:
-		return unique_ptr<Level>(new Time_Level);
-		break;
-	default:
-		return NULL;
-		break;
-	}
+	scenery = move(SceneryGroup::create((LevelType)(rand() % 3)));
 }
 
 void Level::render()
@@ -40,30 +27,11 @@ void Level::phys_handler()
 	scenery->physics();
 	Camera::set_center();
 	Camera::set_edges();
-}       
-
-Level::Level()
-{
 }
 
-Field_Level::Field_Level() : Level()
+void Level::setScenery(SceneryGroup scenery)
 {
-	scenery = unique_ptr<SceneryGroup>(new FieldScenery);
-}
-
-Night_Level::Night_Level() : Level()
-{
-	scenery = unique_ptr<SceneryGroup>(new NightScenery);
-}
-
-Time_Level::Time_Level() : Level()
-{
-	timeOfDay = EVENING;
-
-	bg_pal = Assets::backgroundPalette;
-	transition = false;
-
-	scenery = unique_ptr<SceneryGroup>(new TimeScenery);
+	this->scenery = unique_ptr<SceneryGroup>(&scenery);
 }
 
 void PlatformGroup::render()

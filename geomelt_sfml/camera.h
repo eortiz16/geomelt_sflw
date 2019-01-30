@@ -1,7 +1,6 @@
 #pragma once
 
 #include "headers.h"
-#include "generic.h"
 #include "primitives.h"
 #include "player.h"
 
@@ -30,17 +29,6 @@ private:
 	static geomelt::Boundary edges;
 	static geomelt::Boundary ortho;
 	static geomelt::Vec center;
-
-	friend class Level;
-	friend class Field_Level;
-	friend class Night_Level;
-	friend class Time_Level;
-	friend class CharacterSelect;
-	friend class Menu;
-	friend class MainMenu;
-	friend class CharacterSelect;
-	friend class LevelSelect;
-	friend class Pause;
 public:
 	// void update_value();
 	static void set_center();
@@ -50,4 +38,11 @@ public:
 	Camera() {}
 
 	friend class geomelt::Boundary;
+	friend class Level;
+	friend class CharacterSelect;
+	friend class Menu;
+	friend class MainMenu;
+	friend class CharacterSelect;
+	friend class LevelSelect;
+	friend class Pause;
 };

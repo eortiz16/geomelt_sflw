@@ -1,7 +1,6 @@
 #pragma once
 
 #include "headers.h"
-#include "generic.h"
 #include "primitives.h"
 
 constexpr auto CLR_OPT_CARDINALITY = 8;
@@ -12,9 +11,6 @@ private:
 	geomelt::Color outline;
 
 	friend class Level;
-	friend class Field_Level;
-	friend class Night_Level;
-	friend class Time_Level;
 	friend class CharacterColorSet;
 	friend class PlatformPalette;
 	friend class CharacterPalette;
@@ -72,9 +68,6 @@ private:
 	geomelt::Color black[CORNERS];
 
 	friend class Level;
-	friend class Field_Level;
-	friend class Night_Level;
-	friend class Time_Level;
 	friend class CharacterSelect;
 	friend class SceneryGroup;
 	friend class FieldScenery;
