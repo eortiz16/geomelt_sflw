@@ -33,7 +33,9 @@ class Platform {
 private:
 	geomelt::Quad body;
 	geomelt::Quad outline;
-	ColorSet my_color;
+
+	Platform();
+	Platform(geomelt::Vec center, float width, float height, ColorSet color);
 
 	friend class Player;
 	friend class PlatformGroup;

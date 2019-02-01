@@ -155,9 +155,9 @@ public:
 
 class Pause : public Menu {
 public:
-	void handler(unique_ptr<Level>& level);
+	void handler();
 
-	Pause() {}
+	Pause();
 	~Pause() {}
 
 	friend class PauseState;

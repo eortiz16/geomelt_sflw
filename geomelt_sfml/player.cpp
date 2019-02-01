@@ -374,7 +374,7 @@ void Ball::exhale()
 
 Boxy::Boxy() : Player()
 {
-	weight = GLfloat(GRAVITY);
+	weight = GLfloat(GRAVITY * 0.5f);
 
 	//Default Character Values
 	JUMP_MAX = 2;

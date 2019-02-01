@@ -45,51 +45,61 @@ void PlatformGroup::render()
 /* Platform[0] is the maain platform */
 PlatformGroup::PlatformGroup()
 {
-	Platform p0, p1, p2, p3;
-	//Platform Horizontal Center
-	p0.body.center.x = 0;
-	p1.body.center.x = -SCRN_HT * 3.0f / 4.0f;
-	p2.body.center.x = 0;
-	p3.body.center.x = SCRN_HT * 3.0f / 4.0f;
+	platforms.push_back(
+		Platform(
+			geomelt::Vec(0, -SCRN_HT * 2.5f, 0),
+			SCRN_HT * 6.0f,
+			SCRN_HT / 20.0f,
+			Assets::platformPalette.grass
+		)
+	);
 
-	//Platform Dimensions
-	p0.body.width = 5.0f * SCRN_WD / 6.0f;
-	p0.body.height = SCRN_HT / 20.0f;
-	p0.body.center.y = SCRN_HT / -3.0f;
+	platforms.push_back(
+		Platform(
+			geomelt::Vec(0, SCRN_HT / -3.0f, 0),
+			5.0f * SCRN_WD / 6.0f, 
+			SCRN_HT / 20.0f, 
+			Assets::platformPalette.grass
+		)
+	);
 
-	p1.body.width = SCRN_WD / 4.0f;
-	p1.body.height = SCRN_HT / 20.0f;
-	p1.body.center.y = 100.0f;
+	platforms.push_back(
+		Platform(
+			geomelt::Vec(-SCRN_HT * 3.0f / 4.0f, 100.0f, 0),
+			SCRN_WD / 4.0f,
+			SCRN_HT / 20.0f,
+			Assets::platformPalette.grass
+		)
+	);
 
-	p2.body.width = SCRN_WD / 4.0f;
-	p2.body.height = SCRN_HT / 20.0f;
-	p2.body.center.y = 100.0f;
+	platforms.push_back(
+		Platform(
+			geomelt::Vec(0.0f, SCRN_HT / 4.0f, 0),
+			SCRN_WD / 4.0f,
+			SCRN_HT / 20.0f,
+			Assets::platformPalette.grass
+		)
+	);
 
-	p3.body.width = SCRN_WD / 4.0f;
-	p3.body.height = SCRN_HT / 20.0f;
-	p3.body.center.y = 100.0f;
+	platforms.push_back(
+		Platform(
+			geomelt::Vec(SCRN_HT * 3.0f / 4.0f, 100.0f, 0),
+			SCRN_WD / 4.0f,
+			SCRN_HT / 20.0f,
+			Assets::platformPalette.grass
+		)
+	);
 
-	p2.body.center.y = SCRN_HT / 4.0f;
-
-	platforms.push_back(p0);
-	platforms.push_back(p1);
-	platforms.push_back(p2);
-	platforms.push_back(p3);
-
-	for (vector<Platform>::iterator it = platforms.begin(); it != platforms.end(); ++it) {
-		//outline centered at body
-		it->outline.center = it->body.center;
-
-		it->outline.width = it->body.width + THICKNESS;
-		it->outline.height = it->body.height + THICKNESS;
-
-		//Assign Color to Floor
-		it->body.color = Assets::platformPalette.grass.body;
-		it->outline.color = Assets::platformPalette.grass.outline;
-
-		//Assign Floor Outline Attributes
+	for (vector<Platform>::iterator it = platforms.begin(); it != platforms.end(); ++it) 
 		it->body.boundary_assignment();
-	}
+}
+
+Platform::Platform() {}
+
+Platform::Platform(geomelt::Vec center, float width, float height, ColorSet color)
+{
+	this->body = geomelt::Quad(width, height, 0, color.body, center);
+	this->outline = geomelt::Quad(width + THICKNESS, height + THICKNESS, 0, color.outline, center);
 }
 
 /* Great Candidate for State Design Pattern */

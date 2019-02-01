@@ -18,6 +18,7 @@ private:
 	friend class Ball;
 	friend class Boxy;
 	friend class PlayerMap;
+	friend class Platform;
 	friend class PlatformGroup;
 public:
 	ColorSet() {}
@@ -119,6 +120,8 @@ public:
 	const static sf::Texture optionsSelected;
 	const static sf::Texture exit;
 	const static sf::Texture exitSelected;
+	const static sf::Texture resume;
+	const static sf::Texture resumeSelected;
 	const static sf::Texture button_A;
 	const static sf::Texture button_B;
 	const static sf::Texture button_X;

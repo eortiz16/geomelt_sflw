@@ -65,7 +65,7 @@ void Cursor::updateSelection() {
 	if (selected == icons->end())
 		selected = icons->begin();
 	else if (selected == icons->begin() - 1)
-		selected = icons->begin() + 2;
+		selected = icons->begin() + (icons.get()->textures.size() - 1);
 }
 
 void Cursor::render()
@@ -224,7 +224,59 @@ void LevelSelect::handler()
 		it->get()->render();
 }
 
-void Pause::handler(unique_ptr<Level>& level)
+void Pause::handler()
 {
-	level->gfx_handler();
+	for (vector<unique_ptr<geomelt::Shape>>::iterator it = navigable.begin(); it != navigable.end(); ++it)
+		it->get()->render();
+
+	cursor->render();
+}
+
+Pause::Pause()
+{
+	srand((unsigned int)time(NULL));
+
+	TexturedQuad resume, exit;
+	float apectratio = 0.0f;
+	float centerX = (Camera::edges.left + Camera::edges.right) / 2.0f;
+	float centerY = (Camera::edges.top + Camera::edges.bottom) / 2.0f;
+
+	resume.set_texture_attributes(Assets::textures.resume);
+	apectratio = (float)Assets::textures.resume.getSize().x / (float)Assets::textures.resume.getSize().y;
+	resume.height = (Camera::edges.top - Camera::edges.bottom) * 0.20f;
+	resume.width = resume.height * apectratio;
+	resume.center = geomelt::Vec(centerX, centerY + resume.height, 0);
+	resume.boundary_assignment();
+
+	exit.set_texture_attributes(Assets::textures.exit);
+	apectratio = (float)Assets::textures.exit.getSize().x / (float)Assets::textures.exit.getSize().y;
+	exit.height = (Camera::edges.top - Camera::edges.bottom) * 0.20f;
+	exit.width = exit.height * apectratio;
+	exit.center = geomelt::Vec(centerX, centerY, 0);
+	exit.boundary_assignment();
+
+	navigable.push_back(make_unique<TexturedQuad>(resume));
+	navigable.push_back(make_unique<TexturedQuad>(exit));
+
+	/* Add the selected version to the cursor vector */
+	vector<unique_ptr<geomelt::Shape>> selected;
+
+	resume.set_texture_attributes(Assets::textures.resumeSelected);
+	apectratio = (float)Assets::textures.resume.getSize().x / (float)Assets::textures.resume.getSize().y;
+	resume.height = (Camera::edges.top - Camera::edges.bottom) * 0.20f;
+	resume.width = resume.height * apectratio;
+	resume.center = geomelt::Vec(centerX, centerY + resume.height, 0);
+	resume.boundary_assignment();
+
+	exit.set_texture_attributes(Assets::textures.exitSelected);
+	apectratio = (float)Assets::textures.exit.getSize().x / (float)Assets::textures.exit.getSize().y;
+	exit.height = (Camera::edges.top - Camera::edges.bottom) * 0.20f;
+	exit.width = exit.height * apectratio;
+	exit.center = geomelt::Vec(centerX, centerY, 0);
+	exit.boundary_assignment();
+
+	selected.push_back(make_unique<TexturedQuad>(resume));
+	selected.push_back(make_unique<TexturedQuad>(exit));
+
+	cursor = unique_ptr<Cursor>(new Cursor(selected));
 }

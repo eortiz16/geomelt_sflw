@@ -542,7 +542,15 @@ PauseState::PauseState(GFXNet* context)
 	menu = unique_ptr<Menu>(new Pause);
 }
 
-void PauseState::next() { /* Do nothing */ }
+void PauseState::next() 
+{ 
+	if (this->menu->cursor->selected == this->menu->cursor->icons->begin() + 0) {
+		prev();
+	}
+	else if (this->menu->cursor->selected == this->menu->cursor->icons->begin() + 1) {
+		this->_context->window->close();
+	}
+}
 
 void PauseState::prev()
 {
@@ -553,6 +561,7 @@ void PauseState::prev()
 void PauseState::handler()
 {
 	_context->level->gfx_handler();
+	static_cast<Pause&>(*menu).handler();
 }
 
 void PauseState::read_input()
@@ -572,10 +581,24 @@ void PauseState::read_input()
 			case xbox::B:
 				_context->command = unique_ptr<Command>(new DenyCommand);
 				break;
+			case xbox::A:
+				_context->command = unique_ptr<Command>(new ConfirmCommand);
+				break;
 			default:
 				break;
 			}
 			break;
+
+		case sf::Event::JoystickMoved:
+		{
+			float axis_position1 = sf::Joystick::getAxisPosition(event.joystickMove.joystickId, sf::Joystick::PovY); //DPAD
+
+			if (axis_position1 == 100)
+				_context->command = unique_ptr<CommandMenu>(new PrevCommand);
+			else if (axis_position1 == -100)
+				_context->command = unique_ptr<CommandMenu>(new NextCommand);
+		}
+		break;
 
 		default:
 			break;
