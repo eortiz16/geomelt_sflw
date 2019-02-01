@@ -8,7 +8,7 @@
 // Sony = 1356
 // logitech Controller = 1133
 
-constexpr unsigned int KEY_ID = -1;
+constexpr unsigned int KEY_ID = 9;
 
 namespace xbox {
 	enum Axis { LAX, LAY, LTRT, RAX, RAY, DPADX, DPADY };

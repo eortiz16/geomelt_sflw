@@ -11,6 +11,7 @@ constexpr auto SELECTED_CARDINALITY = 3;
 enum Selected { PLAY, OPTIONS, EXIT };
 
 class Level;
+class PlayerMap;
 
 inline void operator++(Selected &sel, int)
 {
