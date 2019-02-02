@@ -32,6 +32,8 @@ private:
 	
 	friend class CharacterPalette;
 	friend class Player;
+	friend class Ball;
+	friend class Boxy;
 	friend class PlayerMap;
 public:
 	CharacterColorSet() {}

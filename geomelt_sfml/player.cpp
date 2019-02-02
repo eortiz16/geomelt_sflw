@@ -1,16 +1,6 @@
 #include "player.h"
 map<unsigned int, unique_ptr<Player>> PlayerMap::_map;
 
-Player::Player()
-{
-	myID = extract_lowest_ID();
-	weight = 0.0f;
-	JUMP_MAX = 3;
-	jumpCount = 0;
-	velocity = geomelt::Vec(0, 0, 0);
-	myColor = (CharColorOptions)myID;
-}
-
 vector<int> Player::availableIDs = {0,1,2,3,4,5,6,7};
 
 unsigned int Player::extract_lowest_ID()
@@ -26,7 +16,7 @@ unsigned int Player::extract_lowest_ID()
 
 Player::~Player()
 {
-	availableIDs.push_back(this->myID); //push to back
+	availableIDs.push_back(this->myID);
 }
 
 void Player::change_color(SelectColor option)
@@ -121,16 +111,16 @@ void Player::attack()
 { 
 	// Extend arm in direction character is facing
 	if (direction == RIGHT)
-		arm.center.x = body->center.x + body->width / 2;
+		arm.center.x = body->center.x + 3 * body->width / 4;
 	else if (direction == LEFT)
-		arm.center.x = body->center.x - body->width / 2;
+		arm.center.x = body->center.x - 3 * body->width / 4;
 
 	arm.center.y = body->center.y;
 	armOutline.center.x = arm.center.x;
 	armOutline.center.y = arm.center.y;
 
 	// After 25 milliseconds, stop rendering
-	if (toggle.attackTimer.getElapsedTime().asMilliseconds() > 25)
+	if (toggle.attackTimer.getElapsedTime().asMilliseconds() > 35)
 		toggle.attacking ^= 1;
 }
 
@@ -147,8 +137,7 @@ void Player::simple_update()
 	reflection->height = reflection->width;
 
 	reflection->center.y = body->center.y + sqrt(body->radius);
-	outline->center.x = body->center.x;
-	outline->center.y = body->center.y;
+	outline->center = geomelt::Vec(body->center.x, body->center.y, 0);
 
 	arm.center.y = body->center.y;
 	armOutline.center.y = body->center.y;
@@ -263,72 +252,87 @@ void Player::death_handler()
 	}
 }
 
-Ball::Ball() : Player()
+Player::Player()
 {
-	weight = 3.0f * GLfloat(GRAVITY) / 4.0f;
-
-	//Default Character Values
-	JUMP_MAX = 4;
-
-	//Polymorphism
-	body = unique_ptr<geomelt::Circle>(new geomelt::Circle);
-	outline = unique_ptr<geomelt::Circle>(new geomelt::Circle);
-	reflection = unique_ptr<geomelt::Circle>(new geomelt::Circle);
-
-	//Default Player Dimensions
-	body->width = 100;
-	body->height = body->width;
-	body->radius = body->width / 2;
-	
-	outline->width = body->width;
-	outline->height = body->height;
-	outline->radius = body->radius;
-
-	//Arm
-	arm.width = body->width;
-	arm.height = 25;
-	arm.color = Assets::palette.moon;
-	arm.boundary_assignment();
-	armOutline.width = body->width + THICKNESS;
-	armOutline.height = arm.height + THICKNESS / 2.0f;
-	armOutline.color = Assets::palette.black;
-
-	// Movement Parameters
-	move_param_x = 10.0f;
-	move_param_y = 5.0f;
-
-	//Player Boundaries
-	body->boundary_assignment();
-
-	outline->radius = body->radius + 4;
-	eye.radius = (body->radius / 10) + 1;
-	reflection->radius = body->radius - body->radius / 4;
-
-	body->center.x = 0;
-	body->center.y = 200;
-	outline->center.x = body->center.x;
-	outline->center.y = body->center.y;
-
-	update_reflection_x();
-	reflection->center.y = body->center.y + sqrt(body->radius);
-
-	//Color Assignment
-	outline->color = Assets::palette.black;
-	eye.color = Assets::palette.black;
-
-	//Default Center
-	body->center.x = 0;
-	body->center.y = 0;
-
-	//Default Direction
+	myID = extract_lowest_ID();
+	weight = 0.0f;
+	JUMP_MAX = 3;
+	jumpCount = 0;
+	velocity = geomelt::Vec(0, 0, 0);
 	direction = RIGHT;
+	mDimension = 100;
+	myColor = (CharColorOptions)myID;
+	mColor = Assets::characterPalette.colors.at(myColor);
+	
+	eye = geomelt::Circle(
+		mDimension,
+		mDimension,
+		(mDimension / 20.0f) + 1,
+		mColor.outline,
+		geomelt::Vec(0, 0, 0)
+	);
+
+	arm = geomelt::Quad(
+		mDimension,
+		mDimension / 4.0f,
+		0,
+		mColor.body,
+		velocity
+	);
+
+	armOutline = geomelt::Quad(
+		mDimension + THICKNESS,
+		mDimension / 4.0f + THICKNESS / 2.0f,
+		0,
+		mColor.outline,
+		velocity
+	);
 }
 
-void Ball::render()
+Ball::Ball() : Player()
 {
-	if (stats.lifeState == ALIVE)	{
+	// Movement Parameters
+	weight = 3.0f * GLfloat(GRAVITY) / 4.0f;
+	move_param_x = 10.0f;
+	move_param_y = 5.0f;
+	JUMP_MAX = 4;
+
+	body = unique_ptr<geomelt::Circle>(
+		new geomelt::Circle(
+			mDimension,
+			mDimension,
+			mDimension / 2.0f,
+			mColor.body,
+			geomelt::Vec(0, 0, 0)
+		)
+	);
+
+	outline = unique_ptr<geomelt::Circle>(
+		new geomelt::Circle(
+			mDimension,
+			mDimension,
+			mDimension / 2.0f,
+			mColor.outline,
+			geomelt::Vec(0, 0, 0)
+		)
+	);
+
+	reflection = unique_ptr<geomelt::Circle>(
+		new geomelt::Circle(
+			mDimension,
+			mDimension,
+			body->radius - body->radius / 4.0f,
+			mColor.reflection,
+			geomelt::Vec(0, 0, 0)
+		)
+	);
+}
+
+void Player::render()
+{
+	if (stats.lifeState == ALIVE) {
 		outline->render();
-	
+
 		if (toggle.attacking) {
 			armOutline.render();
 			arm.render();
@@ -340,9 +344,9 @@ void Ball::render()
 	}
 }
 
-void Ball::update_position(PlatformGroup plat)
+void Player::update(PlatformGroup plat)
 {
-	if (stats.lifeState == ALIVE)	{
+	if (stats.lifeState == ALIVE) {
 		physics(plat);
 		simple_update();
 
@@ -354,6 +358,11 @@ void Ball::update_position(PlatformGroup plat)
 
 		body->boundary_assignment();
 	}
+}
+
+void Ball::update(PlatformGroup plat)
+{
+	Player::update(plat);
 }
 
 void Ball::jump()
@@ -374,118 +383,67 @@ void Ball::exhale()
 
 Boxy::Boxy() : Player()
 {
+	direction = LEFT;
 	weight = GLfloat(GRAVITY * 0.5f);
-
-	//Default Character Values
 	JUMP_MAX = 2;
-
-	body = unique_ptr<geomelt::Quad>(new geomelt::Quad);
-	outline = unique_ptr<geomelt::Quad>(new geomelt::Quad);
-	reflection = unique_ptr<geomelt::Quad>(new geomelt::Quad);
-
-	//Default Player Dimensions
-	body->width = 100;
-	body->height = body->width;
-	body->radius = body->width / 2;
-
-	//Arm
-	arm.width = 100;
-	arm.height = 25;
-	arm.boundary_assignment();
-	armOutline.width = 108;
-	arm.height = 29;
-	armOutline.color = Assets::palette.black;
-
-	// Movement Parameters
 	move_param_x = 15.0f;
 	move_param_y = 5.0f;
 
-	//Player Boundaries
-	body->boundary_assignment();
-	body->center.x = 0;
-	body->center.y = 0;
+	body = unique_ptr<geomelt::Shape>(
+		new geomelt::Quad(
+			mDimension,
+			mDimension,
+			mDimension / 2.0f,
+			mColor.body,
+			geomelt::Vec(0, 0, 0)
+		)
+	);
 
-	eye.width = body->width / 20 + 1;
-	eye.height = eye.width;
-	eye.radius = eye.width;
+	outline = unique_ptr<geomelt::Shape>(
+		new geomelt::Quad(
+			mDimension + THICKNESS,
+			mDimension + THICKNESS,
+			mDimension / 2.0f,
+			mColor.outline,
+			geomelt::Vec(0, 0, 0)
+		)
+	);
 
-	outline->width = body->width + 8;
-	outline->height = outline->width;
-	outline->center.x = body->center.x;
-	outline->center.y = body->center.y;
-
-	reflection->width = body->width / 1.5f;
-	reflection->height = reflection->width;
-	reflection->radius = reflection->width / 2;
-	update_reflection_x();
-	reflection->center.y = body->center.y + sqrt(body->radius) * 2;
-
-	//Color Assignment
-	outline->color = Assets::palette.black;
-	eye.color = Assets::palette.black;
-
-	//Default Direction
-	direction = LEFT;
+	reflection = unique_ptr<geomelt::Shape>(
+		new geomelt::Quad(
+			body->width / 1.5f,
+			body->width / 1.5f,
+			body->width / 3.0f,
+			mColor.reflection,
+			geomelt::Vec(0, 0, 0)
+		)
+	);
 }
 
-void Boxy::render()
+void Boxy::update(PlatformGroup plat)
 {
-	//Render player while alive
-	if (stats.lifeState == ALIVE)
-	{
-		// Render all player objects
-		outline->render();
+	Player::update(plat);
 
-		// If player is attacking
-		if (toggle.attacking) {
-			armOutline.render();
-			arm.render();
-		}
-
-		body->render();
-		reflection->render();
-		eye.render();
-	}
-}
-
-void Boxy::update_position(PlatformGroup plat)
-{
-	// If player is alive
-	if (stats.lifeState == ALIVE) {
-		// Compute physics
-		physics(plat);
-		simple_update();
-
-		if (toggle.attacking)
-			attack();
-
-		if (toggle.walking)
-			move(direction);
-
-		body->boundary_assignment();
-
+	if (stats.lifeState == ALIVE) 
 		reflection->center.y = body->center.y + sqrt(body->radius) * 1.5f;
-	}
 }
 
 void Boxy::jump()
 {
-	toggle.on_ground = false;
+	if (toggle.on_ground)
+		toggle.on_ground = false;
 
 	//Check if jumpcount is less than jumpmax
 	if (jumpCount < JUMP_MAX) {
-		// vertical velosity modification
-		// add one to jumpcount
-		velocity.y = JUMP_PARAM;
-		jumpCount++;
+		velocity.y = JUMP_PARAM; // vertical velosity modification
+		jumpCount++; // add one to jumpcount
 	}
 }
 
 Attributes::Attributes()
 {
-	// Default attribute assignment
-	health = 0.0f;
-	lifeCount = 4;
+	health = 0.0f; // Should be relabeled as damage
+	lifeCount = 4; // 5 total
 	lifeState = ALIVE;
 }
 
@@ -497,6 +455,7 @@ Toggle::Toggle()
 	on_ground = false;
 }
 
+/* Add player corresponding to joyID */
 void PlayerMap::add(unsigned int joyID)
 {
 	bool is_created_already = false;
@@ -518,11 +477,13 @@ void PlayerMap::add(unsigned int joyID)
 	}
 }
 
+/* Erase player[id] */
 void PlayerMap::purge(unsigned int id)
 {
 	_map.erase(id);
 }
 
+/* Function that allows for character to transform to different concrete player type*/
 void PlayerMap::transform(unsigned int id)
 {
 	//if present
@@ -539,6 +500,7 @@ void PlayerMap::transform(unsigned int id)
 	}
 }
 
+/* Function that toggles an attack */
 void PlayerMap::attack(unsigned int id)
 {
 	if (_map.find(id) != _map.end()) {
@@ -547,12 +509,14 @@ void PlayerMap::attack(unsigned int id)
 	}
 }
 
+/* Function that triggers player[id] to jump */
 void PlayerMap::jump(unsigned int id)
 {
 	if (_map.find(id) != _map.end())
 		_map[id]->jump();
 }
 
+/* Function that triggers player[id] to move */
 void PlayerMap::move(unsigned int id, Direction dir)
 {
 	if (_map.find(id) != _map.end()) {
@@ -561,13 +525,14 @@ void PlayerMap::move(unsigned int id, Direction dir)
 	}
 }
 
+/* Function that triggers player[id] to change to next or previous color */
 void PlayerMap::change_color(unsigned int id, SelectColor dir)
 {
 	if (_map.find(id) != _map.end())
 		_map[id]->change_color(dir);
 }
 
-
+/* Function that toggles player[id] to stop */
 void PlayerMap::stop(unsigned int id)
 {
 	if (_map.find(id) != _map.end()) {
@@ -575,11 +540,13 @@ void PlayerMap::stop(unsigned int id)
 	}
 }
 
+/* Function that erases all players */
 void PlayerMap::clear()
 {
 	_map.clear();
 }
 
+/* Function that returns # of players present */
 unsigned int PlayerMap::size()
 {
 	return _map.size();
@@ -611,7 +578,7 @@ void PlayerMap::phys_handler(PlatformGroup plat)
 {
 	for (map<unsigned int, unique_ptr<Player>>::iterator it = _map.begin(); it != _map.end(); ++it) {
 		if (it->second->stats.lifeState != ELIMINATED)
-			it->second->update_position(plat);
+			it->second->update(plat);
 		else
 			_map.erase(it);
 

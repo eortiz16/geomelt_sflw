@@ -48,6 +48,7 @@ GFXNet::GFXNet()
 	sync.previous = sync.game_clock.getElapsedTime().asMilliseconds();
 }
 
+/* Main Game Loop */
 void GFXNet::loop()
 {
 	while (window->isOpen())

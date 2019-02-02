@@ -69,6 +69,8 @@ protected:
 	geomelt::Quad armOutline;
 	geomelt::Circle eye;
 	CharColorOptions myColor;
+	CharacterColorSet mColor;
+	float mDimension;
 public:
 	void simple_update();
 	void simple_update_menu();
@@ -82,8 +84,8 @@ public:
 	virtual void special() = 0;
 	void move(Direction dir);
 	void reset_attributes();
-	virtual void render(void) = 0;
-	virtual void update_position(PlatformGroup plat) = 0;
+	virtual void render();
+	virtual void update(PlatformGroup plat);
 	virtual void physics(PlatformGroup plat);
 	
 	Player& operator = (const CharacterColorSet &clr);
@@ -98,8 +100,7 @@ public:
 
 class Ball : public Player {
 public:
-	void render();
-	void update_position(PlatformGroup plat);
+	void update(PlatformGroup plat);
 	void jump();
 	void exhale();
 	void special() {}
@@ -112,8 +113,7 @@ public:
 
 class Boxy : public Player {
 public:
-	void render();
-	void update_position(PlatformGroup plat);
+	void update(PlatformGroup plat);
 	void jump();
 	void special() {}
 	
