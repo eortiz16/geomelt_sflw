@@ -29,7 +29,6 @@ GFXNet::GFXNet()
 
 	window->setVerticalSyncEnabled(true);
 	window->setFramerateLimit(FPS);
-
 	window->setActive(true);// Active for OPENGL
 	glShadeModel(GL_SMOOTH);
 	glCullFace(GL_BACK);
@@ -42,10 +41,9 @@ GFXNet::GFXNet()
 	glEnable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_DITHER);
-
 	window->setActive(false);
 
-	sync.previous = sync.game_clock.getElapsedTime().asMilliseconds();
+	sync.previous = sync.gameClock.getElapsedTime().asMilliseconds();
 }
 
 /* Main Game Loop */
@@ -171,7 +169,7 @@ void MainMenuState::read_input()
 			break;
 
 		case sf::Event::MouseMoved:
-			for (vector<unique_ptr<geomelt::Shape>>::iterator it = menu->navigable.begin(); it != menu->navigable.end(); ++it) {
+			for (vector<unique_ptr<Shape>>::iterator it = menu->navigable.begin(); it != menu->navigable.end(); ++it) {
 				int index = it - menu->navigable.begin();
 
 				if (it->get()->boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y)))
@@ -353,7 +351,7 @@ void LevelSelectState::read_input()
 			break;
 
 		case sf::Event::MouseMoved:
-			for (vector<unique_ptr<geomelt::Shape>>::iterator it = menu->navigable.begin(); it != menu->navigable.end(); ++it) {
+			for (vector<unique_ptr<Shape>>::iterator it = menu->navigable.begin(); it != menu->navigable.end(); ++it) {
 				int index = it - menu->navigable.begin();
 
 				if (it->get()->boundary.isWithin(Input::translateX(event.mouseMove.x), Input::translateY(event.mouseMove.y))) {

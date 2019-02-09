@@ -7,8 +7,8 @@ constexpr auto CLR_OPT_CARDINALITY = 8;
 
 class ColorSet {
 private:
-	geomelt::Color body;
-	geomelt::Color outline;
+	Color body;
+	Color outline;
 
 	friend class Level;
 	friend class CharacterColorSet;
@@ -23,12 +23,12 @@ private:
 public:
 	ColorSet() {}
 	ColorSet& operator = (const ColorSet &clr);
-	ColorSet(geomelt::Color, geomelt::Color);
+	ColorSet(Color, Color);
 };
 
 class CharacterColorSet : public ColorSet {
 private:
-	geomelt::Color reflection;
+	Color reflection;
 	
 	friend class CharacterPalette;
 	friend class Player;
@@ -38,37 +38,37 @@ private:
 public:
 	CharacterColorSet() {}
 	CharacterColorSet& operator = (const CharacterColorSet &clr);
-	CharacterColorSet(geomelt::Color, geomelt::Color, geomelt::Color);
+	CharacterColorSet(Color, Color, Color);
 };
 
 class Palette {
 public:
-	const static geomelt::Color sun;
-	const static geomelt::Color moon;
-	const static geomelt::Color platform;
-	const static geomelt::Color black;
-	const static geomelt::Color grey;
-	const static geomelt::Color darkGrey;
-	const static geomelt::Color lightGrey;
-	const static geomelt::Color white;
-	const static geomelt::Color red;
-	const static geomelt::Color darkRed;
-	const static geomelt::Color green;
-	const static geomelt::Color darkGreen;
-	const static geomelt::Color blue;
-	const static geomelt::Color darkBlue;
+	const static Color sun;
+	const static Color moon;
+	const static Color platform;
+	const static Color black;
+	const static Color grey;
+	const static Color darkGrey;
+	const static Color lightGrey;
+	const static Color white;
+	const static Color red;
+	const static Color darkRed;
+	const static Color green;
+	const static Color darkGreen;
+	const static Color blue;
+	const static Color darkBlue;
 };
 
 class BackgroundPalette {
 private:
-	geomelt::Color day[CORNERS];
-	geomelt::Color afternoon[CORNERS];
-	geomelt::Color evening[CORNERS];
-	geomelt::Color night[CORNERS];
-	geomelt::Color dark_night[CORNERS];
-	geomelt::Color morning[CORNERS];
-	geomelt::Color overcast[CORNERS];
-	geomelt::Color black[CORNERS];
+	vector<Color> day;
+	vector<Color> afternoon;
+	vector<Color> evening;
+	vector<Color> night;
+	vector<Color> dark_night;
+	vector<Color> morning;
+	vector<Color> overcast;
+	vector<Color> black;
 
 	friend class Level;
 	friend class CharacterSelect;

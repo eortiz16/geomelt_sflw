@@ -12,7 +12,7 @@ constexpr auto CLOUD_RANGE = 200;
 #pragma once
 class Cloud {
 private:
-	vector<unique_ptr<geomelt::Circle>> body;
+	vector<unique_ptr<Circle>> body;
 	int speed;
 	bool offScreen;
 public:
@@ -37,7 +37,7 @@ public:
 
 class Star {
 private:
-	unique_ptr<geomelt::Shape> body;
+	unique_ptr<Shape> body;
 	friend class StarGroup;
 public:
 	void change_color();
@@ -56,17 +56,18 @@ public:
 
 class Particles {
 private:
-	geomelt::Quad s;
-	geomelt::Vec velocity;
+	Quad s;
+	Vec velocity;
 };
 
-class TexturedQuad : public geomelt::Shape {
+class TexturedQuad : public Shape {
 private:
 	sf::Texture myTexture;
 public:
 	void set_texture_attributes(sf::Texture asset);
 	void render();
 
+	TexturedQuad(sf::Texture texture, float w, float h, Vec v);
 	TexturedQuad() {}
 	~TexturedQuad() {}
 
@@ -82,11 +83,11 @@ public:
 class RoundCornerBox {
 private:
 	GLfloat width, height;
-	geomelt::Vec center;
-	geomelt::Circle corner[CORNERS];
-	geomelt::Quad vRectangle, hRectangle; //vertical, horizontal
+	Vec center;
+	Circle corner[CORNERS];
+	Quad vRectangle, hRectangle; //vertical, horizontal
 public:
-	void set_color(geomelt::Color clr);
+	void set_color(Color clr);
 	void build();
 	void render();
 

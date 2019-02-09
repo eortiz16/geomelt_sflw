@@ -5,145 +5,139 @@
 #define M_PI 3.14159265358979323846
 constexpr auto TRI_NUM = 50;
 
-namespace geomelt
-{
-	class Vec {
-	public:
-		float x, y, z;
+class Vec {
+public:
+	float x, y, z;
 	
-		Vec() {}
-		Vec(float, float, float);
+	Vec() {}
+	Vec(float, float, float);
 
-		friend class Line;
-		friend class Shape;
-		friend class Quad;
-		friend class Circle;
-		friend class TexturedQuad;
-		friend class Star;
-		friend class Cloud;
-		friend class RoundCornerBox;
-		friend class Background;
+	friend class Line;
+	friend class Shape;
+	friend class Quad;
+	friend class Circle;
+	friend class TexturedQuad;
+	friend class Star;
+	friend class Cloud;
+	friend class RoundCornerBox;
+	friend class Background;
+	friend class Player;
+	friend class Ball;
+	friend class Boxy;
+	friend class Menu;
+	friend class MainMenu;
+	friend class LevelSelect;
+	friend class CharacterSelect;
+	friend class Level;
+	friend class Pause;
+	friend class Camera;
+	friend class Cloud;
+	friend class Player;
+};
 
-		friend class Player;
-		friend class Ball;
-		friend class Boxy;
+class Color {
+public:
+	uint8_t r, g, b, alpha;
 
-		friend class Menu;
-		friend class MainMenu;
-		friend class LevelSelect;
-		friend class CharacterSelect;
-		friend class Level;
-		friend class Pause;
-		
-		friend class Camera;
-		friend class Cloud;
-		friend class Player;
-	};
+	Color() {}
+	Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+	Color& operator = (const Color &clr);
 
-	class Color {
-	public:
-		uint8_t r, g, b, alpha;
+	friend class Line;
+	friend class Shape;
+	friend class Quad;
+	friend class Circle;
+	friend class Star;
+	friend class Cloud;
+	friend class RoundCornerBox;
+	friend class Background;
+	friend class LevelSelect;
+};
+
+class Line {
+private:
+	float width;
+	Vec from, to;
+	Color color;
+public:
+	void render();
+	Line();
+};
+
+class Boundary {
+public:
+	float top, bottom, left, right;
+
+	bool isWithin(int x, int y); /* For mouse detection */
+	bool isWithin(Boundary); /* one boundary within another? */
+	bool isWithin(Boundary, float center);/* for use with player */
+
+	Boundary() {}
+	Boundary(float t, float b, float l, float r);
+
+	friend class Shape;
+	friend class Quad;
+	friend class Circle;
+	friend class Camera;
+	friend class CharacterSelect;
+	friend class RoundCornerBox;
+	friend class Platform;
+	friend class Player;
+	friend class Ball;
+	friend class Boxy;
+	friend class Level;
+	friend class GFXNet;
+};
+
+class Shape {
+public:
+	float width, height, radius;
+	Boundary boundary;
+	Color color;
+	Vec center;
 	
-		Color() {}
-		Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-		Color& operator = (const Color &clr);
+	void boundary_assignment();
+	virtual void render() = 0;
+	Shape() {}
+	Shape(float w, float h, float r, Vec v, Color clr = Color(0, 0, 0, 255));
+	~Shape() {}
 
-		friend class Line;
-		friend class Shape;
-		friend class Quad;
-		friend class Circle;
-		friend class Star;
-		friend class Cloud;
-		friend class RoundCornerBox;
-		friend class Background;
-		friend class LevelSelect;
-	};
+	friend class Star;
+	friend class Cloud;
+	friend class RoundCornerBox;
+	friend class Background;
+	friend class LevelSelect;
+	friend class CharacterSelect;
+};
 
-	class Line {
-	private:
-		float width;
-		Vec from, to;
-		Color color;
-	public:
-		void render();
-		Line();
-	};
+class Circle : public Shape {
+public:
+	virtual void render();
+	Circle() {}
+	Circle(float w, float h, float r, Color clr, Vec v) : Shape(w, h, r, v, clr) {}
+	Circle(float r, Color clr, Vec v) : Shape(0, 0, r, v, clr) {}
 
-	class Boundary {
-	public:
-		float top, bottom, left, right;
+	~Circle() {}
 
-		bool isWithin(int x, int y); /* For mouse detection */
-		bool isWithin(Boundary); /* one boundary within another? */
-		bool isWithin(Boundary, float center);/* for use with player */
+	friend class Star;
+	friend class Cloud;
+	friend class RoundCornerBox;
+	friend class Background;
+	friend class LevelSelect;
+	friend class CharacterSelect;
+};
 
-		Boundary() {}
-		Boundary(float t, float b, float l, float r);
+class Quad : public Shape {
+public:
+	void render();
+	Quad() {}
+	Quad(float w, float h, float r, Color clr, Vec v) : Shape(w, h, r, v, clr) {}
+	~Quad() {}
 
-		friend class Shape;
-		friend class Quad;
-		friend class Circle;
-		friend class Camera;
-		friend class CharacterSelect;
-		friend class RoundCornerBox;
-		friend class Platform;
-		friend class Player;
-		friend class Ball;
-		friend class Boxy;
-		friend class Level;
-		friend class GFXNet;
-	};
-
-	class Shape {
-	public:
-		float width, height, radius;
-		Boundary boundary;
-		Color color;
-		Vec center;
-	
-		void boundary_assignment();
-		virtual void render() = 0;
-		Shape() {}
-		Shape(float w, float h, float r, Color clr, Vec v);
-		~Shape() {}
-
-		friend class Star;
-		friend class Cloud;
-		friend class RoundCornerBox;
-		friend class Background;
-		friend class LevelSelect;
-		friend class CharacterSelect;
-	};
-
-	class Circle : public Shape {
-	public:
-		virtual void render();
-		Circle() {}
-		Circle(float w, float h, float r, Color clr, Vec v) : Shape(w, h, r, clr, v) {}
-		Circle(float r, Color clr, Vec v) : Shape(0, 0, r, clr, v) {}
-
-		~Circle() {}
-
-		friend class Star;
-		friend class Cloud;
-		friend class RoundCornerBox;
-		friend class Background;
-		friend class LevelSelect;
-		friend class CharacterSelect;
-	};
-
-	class Quad : public Shape {
-	public:
-		void render();
-		Quad() {}
-		Quad(float w, float h, float r, Color clr, Vec v) : Shape(w, h, r, clr, v) {}
-		~Quad() {}
-
-		friend class Star;
-		friend class Cloud;
-		friend class RoundCornerBox;
-		friend class Background;
-		friend class LevelSelect;
-		friend class CharacterSelect;
-	};
-}
+	friend class Star;
+	friend class Cloud;
+	friend class RoundCornerBox;
+	friend class Background;
+	friend class LevelSelect;
+	friend class CharacterSelect;
+};

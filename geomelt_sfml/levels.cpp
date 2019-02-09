@@ -47,7 +47,7 @@ PlatformGroup::PlatformGroup()
 {
 	platforms.push_back(
 		Platform(
-			geomelt::Vec(0, -SCRN_HT * 2.5f, 0),
+			Vec(0, -SCRN_HT * 2.5f, 0),
 			SCRN_HT * 6.0f,
 			SCRN_HT / 20.0f,
 			Assets::platformPalette.grass
@@ -56,7 +56,7 @@ PlatformGroup::PlatformGroup()
 
 	platforms.push_back(
 		Platform(
-			geomelt::Vec(0, SCRN_HT / -3.0f, 0),
+			Vec(0, SCRN_HT / -3.0f, 0),
 			5.0f * SCRN_WD / 6.0f, 
 			SCRN_HT / 20.0f, 
 			Assets::platformPalette.grass
@@ -65,7 +65,7 @@ PlatformGroup::PlatformGroup()
 
 	platforms.push_back(
 		Platform(
-			geomelt::Vec(-SCRN_HT * 3.0f / 4.0f, 100.0f, 0),
+			Vec(-SCRN_HT * 3.0f / 4.0f, 100.0f, 0),
 			SCRN_WD / 4.0f,
 			SCRN_HT / 20.0f,
 			Assets::platformPalette.grass
@@ -74,7 +74,7 @@ PlatformGroup::PlatformGroup()
 
 	platforms.push_back(
 		Platform(
-			geomelt::Vec(0.0f, SCRN_HT / 4.0f, 0),
+			Vec(0.0f, SCRN_HT / 4.0f, 0),
 			SCRN_WD / 4.0f,
 			SCRN_HT / 20.0f,
 			Assets::platformPalette.grass
@@ -83,7 +83,7 @@ PlatformGroup::PlatformGroup()
 
 	platforms.push_back(
 		Platform(
-			geomelt::Vec(SCRN_HT * 3.0f / 4.0f, 100.0f, 0),
+			Vec(SCRN_HT * 3.0f / 4.0f, 100.0f, 0),
 			SCRN_WD / 4.0f,
 			SCRN_HT / 20.0f,
 			Assets::platformPalette.grass
@@ -96,10 +96,10 @@ PlatformGroup::PlatformGroup()
 
 Platform::Platform() {}
 
-Platform::Platform(geomelt::Vec center, float width, float height, ColorSet color)
+Platform::Platform(Vec center, float width, float height, ColorSet color)
 {
-	this->body = geomelt::Quad(width, height, 0, color.body, center);
-	this->outline = geomelt::Quad(width + THICKNESS, height + THICKNESS, 0, color.outline, center);
+	this->body = Quad(width, height, 0, color.body, center);
+	this->outline = Quad(width + THICKNESS, height + THICKNESS, 0, color.outline, center);
 }
 
 /* Great Candidate for State Design Pattern */
@@ -131,10 +131,10 @@ void Time_Level::transition_handler()
 }
 
 //changes color of background by factor of 1 each frame
-void Time_Level::transition_to(geomelt::Color *clr)
+void Time_Level::transition_to(Color *clr)
 {
 	//Transition from bg to clr
-	geomelt::Color *bg;
+	Color *bg;
 
 	//Adjust Color of Corners
 	for (int i = 0; i < 4; i++)	{

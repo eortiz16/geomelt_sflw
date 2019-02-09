@@ -1,7 +1,6 @@
 #pragma once
 
 #include "headers.h"
-#include "primitives.h"
 #include "player.h"
 
 constexpr auto FAC1 = 1.0000001f;
@@ -10,9 +9,6 @@ constexpr auto left_ortho = -0.75f * SCRN_WD;
 constexpr auto right_ortho = 0.75f * SCRN_WD;
 constexpr auto top_ortho = 0.75f * SCRN_HT;
 constexpr auto bottom_ortho = -0.75f * SCRN_HT;
-
-class Player;
-class PlayerMap;
 
 class Camera {
 private:
@@ -26,9 +22,9 @@ private:
 	static float competitionXLeft;
 	static float competitionXRight;
 
-	static geomelt::Boundary edges;
-	static geomelt::Boundary ortho;
-	static geomelt::Vec center;
+	static Boundary edges;
+	static Boundary ortho;
+	static Vec center;
 public:
 	// void update_value();
 	static void set_center();
@@ -37,7 +33,7 @@ public:
 
 	Camera() {}
 
-	friend class geomelt::Boundary;
+	friend class Boundary;
 	friend class Level;
 	friend class CharacterSelect;
 	friend class Menu;

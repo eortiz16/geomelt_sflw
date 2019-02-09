@@ -13,21 +13,21 @@ public:
 
 class Background : public Scenery {
 private:
-	geomelt::Quad body;
-	vector<geomelt::Color> color;
+	Quad body;
+	vector<Color> color;
 	vector<bool> transition_done;
 public:
 	void render();
 	void physics();
 	Background();
-	Background(geomelt::Color * clr, geomelt::Quad qd);
+	Background(vector<Color> clr, Quad qd);
 
 	friend class SceneryGroup;
 };
 
 class Satelite : public Scenery {
 protected:
-	geomelt::Circle body;
+	Circle body;
 public:
 	virtual void render();
 	virtual void physics() = 0;

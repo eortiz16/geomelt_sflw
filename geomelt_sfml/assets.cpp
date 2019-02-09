@@ -4,20 +4,20 @@ Textures Assets::textures;
 Palette Assets::palette;
 BackgroundPalette Assets::backgroundPalette;
 CharacterPalette Assets::characterPalette;
-const geomelt::Color Palette::sun = geomelt::Color(255, 255, 100, 255);
-const geomelt::Color Palette::moon = geomelt::Color(225, 225, 215, 255);
-const geomelt::Color Palette::platform = geomelt::Color(99, 160, 0, 255);
-const geomelt::Color Palette::black = geomelt::Color(0, 0, 0, 255);
-const geomelt::Color Palette::grey = geomelt::Color(150, 150, 150, 255);
-const geomelt::Color Palette::darkGrey = geomelt::Color(25, 25, 25, 255);
-const geomelt::Color Palette::lightGrey = geomelt::Color(210, 210, 210, 255);
-const geomelt::Color Palette::white = geomelt::Color(255, 255, 255, 255);
-const geomelt::Color Palette::red = geomelt::Color(255, 0, 0, 255);
-const geomelt::Color Palette::darkRed = geomelt::Color(150, 0, 0, 255);
-const geomelt::Color Palette::green = geomelt::Color(0, 255, 0, 255);
-const geomelt::Color Palette::darkGreen = geomelt::Color(0, 150, 0, 255);
-const geomelt::Color Palette::blue = geomelt::Color(0, 0, 255, 255);
-const geomelt::Color Palette::darkBlue = geomelt::Color(0, 0, 150, 255);
+const Color Palette::sun = Color(255, 255, 100, 255);
+const Color Palette::moon = Color(225, 225, 215, 255);
+const Color Palette::platform = Color(99, 160, 0, 255);
+const Color Palette::black = Color(0, 0, 0, 255);
+const Color Palette::grey = Color(150, 150, 150, 255);
+const Color Palette::darkGrey = Color(25, 25, 25, 255);
+const Color Palette::lightGrey = Color(210, 210, 210, 255);
+const Color Palette::white = Color(255, 255, 255, 255);
+const Color Palette::red = Color(255, 0, 0, 255);
+const Color Palette::darkRed = Color(150, 0, 0, 255);
+const Color Palette::green = Color(0, 255, 0, 255);
+const Color Palette::darkGreen = Color(0, 150, 0, 255);
+const Color Palette::blue = Color(0, 0, 255, 255);
+const Color Palette::darkBlue = Color(0, 0, 150, 255);
 const ColorSet PlatformPalette::grass = ColorSet(Palette::platform, Palette::black);
 const map<CharColorOptions, CharacterColorSet> CharacterPalette::colors = CharacterPalette::init();
 const sf::Texture Textures::field = setTexture("resources/textures/field.png");
@@ -53,72 +53,36 @@ BackgroundPalette::BackgroundPalette()
 {
 	enum TOD { DAY, AFTERNOON, EVENING, NITE, DNITE, MORNING };
 
-	for (int i = 0; i < CORNERS; i++)
-	{
+	for (int i = 0; i < CORNERS; ++i) {
+		day.push_back(Color());
+		afternoon.push_back(Color());
+		evening.push_back(Color());
+		night.push_back(Color());
+		dark_night.push_back(Color());
+		morning.push_back(Color());
+		overcast.push_back(Color());
+		overcast.push_back(Color(0, 0, 0, 255));
+	}
+
+	for (int i = 0; i < CORNERS; i++) {
 		//BOTTOM
 		if (i != 1 && i != 2) {
-			day[i].r = 0;
-			day[i].g = 155;
-			day[i].b = 255;
-
-			afternoon[i].r = 20;
-			afternoon[i].g = 135;
-			afternoon[i].b = 255;
-
-			evening[i].r = 100;
-			evening[i].g = 65;
-			evening[i].b = 255;
-
-			night[i].r = 70;
-			night[i].g = 50;
-			night[i].b = 120;
-
-			dark_night[i].r = 10;
-			dark_night[i].g = 15;
-			dark_night[i].b = 60;
-
-			morning[i].r = 100;
-			morning[i].g = 75;
-			morning[i].b = 202;
-
-			overcast[i].r = 175;
-			overcast[i].g = 175;
-			overcast[i].b = 175;
+			day[i] = Color(0, 155, 255, 255);
+			afternoon[i] = Color(20, 135, 255, 255);
+			evening[i] = Color(100, 65, 255, 255);
+			night[i] = Color(70, 50, 120, 255);
+			dark_night[i] = Color(10, 15, 60, 255);
+			morning[i] = Color(100, 75, 202, 255);
+			overcast[i] = Color(175, 175, 175, 255);
+		} else { //TOP
+			day[i] = Color(0, 60, 255, 255);
+			afternoon[i] = Color(50, 125, 255, 255);
+			evening[i] = Color(0, 50, 175, 255);
+			night[i] = Color(25, 25, 75, 255);
+			dark_night[i] = Color(10, 10, 20, 255);
+			morning[i] = Color(10, 10, 50, 255);
+			overcast[i] = Color(215, 215, 215, 255);
 		}
-		else //TOP
-		{
-			day[i].r = 0;
-			day[i].g = 60;
-			day[i].b = 255;
-
-			afternoon[i].r = 50;
-			afternoon[i].g = 125;
-			afternoon[i].b = 255;
-
-			evening[i].r = 0;
-			evening[i].g = 50;
-			evening[i].b = 175;
-
-			night[i].r = 25;
-			night[i].g = 25;
-			night[i].b = 75;
-
-			dark_night[i].r = 10;
-			dark_night[i].g = 10;
-			dark_night[i].b = 20;
-
-			morning[i].r = 10;
-			morning[i].g = 10;
-			morning[i].b = 50;
-
-			overcast[i].r = 215;
-			overcast[i].g = 215;
-			overcast[i].b = 215;
-		}
-
-		black[i].r = 0;
-		black[i].g = 0;
-		black[i].b = 0;
 	}
 }
 
@@ -129,7 +93,7 @@ ColorSet & ColorSet::operator=(const ColorSet & clr)
 	return *this;
 }
 
-ColorSet::ColorSet(geomelt::Color body, geomelt::Color outline)
+ColorSet::ColorSet(Color body, Color outline)
 {
 	this->body = body;
 	this->outline = outline;
@@ -137,13 +101,13 @@ ColorSet::ColorSet(geomelt::Color body, geomelt::Color outline)
 
 CharacterColorSet & CharacterColorSet::operator=(const CharacterColorSet & clr)
 {
-	body = clr.body;
-	outline = clr.outline;
-	reflection = clr.reflection;
+	this->body = clr.body;
+	this->outline = clr.outline;
+	this->reflection = clr.reflection;
 	return *this;
 }
 
-CharacterColorSet::CharacterColorSet(geomelt::Color body, geomelt::Color reflection, geomelt::Color outline)
+CharacterColorSet::CharacterColorSet(Color body, Color reflection, Color outline)
 {
 	this->body = body;
 	this->reflection = reflection;
@@ -155,50 +119,50 @@ map<CharColorOptions, CharacterColorSet> CharacterPalette::init()
 	map<CharColorOptions, CharacterColorSet> palette;
 
 	palette[RED] = CharacterColorSet(
-			geomelt::Color(255, 75, 75, 255),
-			geomelt::Color(255, 125, 125, 255),
+			Color(255, 75, 75, 255),
+			Color(255, 125, 125, 255),
 			Palette::black
 	);
 
 	palette[GREEN] = CharacterColorSet(
-		geomelt::Color(75, 255, 75, 255),
-		geomelt::Color(150, 255, 150, 255),
+		Color(75, 255, 75, 255),
+		Color(150, 255, 150, 255),
 		Palette::black
 	);
 
 	palette[BLUE] = CharacterColorSet(
-		geomelt::Color(150, 150, 255, 255),
-		geomelt::Color(180, 180, 255, 255),
+		Color(150, 150, 255, 255),
+		Color(180, 180, 255, 255),
 		Palette::black
 	);
 
 	palette[YELLOW] = CharacterColorSet(
-		geomelt::Color(255, 225, 0, 255),
-		geomelt::Color(255, 250, 0, 255),
+		Color(255, 225, 0, 255),
+		Color(255, 250, 0, 255),
 		Palette::black
 	);
 
 	palette[PINK] = CharacterColorSet(
-		geomelt::Color(255, 150, 150, 255),
-		geomelt::Color(255, 180, 180, 255),
+		Color(255, 150, 150, 255),
+		Color(255, 180, 180, 255),
 		Palette::black
 	);
 
 	palette[PURPLE] = CharacterColorSet(
-		geomelt::Color(85, 35, 160, 255),
-		geomelt::Color(100, 50, 175, 255),
+		Color(85, 35, 160, 255),
+		Color(100, 50, 175, 255),
 		Palette::black
 	);
 
 	palette[WHITE] = CharacterColorSet(
-		geomelt::Color(225, 225, 225, 255),
-		geomelt::Color(255, 255, 255, 255),
+		Color(225, 225, 225, 255),
+		Color(255, 255, 255, 255),
 		Palette::black
 	);
 
 	palette[BLACK] = CharacterColorSet(
-		geomelt::Color(75, 75, 75, 255),
-		geomelt::Color(125, 125, 125, 255),
+		Color(75, 75, 75, 255),
+		Color(125, 125, 125, 255),
 		Palette::black
 	);
 

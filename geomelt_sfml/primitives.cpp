@@ -1,6 +1,6 @@
 #include "primitives.h"
 
-geomelt::Line::Line()
+Line::Line()
 {
 	width = 2.0;
 	color.r = 0;
@@ -8,7 +8,7 @@ geomelt::Line::Line()
 	color.b = 0;
 }
 
-void geomelt::Line::render()
+void Line::render()
 {
 	glLineWidth(width);
 	glColor3i((GLubyte)color.r, (GLubyte)color.g, (GLubyte)color.b);
@@ -18,7 +18,7 @@ void geomelt::Line::render()
 	glEnd();
 }
 
-void geomelt::Shape::boundary_assignment()
+void Shape::boundary_assignment()
 {
 	boundary.top = center.y + height / 2;
 	boundary.bottom = center.y - height / 2;
@@ -26,7 +26,7 @@ void geomelt::Shape::boundary_assignment()
 	boundary.right = center.x + width / 2;
 }
 
-geomelt::Shape::Shape(float w, float h, float r, Color clr, Vec v)
+Shape::Shape(float w, float h, float r, Vec v, Color clr)
 {
 	width = w;
 	height = h;
@@ -37,7 +37,7 @@ geomelt::Shape::Shape(float w, float h, float r, Color clr, Vec v)
 	boundary_assignment();
 }
 
-void geomelt::Circle::render()
+void Circle::render()
 {
 	GLfloat arg1, arg2;
 	glColor4ub((GLubyte)color.r, (GLubyte)color.g, (GLubyte)color.b, (GLubyte)color.alpha);
@@ -52,7 +52,7 @@ void geomelt::Circle::render()
 	glEnd();
 }
 
-void geomelt::Quad::render()
+void Quad::render()
 {
 	glColor4ub((GLubyte)color.r, (GLubyte)color.g, (GLubyte)color.b, (GLubyte)color.alpha);
 	glBegin(GL_QUADS);
@@ -63,7 +63,7 @@ void geomelt::Quad::render()
 	glEnd();
 }
 
-geomelt::Boundary::Boundary(float t, float b, float l, float r)
+Boundary::Boundary(float t, float b, float l, float r)
 {
 	top = t;
 	bottom = b;
@@ -71,7 +71,7 @@ geomelt::Boundary::Boundary(float t, float b, float l, float r)
 	right = r;
 }
 
-bool geomelt::Boundary::isWithin(int x, int y)
+bool Boundary::isWithin(int x, int y)
 {
 	if (x >= left && x <= right && y <= top && y >= bottom)
 		return true;
@@ -80,7 +80,7 @@ bool geomelt::Boundary::isWithin(int x, int y)
 }
 
 /* Will need modification */
-bool geomelt::Boundary::isWithin(Boundary bnd)
+bool Boundary::isWithin(Boundary bnd)
 {
 	if (this->bottom <= bnd.top	&& this->bottom > bnd.bottom
 		&& this->left <= bnd.right	&& this->right > bnd.left)
@@ -89,7 +89,7 @@ bool geomelt::Boundary::isWithin(Boundary bnd)
 		return false;
 }
 
-bool geomelt::Boundary::isWithin(Boundary bnd, float center)
+bool Boundary::isWithin(Boundary bnd, float center)
 {
 	if (this->bottom <= bnd.top	&& this->bottom > bnd.bottom
 		&& center >= bnd.left && center <= bnd.right)
@@ -98,14 +98,14 @@ bool geomelt::Boundary::isWithin(Boundary bnd, float center)
 		return false;
 }
 
-geomelt::Vec::Vec(float x, float y, float z)
+Vec::Vec(float x, float y, float z)
 {
 	this->x = x;
 	this->y = y;
 	this->z = z;
 }
 
-geomelt::Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
 	this->r = r;
 	this->g = g;
@@ -113,7 +113,7 @@ geomelt::Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	this->alpha = a;
 }
 
-geomelt::Color & geomelt::Color::operator=(const Color & clr)
+Color & Color::operator=(const Color & clr)
 {
 	r = clr.r;
 	g = clr.g;

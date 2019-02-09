@@ -15,12 +15,6 @@ constexpr auto TRANSITION_RATE_TOD = 0.25f;
 constexpr auto MAX_STROKE = 4;
 constexpr auto THICKNESS = 8;
 
-class Game;
-class Camera;
-class Player;
-class PlayerMap;
-class SceneryGroup;
-
 enum TOD { DAY, AFTERNOON, EVENING, NITE, DNITE, MORNING };
 
 inline void operator++(TOD &ti, int)
@@ -31,11 +25,11 @@ inline void operator++(TOD &ti, int)
 
 class Platform {
 private:
-	geomelt::Quad body;
-	geomelt::Quad outline;
+	Quad body;
+	Quad outline;
 
 	Platform();
-	Platform(geomelt::Vec center, float width, float height, ColorSet color);
+	Platform(Vec center, float width, float height, ColorSet color);
 
 	friend class Player;
 	friend class PlatformGroup;

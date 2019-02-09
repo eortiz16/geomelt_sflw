@@ -12,7 +12,7 @@ MainMenu::MainMenu()
 	srand((unsigned int)time(NULL));
 
 	title.set_texture_attributes(Assets::textures.title);
-	title.center = geomelt::Vec(0, SCRN_HT / 2, 0);
+	title.center = Vec(0, SCRN_HT / 2, 0);
 	title.width *= 2;
 	title.height *= 2;
 	title.boundary_assignment();
@@ -20,15 +20,15 @@ MainMenu::MainMenu()
 	TexturedQuad play, options, exit;
 
 	play.set_texture_attributes(Assets::textures.play);
-	play.center = geomelt::Vec(0, -SCRN_HT / 6, 0);
+	play.center = Vec(0, -SCRN_HT / 6, 0);
 	play.boundary_assignment();
 	
 	options.set_texture_attributes(Assets::textures.options);
-	options.center = geomelt::Vec(0, -SCRN_HT / 3, 0);
+	options.center = Vec(0, -SCRN_HT / 3, 0);
 	options.boundary_assignment();
 
 	exit.set_texture_attributes(Assets::textures.exit);
-	exit.center = geomelt::Vec(0, -SCRN_HT / 2, 0);
+	exit.center = Vec(0, -SCRN_HT / 2, 0);
 	exit.boundary_assignment();
 
 	navigable.push_back(make_unique<TexturedQuad>(play));
@@ -37,16 +37,16 @@ MainMenu::MainMenu()
 	
 
 	/* Add the selected version to the cursor vector */
-	vector<unique_ptr<geomelt::Shape>> selected;
+	vector<unique_ptr<Shape>> selected;
 
 	play.set_texture_attributes(Assets::textures.playSelected);
-	play.center = geomelt::Vec(0, -SCRN_HT / 6, 0);
+	play.center = Vec(0, -SCRN_HT / 6, 0);
 	
 	options.set_texture_attributes(Assets::textures.optionsSelected);
-	options.center = geomelt::Vec(0, -SCRN_HT / 3, 0);
+	options.center = Vec(0, -SCRN_HT / 3, 0);
 
 	exit.set_texture_attributes(Assets::textures.exitSelected);
-	exit.center = geomelt::Vec(0, -SCRN_HT / 2, 0);
+	exit.center = Vec(0, -SCRN_HT / 2, 0);
 	
 	selected.push_back(make_unique<TexturedQuad>(play));
 	selected.push_back(make_unique<TexturedQuad>(options));
@@ -55,7 +55,7 @@ MainMenu::MainMenu()
 	cursor = unique_ptr<Cursor>(new Cursor(selected));
 }
 
-Cursor::Cursor(vector<unique_ptr<geomelt::Shape>>& vect)
+Cursor::Cursor(vector<unique_ptr<Shape>>& vect)
 {
 	icons = make_unique<Navigable>(vect);
 	selected = icons->begin();
@@ -73,23 +73,21 @@ void Cursor::render()
 	selected->get()->render();
 }
 
-Navigable::Navigable(vector<unique_ptr<geomelt::Shape>>& vec)
+Navigable::Navigable(vector<unique_ptr<Shape>>& vec)
 {
 	textures.insert(textures.end(), std::make_move_iterator(vec.begin()), std::make_move_iterator(vec.end()));
 }
 
 void MainMenu::handler(unique_ptr<Level>& level)
 {
-	//Fixed Camera
-	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1);
+	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1); //Fixed Camera
 	glClear(1);
 
 	level->phys_handler(); 
 	level->render();
-
 	title.render();
 
-	for (vector<unique_ptr<geomelt::Shape>>::iterator it = navigable.begin(); it != navigable.end(); ++it)
+	for (vector<unique_ptr<Shape>>::iterator it = navigable.begin(); it != navigable.end(); ++it)
 		it->get()->render();
 	
 	cursor->render();
@@ -98,7 +96,7 @@ void MainMenu::handler(unique_ptr<Level>& level)
 
 bool Menu::isWithin(int x, int y)
 {
-	for (vector<unique_ptr<geomelt::Shape>>::iterator it = navigable.begin(); it != navigable.end(); ++it) {
+	for (vector<unique_ptr<Shape>>::iterator it = navigable.begin(); it != navigable.end(); ++it) {
 		if (it->get()->boundary.isWithin(Input::translateX(x), Input::translateY(y)))
 			return true;
 	}
@@ -110,7 +108,7 @@ CharacterSelect::CharacterSelect()
 {
 	background = Background(
 		Assets::backgroundPalette.overcast,
-		geomelt::Quad(2.0f * SCRN_WD, 2.0f * SCRN_HT, 0.0f, Assets::palette.lightGrey, geomelt::Vec(0, 0, 0))
+		Quad(2.0f * SCRN_WD, 2.0f * SCRN_HT, 0.0f, Assets::palette.lightGrey, Vec(0, 0, 0))
 	);
 
 	//assign center of each char select box
@@ -123,7 +121,7 @@ CharacterSelect::CharacterSelect()
 
 	//Construct Char Select Box
 	for (int i = 0; i < 4; i++)	{
-		sb.box.center = geomelt::Vec(wSpace, -SCRN_HT / 2.5f, 0);
+		sb.box.center = Vec(wSpace, -SCRN_HT / 2.5f, 0);
 		sb.box.build();
 		sb.box.set_color(Assets::palette.white);
 		sb.outline.center = sb.box.center;
@@ -134,7 +132,7 @@ CharacterSelect::CharacterSelect()
 		sb.start_icon.set_texture_attributes(Assets::textures.button_Start);
 		sb.start_icon.width = 100;
 		sb.start_icon.height = 100;
-		sb.start_icon.center = geomelt::Vec(wSpace - (1.5f / 4.0f  * sb.box.width), -SCRN_HT / 2.5f, 0);
+		sb.start_icon.center = Vec(wSpace - (1.5f / 4.0f  * sb.box.width), -SCRN_HT / 2.5f, 0);
 
 		selectBox.push_back(sb);
 		wSpace += SCRN_WD / 2.0f;
@@ -164,25 +162,25 @@ LevelSelect::LevelSelect()
 {	
 	background = Background(
 		Assets::backgroundPalette.overcast,
-		geomelt::Quad(10.0f * SCRN_WD, 10.0f * SCRN_HT, 0.0f, Assets::palette.black, geomelt::Vec(0, 0, 0))
+		Quad(10.0f * SCRN_WD, 10.0f * SCRN_HT, 0.0f, Assets::palette.black, Vec(0, 0, 0))
 	);
 
 	TexturedQuad level1, level2, level3;
 
 	level1.set_texture_attributes(Assets::textures.field);
-	level1.center = geomelt::Vec(-SCRN_HT, 0, 0);
+	level1.center = Vec(-SCRN_HT, 0, 0);
 	level1.width = 640;
 	level1.height = 400;
 	level1.boundary_assignment();
 
 	level2.set_texture_attributes(Assets::textures.night);
-	level2.center = geomelt::Vec(0, 0, 0);
+	level2.center = Vec(0, 0, 0);
 	level2.width = 640;
 	level2.height = 400;
 	level2.boundary_assignment();
 
 	level3.set_texture_attributes(Assets::textures.time); 
-	level3.center = geomelt::Vec(SCRN_HT, 0, 0);
+	level3.center = Vec(SCRN_HT, 0, 0);
 	level3.width = 640;
 	level3.height = 400;
 	level3.boundary_assignment();
@@ -192,22 +190,22 @@ LevelSelect::LevelSelect()
 	navigable.push_back(make_unique<TexturedQuad>(level3));
 
 	/* Add the selected version to the cursor vector */
-	vector<unique_ptr<geomelt::Shape>> selected;
+	vector<unique_ptr<Shape>> selected;
 
-	geomelt::Quad selector;
+	Quad selector;
 	selector.center = level1.center;
 	selector.width = 650;
 	selector.height = 410;
 	selector.color = Assets::palette.green;
-	selected.push_back(make_unique<geomelt::Quad>(selector));
+	selected.push_back(make_unique<Quad>(selector));
 
 	selector.center = level2.center;
 	selector.color = Assets::palette.green;
-	selected.push_back(make_unique<geomelt::Quad>(selector));
+	selected.push_back(make_unique<Quad>(selector));
 
 	selector.center = level3.center;
 	selector.color = Assets::palette.green;
-	selected.push_back(make_unique<geomelt::Quad>(selector));
+	selected.push_back(make_unique<Quad>(selector));
 
 	cursor = unique_ptr<Cursor>(new Cursor(selected));
 }
@@ -220,13 +218,13 @@ void LevelSelect::handler()
 	background.render();
 	cursor->render();
 
-	for (vector<unique_ptr<geomelt::Shape>>::iterator it = navigable.begin(); it != navigable.end(); ++it)
+	for (vector<unique_ptr<Shape>>::iterator it = navigable.begin(); it != navigable.end(); ++it)
 		it->get()->render();
 }
 
 void Pause::handler()
 {
-	for (vector<unique_ptr<geomelt::Shape>>::iterator it = navigable.begin(); it != navigable.end(); ++it)
+	for (vector<unique_ptr<Shape>>::iterator it = navigable.begin(); it != navigable.end(); ++it)
 		it->get()->render();
 
 	cursor->render();
@@ -245,34 +243,34 @@ Pause::Pause()
 	apectratio = (float)Assets::textures.resume.getSize().x / (float)Assets::textures.resume.getSize().y;
 	resume.height = (Camera::edges.top - Camera::edges.bottom) * 0.20f;
 	resume.width = resume.height * apectratio;
-	resume.center = geomelt::Vec(centerX, centerY + resume.height, 0);
+	resume.center = Vec(centerX, centerY + resume.height, 0);
 	resume.boundary_assignment();
 
 	exit.set_texture_attributes(Assets::textures.exit);
 	apectratio = (float)Assets::textures.exit.getSize().x / (float)Assets::textures.exit.getSize().y;
 	exit.height = (Camera::edges.top - Camera::edges.bottom) * 0.20f;
 	exit.width = exit.height * apectratio;
-	exit.center = geomelt::Vec(centerX, centerY, 0);
+	exit.center = Vec(centerX, centerY, 0);
 	exit.boundary_assignment();
 
 	navigable.push_back(make_unique<TexturedQuad>(resume));
 	navigable.push_back(make_unique<TexturedQuad>(exit));
 
 	/* Add the selected version to the cursor vector */
-	vector<unique_ptr<geomelt::Shape>> selected;
+	vector<unique_ptr<Shape>> selected;
 
 	resume.set_texture_attributes(Assets::textures.resumeSelected);
 	apectratio = (float)Assets::textures.resume.getSize().x / (float)Assets::textures.resume.getSize().y;
 	resume.height = (Camera::edges.top - Camera::edges.bottom) * 0.20f;
 	resume.width = resume.height * apectratio;
-	resume.center = geomelt::Vec(centerX, centerY + resume.height, 0);
+	resume.center = Vec(centerX, centerY + resume.height, 0);
 	resume.boundary_assignment();
 
 	exit.set_texture_attributes(Assets::textures.exitSelected);
 	apectratio = (float)Assets::textures.exit.getSize().x / (float)Assets::textures.exit.getSize().y;
 	exit.height = (Camera::edges.top - Camera::edges.bottom) * 0.20f;
 	exit.width = exit.height * apectratio;
-	exit.center = geomelt::Vec(centerX, centerY, 0);
+	exit.center = Vec(centerX, centerY, 0);
 	exit.boundary_assignment();
 
 	selected.push_back(make_unique<TexturedQuad>(resume));

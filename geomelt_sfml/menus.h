@@ -10,9 +10,6 @@
 constexpr auto SELECTED_CARDINALITY = 3;
 enum Selected { PLAY, OPTIONS, EXIT };
 
-class Level;
-class PlayerMap;
-
 inline void operator++(Selected &sel, int)
 {
 	const int i = static_cast<int>(sel);
@@ -29,7 +26,7 @@ inline void operator--(Selected &sel, int)
 
 class Navigable {
 private:
-	typedef vector<unique_ptr<geomelt::Shape>> SelectedTextures;
+	typedef vector<unique_ptr<Shape>> SelectedTextures;
 	SelectedTextures textures;
 public:
 	typedef SelectedTextures::iterator iterator;
@@ -38,7 +35,7 @@ public:
 	iterator end() { return textures.end(); }
 
 	Navigable() {}
-	Navigable(vector<unique_ptr<geomelt::Shape>>& vec);
+	Navigable(vector<unique_ptr<Shape>>& vec);
 	~Navigable() {}
 
 	friend class Cursor;
@@ -55,13 +52,13 @@ public:
 class Cursor {
 private:
 	unique_ptr<Navigable> icons;
-	vector<unique_ptr<geomelt::Shape>>::iterator selected;
+	vector<unique_ptr<Shape>>::iterator selected;
 public:
 	void render();
 	void updateSelection();
 
 	Cursor() {}
-	Cursor(vector<unique_ptr<geomelt::Shape>>& vec);
+	Cursor(vector<unique_ptr<Shape>>& vec);
 	~Cursor() {}
 
 	friend class Menu;
@@ -81,7 +78,7 @@ public:
 
 class Menu {
 protected:
-	vector<unique_ptr<geomelt::Shape>> navigable;
+	vector<unique_ptr<Shape>> navigable;
 	unique_ptr<Cursor> cursor;
 public:
 	bool isWithin(int x, int y);
@@ -104,8 +101,8 @@ private:
 	TexturedQuad title;
 	sf::Text text;
 public:
-	void handler(unique_ptr<Level>& level);
 	MainMenu();
+	void handler(unique_ptr<Level>& level);
 	~MainMenu() {}
 
 	friend class MainMenuState;

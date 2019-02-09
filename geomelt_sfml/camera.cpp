@@ -8,9 +8,9 @@ float Camera::yMin = (float)INT_MAX;
 float Camera::yMax = (float)INT_MIN;
 float Camera::competitionXLeft = -400.0f;
 float Camera::competitionXRight = 400.0f;
-geomelt::Boundary Camera::ortho = geomelt::Boundary(SCRN_HT, -SCRN_HT, -SCRN_WD, SCRN_WD);
-geomelt::Boundary Camera::edges = geomelt::Boundary(SCRN_HT, -SCRN_HT, -SCRN_WD, SCRN_WD);
-geomelt::Vec Camera::center = geomelt::Vec(0, 0, 0);
+Boundary Camera::ortho = Boundary(SCRN_HT, -SCRN_HT, -SCRN_WD, SCRN_WD);
+Boundary Camera::edges = Boundary(SCRN_HT, -SCRN_HT, -SCRN_WD, SCRN_WD);
+Vec Camera::center = Vec(0, 0, 0);
 
 //Default, need to add level camera
 void Camera::set_center()
@@ -119,7 +119,7 @@ void Camera::set_edges()
 			right = center.x + (top - bottom) * aspect_ratio / 2.0f;
 		}
 
-		edges = geomelt::Boundary(top, bottom, left, right);
+		edges = Boundary(top, bottom, left, right);
 	//}
 }
 
@@ -142,5 +142,5 @@ void Camera::transition()
 		bottom = edges.bottom * FAC2;
 	}
 
-	ortho = geomelt::Boundary(top, bottom, left, right);
+	ortho = Boundary(top, bottom, left, right);
 }

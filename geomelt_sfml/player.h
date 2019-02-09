@@ -11,8 +11,6 @@ constexpr auto JUMP_PARAM = 25.0f;
 enum PlayerState { ALIVE, DEAD, ELIMINATED };
 enum SelectColor{NEXT, PREV, RANDOM};
 
-class PlatformGroup;
-
 class Attributes {
 private:
 	float health;
@@ -53,21 +51,21 @@ class Player {
 protected:
 	static vector<int> availableIDs;
 	float weight;
-	geomelt::Vec velocity;
-	float move_param_x; // speed
-	float move_param_y; // jump
-	int JUMP_MAX;
+	Vec velocity;
+	float speed_x; // speed
+	float speed_y; // jump
+	int jumpMax;
 	int jumpCount;
 	Direction direction;
 	unsigned int myID;
 	Toggle toggle;
 	Attributes stats;
-	unique_ptr<geomelt::Shape> body;
-	unique_ptr<geomelt::Shape> outline;
-	unique_ptr<geomelt::Shape> reflection;
-	geomelt::Quad arm;
-	geomelt::Quad armOutline;
-	geomelt::Circle eye;
+	unique_ptr<Shape> body;
+	unique_ptr<Shape> outline;
+	unique_ptr<Shape> reflection;
+	Quad arm;
+	Quad armOutline;
+	Circle eye;
 	CharColorOptions myColor;
 	CharacterColorSet mColor;
 	float mDimension;
@@ -88,7 +86,6 @@ public:
 	virtual void update(PlatformGroup plat);
 	virtual void physics(PlatformGroup plat);
 	
-	Player& operator = (const CharacterColorSet &clr);
 	explicit Player();
 	Player(const Player&) = delete;
 	Player& operator=(const Player&) = delete;

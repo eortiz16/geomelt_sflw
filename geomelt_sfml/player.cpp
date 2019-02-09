@@ -73,18 +73,12 @@ void Player::physics(PlatformGroup plat)
 		}
 
 		//Reset size
-		if (toggle.on_ground)
-			body->radius = body->width / 2;
+		if (toggle.on_ground) {
+			body->radius = body->width / 2; // divide by 1.999f to slowly inflate
+			body->width = body->radius * 2;
+			body->height = body->width;
+		}
 	}
-}
-
-Player & Player::operator=(const CharacterColorSet & clr)
-{
-	body->color = clr.body;
-	outline->color = clr.outline;
-	reflection->color = clr.reflection;
-	arm.color = clr.body;
-	return *this;
 }
 
 /*Takes the width resolution and scales down to a factor controls reflection of character*/
@@ -137,7 +131,7 @@ void Player::simple_update()
 	reflection->height = reflection->width;
 
 	reflection->center.y = body->center.y + sqrt(body->radius);
-	outline->center = geomelt::Vec(body->center.x, body->center.y, 0);
+	outline->center = Vec(body->center.x, body->center.y, 0);
 
 	arm.center.y = body->center.y;
 	armOutline.center.y = body->center.y;
@@ -197,13 +191,13 @@ void Player::move(Direction dir)
 	direction = dir;
 	//Horizontal Velocity
 	if (direction == LEFT)
-		velocity.x = -move_param_x;
+		velocity.x = -speed_x;
 	else
-		velocity.x = move_param_x;
+		velocity.x = speed_x;
 
 	//Small hop when on ground
 	if (toggle.on_ground)
-		velocity.y = move_param_y;
+		velocity.y = speed_y;
 }
 
 void Player::respawn()
@@ -256,23 +250,23 @@ Player::Player()
 {
 	myID = extract_lowest_ID();
 	weight = 0.0f;
-	JUMP_MAX = 3;
+	jumpMax = 3;
 	jumpCount = 0;
-	velocity = geomelt::Vec(0, 0, 0);
+	velocity = Vec(0, 0, 0);
 	direction = RIGHT;
 	mDimension = 100;
 	myColor = (CharColorOptions)myID;
 	mColor = Assets::characterPalette.colors.at(myColor);
 	
-	eye = geomelt::Circle(
+	eye = Circle(
 		mDimension,
 		mDimension,
 		(mDimension / 20.0f) + 1,
 		mColor.outline,
-		geomelt::Vec(0, 0, 0)
+		Vec(0, 0, 0)
 	);
 
-	arm = geomelt::Quad(
+	arm = Quad(
 		mDimension,
 		mDimension / 4.0f,
 		0,
@@ -280,7 +274,7 @@ Player::Player()
 		velocity
 	);
 
-	armOutline = geomelt::Quad(
+	armOutline = Quad(
 		mDimension + THICKNESS,
 		mDimension / 4.0f + THICKNESS / 2.0f,
 		0,
@@ -293,37 +287,37 @@ Ball::Ball() : Player()
 {
 	// Movement Parameters
 	weight = 3.0f * GLfloat(GRAVITY) / 4.0f;
-	move_param_x = 10.0f;
-	move_param_y = 5.0f;
-	JUMP_MAX = 4;
+	speed_x = 10.0f;
+	speed_y = 5.0f;
+	jumpMax = 4;
 
-	body = unique_ptr<geomelt::Circle>(
-		new geomelt::Circle(
+	body = unique_ptr<Circle>(
+		new Circle(
 			mDimension,
 			mDimension,
 			mDimension / 2.0f,
 			mColor.body,
-			geomelt::Vec(0, 0, 0)
+			Vec(0, 0, 0)
 		)
 	);
 
-	outline = unique_ptr<geomelt::Circle>(
-		new geomelt::Circle(
+	outline = unique_ptr<Circle>(
+		new Circle(
 			mDimension,
 			mDimension,
 			mDimension / 2.0f,
 			mColor.outline,
-			geomelt::Vec(0, 0, 0)
+			Vec(0, 0, 0)
 		)
 	);
 
-	reflection = unique_ptr<geomelt::Circle>(
-		new geomelt::Circle(
+	reflection = unique_ptr<Circle>(
+		new Circle(
 			mDimension,
 			mDimension,
 			body->radius - body->radius / 4.0f,
 			mColor.reflection,
-			geomelt::Vec(0, 0, 0)
+			Vec(0, 0, 0)
 		)
 	);
 }
@@ -369,7 +363,7 @@ void Ball::jump()
 {
 	toggle.on_ground = false;
 
-	if (jumpCount < JUMP_MAX) {
+	if (jumpCount < jumpMax) {
 		exhale(); //Change character's size
 		velocity.y = JUMP_PARAM; //Vertical Velocity
 		jumpCount++;
@@ -385,37 +379,37 @@ Boxy::Boxy() : Player()
 {
 	direction = LEFT;
 	weight = GLfloat(GRAVITY * 0.5f);
-	JUMP_MAX = 2;
-	move_param_x = 15.0f;
-	move_param_y = 5.0f;
+	jumpMax = 2;
+	speed_x = 15.0f;
+	speed_y = 5.0f;
 
-	body = unique_ptr<geomelt::Shape>(
-		new geomelt::Quad(
+	body = unique_ptr<Shape>(
+		new Quad(
 			mDimension,
 			mDimension,
 			mDimension / 2.0f,
 			mColor.body,
-			geomelt::Vec(0, 0, 0)
+			Vec(0, 0, 0)
 		)
 	);
 
-	outline = unique_ptr<geomelt::Shape>(
-		new geomelt::Quad(
+	outline = unique_ptr<Shape>(
+		new Quad(
 			mDimension + THICKNESS,
 			mDimension + THICKNESS,
 			mDimension / 2.0f,
 			mColor.outline,
-			geomelt::Vec(0, 0, 0)
+			Vec(0, 0, 0)
 		)
 	);
 
-	reflection = unique_ptr<geomelt::Shape>(
-		new geomelt::Quad(
+	reflection = unique_ptr<Shape>(
+		new Quad(
 			body->width / 1.5f,
 			body->width / 1.5f,
 			body->width / 3.0f,
 			mColor.reflection,
-			geomelt::Vec(0, 0, 0)
+			Vec(0, 0, 0)
 		)
 	);
 }
@@ -434,7 +428,7 @@ void Boxy::jump()
 		toggle.on_ground = false;
 
 	//Check if jumpcount is less than jumpmax
-	if (jumpCount < JUMP_MAX) {
+	if (jumpCount < jumpMax) {
 		velocity.y = JUMP_PARAM; // vertical velosity modification
 		jumpCount++; // add one to jumpcount
 	}
@@ -472,7 +466,7 @@ void PlayerMap::add(unsigned int joyID)
 			_map[joyID] = unique_ptr<Player>(new Ball());
 
 			Player *plyr = _map[joyID].get();
-			*plyr = Assets::characterPalette.colors.at(plyr->myColor);
+			plyr->mColor = Assets::characterPalette.colors.at(plyr->myColor);
 		}
 	}
 }
@@ -565,7 +559,7 @@ void PlayerMap::options_render(vector<CharSelBox> selectBox)
 	map<unsigned int, unique_ptr<Player>>::iterator it = _map.begin();
 
 	while (it != _map.end()) {
-		*it->second = Assets::characterPalette.colors.at(it->second->myColor);
+		it->second->mColor = Assets::characterPalette.colors.at(it->second->myColor);
 		it->second->body->center = selectBox[it->second->myID].box.center;
 		it->second->simple_update_menu();
 		it->second->render();
@@ -598,9 +592,9 @@ void PlayerMap::reset()
 		it->second->simple_update();
 
 		if (it->second->myID % 2 == 0)
-			it->second->body->center = geomelt::Vec(500.0f, 500.0f, 0);
+			it->second->body->center = Vec(500.0f, 500.0f, 0);
 		else
-			it->second->body->center = geomelt::Vec(-500.0f, 500.0f, 0);
+			it->second->body->center = Vec(-500.0f, 500.0f, 0);
 
 	}
 }

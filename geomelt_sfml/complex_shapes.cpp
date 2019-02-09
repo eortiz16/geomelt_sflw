@@ -48,7 +48,7 @@ RoundCornerBox::RoundCornerBox()
 	corner[3].center.y = hRectangle.boundary.bottom;
 }
 
-void RoundCornerBox::set_color(geomelt::Color clr)
+void RoundCornerBox::set_color(Color clr)
 {
 	vRectangle.color = clr;
 	hRectangle.color = clr;
@@ -107,7 +107,7 @@ Cloud Cloud::make_cloud(Direction dir)
 	GLfloat size = (GLfloat)(rand() % CLOUD_RANGE) + CLOUD_START;
 
 	// Define one uniform cloud subshape
-	geomelt::Circle circle;
+	Circle circle;
 	circle.color.r = color;
 	circle.color.g = color;
 	circle.color.b = color;
@@ -117,7 +117,7 @@ Cloud Cloud::make_cloud(Direction dir)
 
 	//Assign computed attributes to object
 	for (int i = 0; i < SUBCLOUD_SIZE; i++)
-		cloud.body.push_back(make_unique<geomelt::Circle>(circle));
+		cloud.body.push_back(make_unique<Circle>(circle));
 
 	// Assign x of middle circle // Start ar right or left
 	cloud.body[1]->center.x = (dir == LEFT) ? 2.0f * SCRN_WD + 1.5f * size : -2.0f * SCRN_WD - 1.5f * size;
@@ -137,7 +137,7 @@ Cloud Cloud::make_cloud(Direction dir)
 
 void Cloud::update(Direction dir)
 {
-	vector<unique_ptr<geomelt::Circle>>::iterator it;
+	vector<unique_ptr<Circle>>::iterator it;
 
 	for (it = body.begin(); it != body.end(); ++it) 
 		it->get()->center.x += (dir == LEFT) ? -speed : speed;
@@ -145,7 +145,7 @@ void Cloud::update(Direction dir)
 
 void Cloud::render()
 {
-	vector<unique_ptr<geomelt::Circle>>::iterator it;
+	vector<unique_ptr<Circle>>::iterator it;
 
 	for (it = body.begin(); it != body.end(); ++it)
 		it->get()->render();
@@ -153,7 +153,7 @@ void Cloud::render()
 
 Star::Star() 
 {
-	body = make_unique<geomelt::Circle>();
+	body = make_unique<Circle>();
 	body->radius = 3;
 	body->color.r = 255;
 	body->color.g = 255;
@@ -196,7 +196,7 @@ Star::Star(unsigned int seed) : Star()
 	x = ((seed % 16 + 1) * horizonalPartition) - w / 2 - horizonalPartition / 2;
 	y = ((seed % 10 + 1) * verticalPartition) - h / 2 - verticalPartition / 2;
 	*/
-	body->center = geomelt::Vec(x, y, 0);
+	body->center = Vec(x, y, 0);
 }
 
 StarGroup::StarGroup() 
@@ -257,7 +257,7 @@ void TexturedQuad::render()
 	glDisable(GL_TEXTURE_2D);
 }
 
-
+TexturedQuad::TexturedQuad(sf::Texture texture, float w, float h, Vec v) : Shape(w, h, 0.0f, v) {}
 
 CloudGroup::CloudGroup()
 {

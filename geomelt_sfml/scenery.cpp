@@ -21,17 +21,15 @@ void Background::physics()
 Background::Background()
 {
 	for (int i = 0; i < CORNERS; i++) {
-		color.push_back(geomelt::Color());
+		color.push_back(Color());
 		transition_done.push_back(false);
 	}
 }
 
-Background::Background(geomelt::Color * clr, geomelt::Quad qd) : Background()
+Background::Background(vector<Color> clr, Quad qd) : Background()
 {
-	body = qd;
-
-	for (int i = 0; i < CORNERS; i++)
-		color[i] = clr[i];
+	this->body = qd;
+	this->color = clr;
 }
 
 void Satelite::render()
@@ -50,10 +48,10 @@ void Sun::physics()
 
 Sun::Sun()
 {
-	body = geomelt::Circle(
+	body = Circle(
 		SCRN_HT,
 		Assets::palette.sun,
-		geomelt::Vec(SCRN_WD, SCRN_HT, 0)
+		Vec(SCRN_WD, SCRN_HT, 0)
 	);
 }
 
@@ -68,10 +66,10 @@ void Moon::physics()
 
 Moon::Moon()
 {
-	body = geomelt::Circle(
+	body = Circle(
 		SCRN_HT / 2.0f,
 		Assets::palette.moon,
-		geomelt::Vec(SCRN_WD / 2.0f, SCRN_HT / 2.0f, 0)
+		Vec(SCRN_WD / 2.0f, SCRN_HT / 2.0f, 0)
 	);
 }
 
@@ -143,7 +141,7 @@ SceneryGroup::SceneryGroup()
 	unique_ptr<Scenery> blackVoid = unique_ptr<Scenery>(
 		new Background(
 			Assets::backgroundPalette.black,
-			geomelt::Quad(10.0f * SCRN_WD, 10.0f * SCRN_HT, 0.0f, Assets::palette.black, geomelt::Vec(0, 0, 0))
+			Quad(10.0f * SCRN_WD, 10.0f * SCRN_HT, 0.0f, Assets::palette.black, Vec(0, 0, 0))
 		)
 	);
 
@@ -156,7 +154,7 @@ FieldScenery::FieldScenery() : SceneryGroup()
 	unique_ptr<Scenery> background = unique_ptr<Scenery>(
 		new Background(
 			Assets::backgroundPalette.day,
-			geomelt::Quad(4.0f * SCRN_WD, 5.0f * SCRN_HT, 0.0f, Assets::palette.black, geomelt::Vec(0, 0, 0))
+			Quad(4.0f * SCRN_WD, 5.0f * SCRN_HT, 0.0f, Assets::palette.black, Vec(0, 0, 0))
 		)
 	);
 
@@ -176,7 +174,7 @@ NightScenery::NightScenery() : SceneryGroup() {
 	unique_ptr<Scenery> background = unique_ptr<Scenery>(
 		new Background(
 			Assets::backgroundPalette.night,
-			geomelt::Quad(4.0f * SCRN_WD, 5.0f * SCRN_HT, 0.0f, Assets::palette.black, geomelt::Vec(0, 0, 0))
+			Quad(4.0f * SCRN_WD, 5.0f * SCRN_HT, 0.0f, Assets::palette.black, Vec(0, 0, 0))
 		)
 	);
 
@@ -196,7 +194,7 @@ TimeScenery::TimeScenery() : SceneryGroup() {
 	unique_ptr<Scenery> background = unique_ptr<Scenery>(
 		new Background(
 			Assets::backgroundPalette.evening,
-			geomelt::Quad(4.0f * SCRN_WD, 5.0f * SCRN_HT, 0.0f, Assets::palette.black, geomelt::Vec(0, 0, 0))
+			Quad(4.0f * SCRN_WD, 5.0f * SCRN_HT, 0.0f, Assets::palette.black, Vec(0, 0, 0))
 		)
 	);
 
