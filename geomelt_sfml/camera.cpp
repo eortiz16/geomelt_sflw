@@ -72,9 +72,6 @@ void Camera::update_value()
 
 	if (flag)
 	{
-		
-		
-		"ADD";
 		competitionXLeft -= 1.0 / (1.0 / sin(val));
 		competitionXRight += 1.0 / (1.0 / sin(val));
 	}

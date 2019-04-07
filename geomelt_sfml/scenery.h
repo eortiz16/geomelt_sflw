@@ -69,7 +69,6 @@ private:
 public:
 	void render();
 	void physics();
-	void purge();
 
 	Clouds();
 };

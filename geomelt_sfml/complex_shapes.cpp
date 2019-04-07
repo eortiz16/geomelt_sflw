@@ -108,9 +108,7 @@ Cloud Cloud::make_cloud(Direction dir)
 		Vec(0, (GLfloat)(rand() % (4 * SCRN_HT)) - (2 * SCRN_HT), 0)
 	);
 
-	auto speed = rand() % MAX_SPEED + (int)radius % MAX_SPEED + 1;
-
-	return Cloud(circle, speed, dir);
+	return Cloud(circle, rand() % MAX_SPEED + (int)radius % MAX_SPEED + 1, dir);
 }
 
 Cloud::Cloud()
@@ -135,6 +133,7 @@ Cloud::Cloud(Circle circle, int spd, Direction dir) : Cloud()
 	this->body[0].center.x = body[1].center.x - radius;
 	this->body[2].center.x = body[1].center.x + radius;
 
+	this->speed = spd;
 	this->offScreen = false;
 }
 

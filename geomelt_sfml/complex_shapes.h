@@ -4,7 +4,7 @@
 #define rnd() (float)rand() / (float)RAND_MAX
 constexpr auto MAX_STAR = 80 ;
 constexpr auto MAX_SPEED = 5;
-constexpr auto MAX_CLOUDS = 1;
+constexpr auto MAX_CLOUDS = 20;
 constexpr auto SUBCLOUD_SIZE = 3;
 constexpr auto CLOUD_START = 50;
 constexpr auto CLOUD_RANGE = 200;
