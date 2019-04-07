@@ -83,14 +83,59 @@ void Stars::physics()
 	stars.update();
 }
 
-void Clds::render()
+Clouds::Clouds()
 {
-	clouds.render();
+	//Wind Direction
+	(rand() % 2 == 0) ? windDirection = RIGHT : windDirection = LEFT;
+
+	//Create MAX_CLOUDS amount of clouds
+	for (int i = 0; i < MAX_CLOUDS; ++i)
+		group.push_back(Cloud::make_cloud(windDirection)); 
+
+	// Initially only Assign random X coordinate
+	for (auto &cloud : group) {
+		int randX = rand() % (4 * SCRN_WD) - 2 * SCRN_WD; // get random position for cloud
+
+		cloud.body[1].center.x = (float)randX;
+		cloud.body[0].center.x = randX - cloud.body[1].radius;
+		cloud.body[2].center.x = randX + cloud.body[1].radius;
+	}
 }
 
-void Clds::physics()
+void Clouds::render()
 {
-	clouds.update();
+	for (auto &cloud : group)
+		cloud.render();
+}
+
+void Clouds::purge()
+{
+	for (auto it = group.begin(); it != group.end(); ++it) {
+		if (it->offScreen) {
+			group.erase(it); //ERASE
+			group.push_back(Cloud::make_cloud(windDirection)); //RESPAWN
+		}
+	}
+}
+
+void Clouds::physics()
+{
+	GLfloat arg1, arg2;
+
+	for (auto &cloud : group) {
+		// Parameters to determine when a cloud is off screen
+		arg1 = cloud.body[1].center.x + (cloud.body[1].radius  * 1.5f);
+		arg2 = cloud.body[1].center.x - (cloud.body[1].radius  * 1.5f);
+
+		//Reset if Last Cloud Offscreen
+		if ((arg1 < -2.0f * SCRN_WD && windDirection == LEFT)
+			|| (arg2 > 2.0f * SCRN_WD && windDirection == RIGHT)) 
+			cloud.offScreen = true;
+
+		cloud.update(windDirection);
+	}
+
+	purge();
 }
 
 void Flowers::render()
@@ -165,7 +210,7 @@ FieldScenery::FieldScenery() : SceneryGroup()
 	addObject(sun);
 	sun.release();
 
-	unique_ptr<Scenery> clouds = unique_ptr<Scenery>(new Clds);
+	unique_ptr<Scenery> clouds = unique_ptr<Scenery>(new Clouds);
 	addObject(clouds);
 	clouds.release();
 }
@@ -209,7 +254,7 @@ TimeScenery::TimeScenery() : SceneryGroup() {
 	addObject(moon);
 	moon.release();
 
-	unique_ptr<Scenery> clouds = unique_ptr<Scenery>(new Clds);
+	unique_ptr<Scenery> clouds = unique_ptr<Scenery>(new Clouds);
 	addObject(clouds);
 	clouds.release();
 }

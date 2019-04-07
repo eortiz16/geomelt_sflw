@@ -115,9 +115,9 @@ Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 
 Color & Color::operator=(const Color & clr)
 {
-	r = clr.r;
-	g = clr.g;
-	b = clr.b;
-	alpha = clr.alpha;
+	this->r = clr.r;
+	this->g = clr.g;
+	this->b = clr.b;
+	this->alpha = clr.alpha;
 	return *this;
 }

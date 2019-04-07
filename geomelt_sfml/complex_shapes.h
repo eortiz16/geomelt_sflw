@@ -4,7 +4,7 @@
 #define rnd() (float)rand() / (float)RAND_MAX
 constexpr auto MAX_STAR = 80 ;
 constexpr auto MAX_SPEED = 5;
-constexpr auto MAX_CLOUDS = 20;
+constexpr auto MAX_CLOUDS = 1;
 constexpr auto SUBCLOUD_SIZE = 3;
 constexpr auto CLOUD_START = 50;
 constexpr auto CLOUD_RANGE = 200;
@@ -12,7 +12,7 @@ constexpr auto CLOUD_RANGE = 200;
 #pragma once
 class Cloud {
 private:
-	vector<unique_ptr<Circle>> body;
+	vector<Circle> body;
 	int speed;
 	bool offScreen;
 public:
@@ -20,19 +20,10 @@ public:
 	void render();
 	static Cloud make_cloud(Direction dir); //Factory Method
 
-	friend class CloudGroup;
-};
-
-class CloudGroup {
-private:
-	vector<Cloud> clouds;
-	Direction windDirection;
-public:
-	void update();
-	void purge();
-	void render();
-
-	CloudGroup();
+	Cloud();
+	Cloud(Circle, int, Direction);
+	~Cloud();
+	friend class Clouds;
 };
 
 class Star {

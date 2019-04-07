@@ -98,82 +98,72 @@ void RoundCornerBox::build()
 
 Cloud Cloud::make_cloud(Direction dir)
 {
-	// clr represents the color of cloud object
-	// size assigns a uniform size to cloud object
-	// level assigns a Y coor for the cloud object to travel
-
-	Cloud cloud;
-	int color = rand() % 55 + 200;
-	GLfloat size = (GLfloat)(rand() % CLOUD_RANGE) + CLOUD_START;
-
 	// Define one uniform cloud subshape
-	Circle circle;
-	circle.color.r = color;
-	circle.color.g = color;
-	circle.color.b = color;
-	circle.color.alpha = 255;
-	circle.radius = size;
-	circle.center.y = (GLfloat)(rand() % (4 * SCRN_HT)) - (2 * SCRN_HT);
-
-	//Assign computed attributes to object
-	for (int i = 0; i < SUBCLOUD_SIZE; i++)
-		cloud.body.push_back(make_unique<Circle>(circle));
-
-	// Assign x of middle circle // Start ar right or left
-	cloud.body[1]->center.x = (dir == LEFT) ? 2.0f * SCRN_WD + 1.5f * size : -2.0f * SCRN_WD - 1.5f * size;
-
-	// Assign center of first and last circle, bassed on middle
-	cloud.body[0]->center.x = cloud.body[1]->center.x - cloud.body[1]->radius;
-	cloud.body[2]->center.x = cloud.body[1]->center.x + cloud.body[1]->radius;
-
-	//Set Speed - Based on Size (Kind of)
-	cloud.speed = rand() % MAX_SPEED + (int)size % MAX_SPEED + 1;
+	uint8_t color = rand() % 55 + 200;
+	GLfloat radius = (GLfloat)(rand() % CLOUD_RANGE) + CLOUD_START;
 	
-	//for erasing cloud when off screen
-	cloud.offScreen = false;
+	Circle circle = Circle(
+		radius,
+		Color(color, color, color, 255),
+		Vec(0, (GLfloat)(rand() % (4 * SCRN_HT)) - (2 * SCRN_HT), 0)
+	);
 
-	return cloud;
+	auto speed = rand() % MAX_SPEED + (int)radius % MAX_SPEED + 1;
+
+	return Cloud(circle, speed, dir);
+}
+
+Cloud::Cloud()
+{
+	for (int i = 0; i < SUBCLOUD_SIZE; ++i)
+		body.push_back(Circle());
+}
+
+Cloud::~Cloud()
+{
+	body.clear();
+}
+
+Cloud::Cloud(Circle circle, int spd, Direction dir) : Cloud()
+{
+	float radius = circle.radius;
+
+	for (int i = 0; i < SUBCLOUD_SIZE; i++)
+		this->body.at(i) = Circle(circle);
+
+	this->body[1].center.x = (dir == LEFT) ? 2.0f * SCRN_WD + 1.5f * radius : -2.0f * SCRN_WD - 1.5f * radius;
+	this->body[0].center.x = body[1].center.x - radius;
+	this->body[2].center.x = body[1].center.x + radius;
+
+	this->offScreen = false;
 }
 
 void Cloud::update(Direction dir)
 {
-	vector<unique_ptr<Circle>>::iterator it;
-
-	for (it = body.begin(); it != body.end(); ++it) 
-		it->get()->center.x += (dir == LEFT) ? -speed : speed;
+	for (auto &circle : body)
+		circle.center.x += (dir == LEFT) ? -speed : speed;
 }
 
 void Cloud::render()
 {
-	vector<unique_ptr<Circle>>::iterator it;
-
-	for (it = body.begin(); it != body.end(); ++it)
-		it->get()->render();
+	for (auto &circle : body)
+		circle.render();
 }
 
 Star::Star() 
 {
 	body = make_unique<Circle>();
 	body->radius = 3;
-	body->color.r = 255;
-	body->color.g = 255;
-	body->color.b = 255;
-	body->color.alpha = 255;
+	body->color = Color(255, 255, 255, 255);
 }
 
 void Star::change_color()
 {
 	//Stars Flicker in the Night Sky
-	if (rand() % 2 == 0) {
-		body->color.r = 255;
-		body->color.g = rand() % 255;
-		body->color.b = 215;
-	}
-	else {
-		body->color.r = rand() % 255;
-		body->color.g = 215;
-		body->color.b = 255;
-	}
+	if (rand() % 2 == 0) 
+		body->color = Color(255, rand() % 255, 215, 255);
+	else 
+		body->color = Color(rand() % 255, 215, 255, 255);
 }
 
 Star::Star(unsigned int seed) : Star() 
@@ -258,62 +248,3 @@ void TexturedQuad::render()
 }
 
 TexturedQuad::TexturedQuad(sf::Texture texture, float w, float h, Vec v) : Shape(w, h, 0.0f, v) {}
-
-CloudGroup::CloudGroup()
-{
-	//Wind Direction
-	(rand() % 2 == 0) ? windDirection = RIGHT : windDirection = LEFT;
-
-	for (int i = 0; i < MAX_CLOUDS; ++i)
-		clouds.push_back(Cloud::make_cloud(windDirection));
-
-	// Initially only Assign random X coordinate
-	for (vector<Cloud>::iterator it = clouds.begin(); it != clouds.end(); ++it) {
-		int randX = rand() % (4 * SCRN_WD) - 2 * SCRN_WD; // get random position for cloud
-		it->body[1]->center.x = (float)randX;
-		it->body[0]->center.x = randX - it->body[1]->radius;
-		it->body[2]->center.x = randX + it->body[1]->radius;
-	}
-}
-
-void CloudGroup::update()
-{
-	GLfloat arg1, arg2;
-	int offset = 0;
-
-	for (vector<Cloud>::iterator it = clouds.begin(); it != clouds.end(); ++it) {
-		// Parameters to determine when a cloud is off screen
-		arg1 = it->body[1]->center.x + (it->body[1]->radius  * 1.5f);
-		arg2 = it->body[1]->center.x - (it->body[1]->radius  * 1.5f);
-		offset = it - clouds.begin();
-
-		//Reset if Last Cloud Offscreen
-		if (arg1 < -2.0f * SCRN_WD && windDirection == LEFT) {
-			clouds.erase(clouds.begin() + offset);
-			clouds.push_back(Cloud::make_cloud(windDirection));
-		}
-		else if (arg2 > 2.0f * SCRN_WD && windDirection == RIGHT) {
-			clouds.erase(clouds.begin() + offset);
-			clouds.push_back(Cloud::make_cloud(windDirection));
-		}
-		it->update(windDirection);
-	}
-
-	purge();
-}
-
-void CloudGroup::purge()
-{
-	for (vector<Cloud>::iterator it = clouds.begin(); it != clouds.end(); ++it) {
-		if (it->offScreen) {
-			clouds.erase(it);
-			clouds.push_back(Cloud::make_cloud(windDirection));
-		}
-	}
-}
-
-void CloudGroup::render()
-{
-	for (vector<Cloud>::iterator it = clouds.begin(); it != clouds.end(); ++it)
-		it->render();
-}

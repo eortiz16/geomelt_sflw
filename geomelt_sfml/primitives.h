@@ -100,7 +100,7 @@ public:
 	virtual void render() = 0;
 	Shape() {}
 	Shape(float w, float h, float r, Vec v, Color clr = Color(0, 0, 0, 255));
-	~Shape() {}
+	virtual ~Shape() {}
 
 	friend class Star;
 	friend class Cloud;
@@ -113,11 +113,10 @@ public:
 class Circle : public Shape {
 public:
 	virtual void render();
-	Circle() {}
+	explicit Circle() {}
 	Circle(float w, float h, float r, Color clr, Vec v) : Shape(w, h, r, v, clr) {}
 	Circle(float r, Color clr, Vec v) : Shape(0, 0, r, v, clr) {}
-
-	~Circle() {}
+	virtual ~Circle() {}
 
 	friend class Star;
 	friend class Cloud;
@@ -132,7 +131,7 @@ public:
 	void render();
 	Quad() {}
 	Quad(float w, float h, float r, Color clr, Vec v) : Shape(w, h, r, v, clr) {}
-	~Quad() {}
+	virtual ~Quad() {}
 
 	friend class Star;
 	friend class Cloud;

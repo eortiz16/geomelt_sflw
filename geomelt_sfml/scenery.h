@@ -62,12 +62,16 @@ public:
 	void physics();
 };
 
-class Clds : public Scenery {
+class Clouds : public Scenery {
 private:
-	CloudGroup clouds;
+	vector<Cloud> group;
+	Direction windDirection;
 public:
 	void render();
 	void physics();
+	void purge();
+
+	Clouds();
 };
 
 /* Empty SceneryGroup */
