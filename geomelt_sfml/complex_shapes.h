@@ -23,26 +23,19 @@ public:
 	Cloud();
 	Cloud(Circle, int, Direction);
 	~Cloud();
+
 	friend class Clouds;
 };
 
 class Star {
 private:
 	unique_ptr<Shape> body;
-	friend class StarGroup;
 public:
 	void change_color();
 	Star();
 	Star(unsigned int seed);
-};
 
-class StarGroup {
-private:
-	vector<Star> star;
-public:
-	void render();
-	void update();
-	StarGroup();
+	friend class Stars;
 };
 
 class Particles {

@@ -188,25 +188,6 @@ Star::Star(unsigned int seed) : Star()
 	body->center = Vec(x, y, 0);
 }
 
-StarGroup::StarGroup() 
-{
-	for (unsigned int i = 0; i < MAX_STAR; i++) 
-		star.push_back(Star(i));
-}
-
-void StarGroup::render()
-{
-	for (vector<Star>::iterator it = star.begin(); it != star.end(); ++it) {
-		it->change_color();
-		it->body->render();
-	}
-}
-
-void StarGroup::update()
-{
-	//for moving accross the screen;
-}
-
 void TexturedQuad::set_texture_attributes(sf::Texture tex)
 {
 	myTexture = tex;

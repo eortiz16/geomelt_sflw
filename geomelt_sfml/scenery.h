@@ -49,10 +49,11 @@ public:
 
 class Stars : public Scenery {
 private:
-	StarGroup stars;
+	vector<Star> group;
 public:
 	void render();
 	void physics();
+	Stars();
 };
 
 class Flowers : public Scenery {
@@ -80,7 +81,7 @@ protected:
 public:
 	virtual void render();
 	virtual void physics();
-	void addObject(unique_ptr<Scenery>& obj);
+
 	static unique_ptr<SceneryGroup> create(LevelType lvl);
 
 	SceneryGroup();

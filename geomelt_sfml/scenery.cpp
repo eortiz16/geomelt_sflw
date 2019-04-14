@@ -73,14 +73,23 @@ Moon::Moon()
 	);
 }
 
+Stars::Stars()
+{
+	for (unsigned int i = 0; i < MAX_STAR; i++)
+		group.push_back(Star(i));
+}
+
 void Stars::render()
 {
-	stars.render();
+	for (vector<Star>::iterator it = group.begin(); it != group.end(); ++it) {
+		it->change_color();
+		it->body->render();
+	}
 }
 
 void Stars::physics()
 {
-	stars.update();
+	//for moving accross the screen;
 }
 
 Clouds::Clouds()
@@ -89,10 +98,8 @@ Clouds::Clouds()
 	(rand() % 2 == 0) ? windDirection = RIGHT : windDirection = LEFT;
 
 	//Create MAX_CLOUDS amount of clouds
-	for (int i = 0; i < MAX_CLOUDS; ++i) {
+	for (int i = 0; i < MAX_CLOUDS; ++i) 
 		group.push_back(Cloud::make_cloud(windDirection));
-		cout << group[i].speed << "\n";
-	}
 
 	// Initially only Assign random X coordinate
 	for (auto &cloud : group) {
@@ -156,11 +163,6 @@ void SceneryGroup::physics()
 		element->physics();
 }
 
-void SceneryGroup::addObject(unique_ptr<Scenery>& obj)
-{
-	scenery.push_back(move(obj));
-}
-
 unique_ptr<SceneryGroup> SceneryGroup::create(LevelType lvl)
 {
 	switch (lvl) {
@@ -181,78 +183,49 @@ unique_ptr<SceneryGroup> SceneryGroup::create(LevelType lvl)
 
 SceneryGroup::SceneryGroup()
 {
-	unique_ptr<Scenery> blackVoid = unique_ptr<Scenery>(
+	cout << "!";
+	scenery.push_back(move(unique_ptr<Scenery>(
 		new Background(
 			Assets::backgroundPalette.black,
 			Quad(10.0f * SCRN_WD, 10.0f * SCRN_HT, 0.0f, Assets::palette.black, Vec(0, 0, 0))
 		)
-	);
-
-	addObject(blackVoid);
-	blackVoid.release();
+		)));
 }
 
 FieldScenery::FieldScenery() : SceneryGroup() 
 {
-	unique_ptr<Scenery> background = unique_ptr<Scenery>(
+	scenery.push_back(move(unique_ptr<Scenery>(
 		new Background(
 			Assets::backgroundPalette.day,
 			Quad(4.0f * SCRN_WD, 5.0f * SCRN_HT, 0.0f, Assets::palette.black, Vec(0, 0, 0))
 		)
-	);
+		)));
 
-	addObject(background);
-	background.release();
-
-	unique_ptr<Scenery> sun = unique_ptr<Scenery>(new Sun);
-	addObject(sun);
-	sun.release();
-
-	unique_ptr<Scenery> clouds = unique_ptr<Scenery>(new Clouds);
-	addObject(clouds);
-	clouds.release();
+	scenery.push_back(move(unique_ptr<Scenery>(new Sun)));
+	scenery.push_back(move(unique_ptr<Scenery>(new Clouds)));
 }
 
 NightScenery::NightScenery() : SceneryGroup() {
-	unique_ptr<Scenery> background = unique_ptr<Scenery>(
-		new Background(
-			Assets::backgroundPalette.night,
-			Quad(4.0f * SCRN_WD, 5.0f * SCRN_HT, 0.0f, Assets::palette.black, Vec(0, 0, 0))
-		)
-	);
-
-	addObject(background);
-	background.release();
-
-	unique_ptr<Scenery> stars = unique_ptr<Scenery>(new Stars);
-	addObject(stars);
-	stars.release();
-
-	unique_ptr<Scenery> moon = unique_ptr<Scenery>(new Moon);
-	addObject(moon);
-	moon.release();
-}
-
-TimeScenery::TimeScenery() : SceneryGroup() {
-	unique_ptr<Scenery> background = unique_ptr<Scenery>(
+	scenery.push_back(move(unique_ptr<Scenery>(
 		new Background(
 			Assets::backgroundPalette.evening,
 			Quad(4.0f * SCRN_WD, 5.0f * SCRN_HT, 0.0f, Assets::palette.black, Vec(0, 0, 0))
 		)
-	);
+		)));
 
-	addObject(background);
-	background.release();
+	scenery.push_back(move(unique_ptr<Scenery>(new Stars)));
+	scenery.push_back(move(unique_ptr<Scenery>(new Moon)));
+}
 
-	unique_ptr<Scenery> stars = unique_ptr<Scenery>(new Stars);
-	addObject(stars);
-	stars.release();
+TimeScenery::TimeScenery() : SceneryGroup() {
+	scenery.push_back(move(unique_ptr<Scenery>(
+		new Background(
+			Assets::backgroundPalette.evening,
+			Quad(4.0f * SCRN_WD, 5.0f * SCRN_HT, 0.0f, Assets::palette.black, Vec(0, 0, 0))
+		)
+		)));
 
-	unique_ptr<Scenery> moon = unique_ptr<Scenery>(new Moon);
-	addObject(moon);
-	moon.release();
-
-	unique_ptr<Scenery> clouds = unique_ptr<Scenery>(new Clouds);
-	addObject(clouds);
-	clouds.release();
+	scenery.push_back(move(unique_ptr<Scenery>(new Stars)));
+	scenery.push_back(move(unique_ptr<Scenery>(new Moon)));
+	scenery.push_back(move(unique_ptr<Scenery>(new Clouds)));
 }
