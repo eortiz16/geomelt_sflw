@@ -6,6 +6,7 @@
 #include "complex_shapes.h"
 #include "camera.h"
 #include "scenery.h"
+#include "command.h"
 
 #define sm_rnd() (rand() - 0.5f) / 255
 constexpr auto GRAVITY = 1.0f;
@@ -25,9 +26,9 @@ inline void operator++(TOD &ti, int)
 
 class Platform {
 private:
-	Quad body;
-	Quad outline;
-
+	Quad _body;
+	Quad _outline;
+public:
 	Platform();
 	Platform(Vec center, float width, float height, ColorSet color);
 
@@ -37,7 +38,7 @@ private:
 
 class PlatformGroup {
 private:
-	vector<Platform> platforms;
+	vector<Platform> _platforms;
 public:
 	void render();
 	PlatformGroup();
@@ -45,11 +46,22 @@ public:
 	friend class Player;
 };
 
+class RState;
+class NextColorCommand;
+
 class Level {
-protected:
-	PlatformGroup platforms;
-	static PlayerMap players;
-	unique_ptr<SceneryGroup> scenery;
+private:
+	PlatformGroup _platforms;
+	static PlayerMap _players;
+	unique_ptr<SceneryGroup> _scenery;
+public:
+	virtual void render();
+	virtual void gfx_handler();
+	virtual void phys_handler();
+	void setScenery(SceneryGroup scenery);
+
+	explicit Level();
+	virtual ~Level() {}
 
 	friend class CharacterSelectState;
 	friend class LevelState;
@@ -64,12 +76,6 @@ protected:
 	friend class RemoveCharacterCommand;
 	friend class PrevColorCommand;
 	friend class NextColorCommand;
-public:
-	virtual void render();
-	virtual void gfx_handler();
-	virtual void phys_handler();
-	void setScenery(SceneryGroup scenery);
 
-	explicit Level();
-	virtual ~Level() {}
+	//friend void NextColorCommand::execute(RState*);
 };

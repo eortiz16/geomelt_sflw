@@ -80,7 +80,7 @@ Navigable::Navigable(vector<unique_ptr<Shape>>& vec)
 
 void MainMenu::handler(unique_ptr<Level>& level)
 {
-	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1); //Fixed Camera
+	glOrtho(Camera::_ortho.left, Camera::_ortho.right, Camera::_ortho.bottom, Camera::_ortho.top, -1, 1); //Fixed Camera
 	glClear(1);
 
 	level->phys_handler(); 
@@ -142,7 +142,7 @@ CharacterSelect::CharacterSelect()
 void CharacterSelect::handler(PlayerMap players)
 {
 	//Fixed Camera
-	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1);
+	glOrtho(Camera::_ortho.left, Camera::_ortho.right, Camera::_ortho.bottom, Camera::_ortho.top, -1, 1);
 	glClear(1);
 
 	background.render();
@@ -212,7 +212,7 @@ LevelSelect::LevelSelect()
 
 void LevelSelect::handler() 
 {
-	glOrtho(Camera::ortho.left, Camera::ortho.right, Camera::ortho.bottom, Camera::ortho.top, -1, 1);
+	glOrtho(Camera::_ortho.left, Camera::_ortho.right, Camera::_ortho.bottom, Camera::_ortho.top, -1, 1);
 	glClear(1);
 
 	background.render();
@@ -236,19 +236,19 @@ Pause::Pause()
 
 	TexturedQuad resume, exit;
 	float apectratio = 0.0f;
-	float centerX = (Camera::edges.left + Camera::edges.right) / 2.0f;
-	float centerY = (Camera::edges.top + Camera::edges.bottom) / 2.0f;
+	float centerX = (Camera::_edges.left + Camera::_edges.right) / 2.0f;
+	float centerY = (Camera::_edges.top + Camera::_edges.bottom) / 2.0f;
 
 	resume.set_texture_attributes(Assets::textures.resume);
 	apectratio = (float)Assets::textures.resume.getSize().x / (float)Assets::textures.resume.getSize().y;
-	resume.height = (Camera::edges.top - Camera::edges.bottom) * 0.20f;
+	resume.height = (Camera::_edges.top - Camera::_edges.bottom) * 0.20f;
 	resume.width = resume.height * apectratio;
 	resume.center = Vec(centerX, centerY + resume.height, 0);
 	resume.boundary_assignment();
 
 	exit.set_texture_attributes(Assets::textures.exit);
 	apectratio = (float)Assets::textures.exit.getSize().x / (float)Assets::textures.exit.getSize().y;
-	exit.height = (Camera::edges.top - Camera::edges.bottom) * 0.20f;
+	exit.height = (Camera::_edges.top - Camera::_edges.bottom) * 0.20f;
 	exit.width = exit.height * apectratio;
 	exit.center = Vec(centerX, centerY, 0);
 	exit.boundary_assignment();
@@ -261,14 +261,14 @@ Pause::Pause()
 
 	resume.set_texture_attributes(Assets::textures.resumeSelected);
 	apectratio = (float)Assets::textures.resume.getSize().x / (float)Assets::textures.resume.getSize().y;
-	resume.height = (Camera::edges.top - Camera::edges.bottom) * 0.20f;
+	resume.height = (Camera::_edges.top - Camera::_edges.bottom) * 0.20f;
 	resume.width = resume.height * apectratio;
 	resume.center = Vec(centerX, centerY + resume.height, 0);
 	resume.boundary_assignment();
 
 	exit.set_texture_attributes(Assets::textures.exitSelected);
 	apectratio = (float)Assets::textures.exit.getSize().x / (float)Assets::textures.exit.getSize().y;
-	exit.height = (Camera::edges.top - Camera::edges.bottom) * 0.20f;
+	exit.height = (Camera::_edges.top - Camera::_edges.bottom) * 0.20f;
 	exit.width = exit.height * apectratio;
 	exit.center = Vec(centerX, centerY, 0);
 	exit.boundary_assignment();

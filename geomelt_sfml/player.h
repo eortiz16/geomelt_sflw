@@ -47,6 +47,8 @@ public:
 	friend class StopCommand;
 };
 
+class PlatformGroup;
+
 class Player {
 protected:
 	static vector<int> availableIDs;

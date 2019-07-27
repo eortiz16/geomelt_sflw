@@ -46,14 +46,14 @@ void Player::physics(PlatformGroup plat)
 		body->center.x += velocity.x;
 
 		//Check contact with each platform in level
-		for (vector<Platform>::iterator it = plat.platforms.begin(); it != plat.platforms.end(); ++it) {
-			if (body->boundary.isWithin(it->body.boundary, body->center.x)
+		for (vector<Platform>::iterator it = plat._platforms.begin(); it != plat._platforms.end(); ++it) {
+			if (body->boundary.isWithin(it->_body.boundary, body->center.x)
 				&& velocity.y <= 0.0) {
 				//Reset attributes
 				toggle.on_ground = true;
 				jumpCount = 0;
 				velocity.y *= -0.25f;
-				body->center.y = it->body.boundary.top + body->height / 2;
+				body->center.y = it->_body.boundary.top + body->height / 2;
 				break;
 			}
 			else

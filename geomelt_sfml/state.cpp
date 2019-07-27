@@ -63,6 +63,7 @@ void GFXNet::loop()
 		sync.catch_up();
 		window->setActive(true);
 		_state->handler(); //Render
+
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glMatrixMode(GL_MODELVIEW);// Transformations
 		glLoadIdentity();
@@ -210,14 +211,14 @@ void CharacterSelectState::next()
 
 void CharacterSelectState::prev()
 {
-	_context->level->players.clear();
+	_context->level->_players.clear();
 	_context->setState(new MainMenuState(_context));
 	_context->command = Command::create(_context->_state);
 }
 
 void CharacterSelectState::handler()
 {
-	static_cast<CharacterSelect&>(*menu).handler(_context->level->players);
+	static_cast<CharacterSelect&>(*menu).handler(_context->level->_players);
 }
 
 void CharacterSelectState::read_input()
@@ -266,7 +267,7 @@ void CharacterSelectState::read_input()
 				_context->command = unique_ptr<Command>(new ChangeCharacterCommand(event.joystickButton.joystickId));
 				break;
 			case xbox::B:
-				if (_context->level->players.size() == 0)
+				if (_context->level->_players.size() == 0)
 					_context->command = unique_ptr<Command>(new DenyCommand);
 				else
 					_context->command = unique_ptr<Command>(new RemoveCharacterCommand(event.joystickButton.joystickId));
@@ -302,8 +303,8 @@ LevelSelectState::LevelSelectState(GFXNet* context)
 
 void LevelSelectState::next()
 {
-	_context->level->scenery = move(SceneryGroup::create((LevelType)(distance(menu->cursor->icons->begin(), menu->cursor->selected))));
-	_context->level->players.reset();
+	_context->level->_scenery = move(SceneryGroup::create((LevelType)(distance(menu->cursor->icons->begin(), menu->cursor->selected))));
+	_context->level->_players.reset();
 	_context->setState(new LevelState(_context));
 	_context->command = Command::create(_context->_state);
 }

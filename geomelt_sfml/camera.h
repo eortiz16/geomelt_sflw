@@ -12,18 +12,18 @@ constexpr auto bottom_ortho = -0.75f * SCRN_HT;
 
 class Camera {
 private:
-	static float ZOOM;
-	static float aspect_ratio;
-	static float xMin;
-	static float xMax;
-	static float yMin;
-	static float yMax;
+	static float _ZOOM;
+	static float _aspect_ratio;
+	static float _xMin;
+	static float _xMax;
+	static float _yMin;
+	static float _yMax;
 
-	static float competitionXLeft;
-	static float competitionXRight;
+	static float _competitionXLeft;
+	static float _competitionXRight;
 
-	static Boundary edges;
-	static Boundary ortho;
+	static Boundary _edges;
+	static Boundary _ortho;
 	static Vec center;
 public:
 	// void update_value();

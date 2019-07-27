@@ -20,16 +20,17 @@ void Background::physics()
 
 Background::Background()
 {
+	// Set up gradient
 	for (int i = 0; i < CORNERS; i++) {
 		color.push_back(Color());
 		transition_done.push_back(false);
 	}
 }
 
-Background::Background(vector<Color> clr, Quad qd) : Background()
+Background::Background(vector<Color> color, Quad body) : Background()
 {
-	this->body = qd;
-	this->color = clr;
+	this->body = body;
+	this->color = color;
 }
 
 void Satelite::render()
@@ -183,7 +184,6 @@ unique_ptr<SceneryGroup> SceneryGroup::create(LevelType lvl)
 
 SceneryGroup::SceneryGroup()
 {
-	cout << "!";
 	scenery.push_back(move(unique_ptr<Scenery>(
 		new Background(
 			Assets::backgroundPalette.black,

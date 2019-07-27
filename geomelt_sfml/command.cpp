@@ -43,27 +43,27 @@ void DenyCommand::execute(RState* state)
 /* Specific for all players */
 void JumpCommand::execute(RState* state)
 {
-	state->_context->level->players.jump(this->id);
+	state->_context->level->_players.jump(this->id);
 }
 
 void AttackCommand::execute(RState* state)
 {
-	state->_context->level->players.attack(this->id);
+	state->_context->level->_players.attack(this->id);
 }
 
 void MoveLeftCommand::execute(RState* state)
 {
-	state->_context->level->players.move(this->id, LEFT);
+	state->_context->level->_players.move(this->id, LEFT);
 }
 
 void MoveRightCommand::execute(RState* state)
 {
-	state->_context->level->players.move(this->id, RIGHT);
+	state->_context->level->_players.move(this->id, RIGHT);
 }
 
 void StopCommand::execute(RState * state)
 {
-	state->_context->level->players.stop(this->id);
+	state->_context->level->_players.stop(this->id);
 }
 
 void ExitCommand::execute(RState* state)
@@ -73,28 +73,28 @@ void ExitCommand::execute(RState* state)
 
 void AddCharacterCommand::execute(RState* state)
 {
-	state->_context->level->players.add(this->id);
+	state->_context->level->_players.add(this->id);
 	static_cast<CharacterSelect&>(*static_cast<CharacterSelectState&>(*state).menu).selectBox[id].occupied = true;
 }
 
 void RemoveCharacterCommand::execute(RState* state)
 {
-	state->_context->level->players.purge(this->id);
+	state->_context->level->_players.purge(this->id);
 }
 
 void ChangeCharacterCommand::execute(RState* state)
 {
-	state->_context->level->players.transform(this->id);
+	state->_context->level->_players.transform(this->id);
 }
 
 void NextColorCommand::execute(RState* state)
 {
-	state->_context->level->players.change_color(this->id, NEXT);
+	state->_context->level->_players.change_color(this->id, NEXT);
 }
 
 void PrevColorCommand::execute(RState* state)
 {
-	state->_context->level->players.change_color(this->id, PREV);
+	state->_context->level->_players.change_color(this->id, PREV);
 }
 
 CommandLevel::CommandLevel(unsigned int id)

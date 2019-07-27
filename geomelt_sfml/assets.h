@@ -6,36 +6,20 @@
 constexpr auto CLR_OPT_CARDINALITY = 8;
 
 class ColorSet {
-private:
+public:
 	Color body;
 	Color outline;
 
-	friend class Level;
-	friend class CharacterColorSet;
-	friend class PlatformPalette;
-	friend class CharacterPalette;
-	friend class Player;
-	friend class Ball;
-	friend class Boxy;
-	friend class PlayerMap;
-	friend class Platform;
-	friend class PlatformGroup;
-public:
 	ColorSet() {}
 	ColorSet& operator = (const ColorSet &clr);
 	ColorSet(Color, Color);
 };
 
 class CharacterColorSet : public ColorSet {
-private:
-	Color reflection;
-	
-	friend class CharacterPalette;
-	friend class Player;
-	friend class Ball;
-	friend class Boxy;
-	friend class PlayerMap;
+
 public:
+	Color reflection;
+
 	CharacterColorSet() {}
 	CharacterColorSet& operator = (const CharacterColorSet &clr);
 	CharacterColorSet(Color, Color, Color);
@@ -60,7 +44,7 @@ public:
 };
 
 class BackgroundPalette {
-private:
+public:
 	vector<Color> day;
 	vector<Color> afternoon;
 	vector<Color> evening;
@@ -70,14 +54,6 @@ private:
 	vector<Color> overcast;
 	vector<Color> black;
 
-	friend class Level;
-	friend class CharacterSelect;
-	friend class SceneryGroup;
-	friend class FieldScenery;
-	friend class NightScenery;
-	friend class TimeScenery;
-	friend class LevelSelect;
-public:
 	BackgroundPalette();
 };
 

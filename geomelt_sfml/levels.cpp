@@ -1,51 +1,51 @@
 #include "levels.h"
 
-PlayerMap Level::players;
+PlayerMap Level::_players;
 
 Level::Level()
 {
-	scenery = move(SceneryGroup::create((LevelType)(rand() % 3)));
+	_scenery = move(SceneryGroup::create((LevelType)(rand() % 3)));
 }
 
 void Level::render()
 {
-	scenery->render();
-	platforms.render();
-	players.render();
+	_scenery->render();
+	_platforms.render();
+	_players.render();
 }
 
 void Level::gfx_handler()
 {
 	//Dynamic Camera
-	glOrtho(Camera::edges.left, Camera::edges.right, Camera::edges.bottom, Camera::edges.top, -1, 1);
+	glOrtho(Camera::_edges.left, Camera::_edges.right, Camera::_edges.bottom, Camera::_edges.top, -1, 1);
 	render();
 }
 
 void Level::phys_handler()
 {
-	players.phys_handler(platforms);
-	scenery->physics();
+	_players.phys_handler(_platforms);
+	_scenery->physics();
 	Camera::set_center();
 	Camera::set_edges();
 }
 
 void Level::setScenery(SceneryGroup scenery)
 {
-	this->scenery = unique_ptr<SceneryGroup>(&scenery);
+	this->_scenery = unique_ptr<SceneryGroup>(&scenery);
 }
 
 void PlatformGroup::render()
 {
-	for (vector<Platform>::iterator it = platforms.begin(); it != platforms.end(); ++it) {
-		it->outline.render();
-		it->body.render();
+	for (vector<Platform>::iterator it = _platforms.begin(); it != _platforms.end(); ++it) {
+		it->_outline.render();
+		it->_body.render();
 	}
 }
 
-/* Platform[0] is the maain platform */
+/* Platform[0] is the main platform */
 PlatformGroup::PlatformGroup()
 {
-	platforms.push_back(
+	_platforms.push_back(
 		Platform(
 			Vec(0, -SCRN_HT * 2.5f, 0),
 			SCRN_HT * 6.0f,
@@ -54,7 +54,7 @@ PlatformGroup::PlatformGroup()
 		)
 	);
 
-	platforms.push_back(
+	_platforms.push_back(
 		Platform(
 			Vec(0, SCRN_HT / -3.0f, 0),
 			5.0f * SCRN_WD / 6.0f, 
@@ -63,7 +63,7 @@ PlatformGroup::PlatformGroup()
 		)
 	);
 
-	platforms.push_back(
+	_platforms.push_back(
 		Platform(
 			Vec(-SCRN_HT * 3.0f / 4.0f, 100.0f, 0),
 			SCRN_WD / 4.0f,
@@ -72,7 +72,7 @@ PlatformGroup::PlatformGroup()
 		)
 	);
 
-	platforms.push_back(
+	_platforms.push_back(
 		Platform(
 			Vec(0.0f, SCRN_HT / 4.0f, 0),
 			SCRN_WD / 4.0f,
@@ -81,7 +81,7 @@ PlatformGroup::PlatformGroup()
 		)
 	);
 
-	platforms.push_back(
+	_platforms.push_back(
 		Platform(
 			Vec(SCRN_HT * 3.0f / 4.0f, 100.0f, 0),
 			SCRN_WD / 4.0f,
@@ -90,16 +90,16 @@ PlatformGroup::PlatformGroup()
 		)
 	);
 
-	for (vector<Platform>::iterator it = platforms.begin(); it != platforms.end(); ++it) 
-		it->body.boundary_assignment();
+	for (vector<Platform>::iterator it = _platforms.begin(); it != _platforms.end(); ++it) 
+		it->_body.boundary_assignment();
 }
 
 Platform::Platform() {}
 
 Platform::Platform(Vec center, float width, float height, ColorSet color)
 {
-	this->body = Quad(width, height, 0, color.body, center);
-	this->outline = Quad(width + THICKNESS, height + THICKNESS, 0, color.outline, center);
+	this->_body = Quad(width, height, 0, color.body, center);
+	this->_outline = Quad(width + THICKNESS, height + THICKNESS, 0, color.outline, center);
 }
 
 /* Great Candidate for State Design Pattern */

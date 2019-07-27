@@ -5,8 +5,8 @@ void RoundCornerBox::render()
 	vRectangle.render();
 	hRectangle.render();
 
-	for (int j = 0; j < 4; j++)
-		corner[j].render();
+	for (auto &element : corner)
+		element.render();
 }
 
 RoundCornerBox::RoundCornerBox()
