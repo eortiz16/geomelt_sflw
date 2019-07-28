@@ -87,15 +87,17 @@ bool Player::isAttacking(const Player& p)
 	// GRAB (x,y) of arm corner coors
 	vector<pair<float, float>> coordinates; //attacking player coordinates
 
+	coordinates.push_back({ arm.center.x + arm.width / 2.0, arm.center.y });
 	coordinates.push_back({ arm.center.x + arm.width / 2.0, arm.center.y + (arm.height / 2.0) });
 	coordinates.push_back({ arm.center.x + arm.width / 2.0, arm.center.y - (arm.height / 2.0) });
+	coordinates.push_back({ arm.center.x - arm.width / 2.0, arm.center.y });
 	coordinates.push_back({ arm.center.x - arm.width / 2.0, arm.center.y + (arm.height / 2.0) });
 	coordinates.push_back({ arm.center.x - arm.width / 2.0, arm.center.y - (arm.height / 2.0) });
 
 	bool within = false;
 	for (auto coor : coordinates) {
 		if (coor.first <= p.body->boundary.right && coor.first >= p.body->boundary.left &&
-			(coor.second <= p.body->boundary.top || coor.second >= p.body->boundary.bottom) ) {
+			(coor.second <= p.body->boundary.top && coor.second >= p.body->boundary.bottom) ) {
 			within = true;
 		}
 	}
