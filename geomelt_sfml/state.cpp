@@ -426,6 +426,7 @@ void LevelState::handler()
 {
 	_context->level->phys_handler();
 	_context->level->gfx_handler();
+	_context->level->event_handler();
 }
 
 void LevelState::read_input()

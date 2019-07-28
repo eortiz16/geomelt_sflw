@@ -45,6 +45,7 @@ public:
 	friend class MoveLeftCommand;
 	friend class MoveRightCommand;
 	friend class StopCommand;
+	friend class Level;
 };
 
 class PlatformGroup;
@@ -58,6 +59,7 @@ protected:
 	float speed_y; // jump
 	int jumpMax;
 	int jumpCount;
+	float damageMultiplier;
 	Direction direction;
 	unsigned int myID;
 	Toggle toggle;
@@ -72,6 +74,8 @@ protected:
 	CharacterColorSet mColor;
 	float mDimension;
 public:
+	bool isAttacking(const Player&);
+	void attackedBy(const Player&);
 	void simple_update();
 	void simple_update_menu();
 	void change_color(SelectColor option);
@@ -95,6 +99,7 @@ public:
 
 	friend class PlayerMap;
 	friend class Camera;
+	friend class Level;
 };
 
 class Ball : public Player {
@@ -142,4 +147,5 @@ public:
 	void reset();
 
 	friend class Camera;
+	friend class Level;
 };

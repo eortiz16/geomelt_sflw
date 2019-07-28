@@ -58,6 +58,7 @@ public:
 	virtual void render();
 	virtual void gfx_handler();
 	virtual void phys_handler();
+	virtual void event_handler();
 	void setScenery(SceneryGroup scenery);
 
 	explicit Level();

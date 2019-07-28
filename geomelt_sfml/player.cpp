@@ -81,6 +81,46 @@ void Player::physics(PlatformGroup plat)
 	}
 }
 
+// p1 is attacking p2
+bool Player::isAttacking(const Player& p)
+{
+	// GRAB (x,y) of arm corner coors
+	vector<pair<float, float>> coordinates; //attacking player coordinates
+
+	coordinates.push_back({ arm.center.x + arm.width / 2.0, arm.center.y + (arm.height / 2.0) });
+	coordinates.push_back({ arm.center.x + arm.width / 2.0, arm.center.y - (arm.height / 2.0) });
+	coordinates.push_back({ arm.center.x - arm.width / 2.0, arm.center.y + (arm.height / 2.0) });
+	coordinates.push_back({ arm.center.x - arm.width / 2.0, arm.center.y - (arm.height / 2.0) });
+
+	bool within = false;
+	for (auto coor : coordinates) {
+		if (coor.first <= p.body->boundary.right && coor.first >= p.body->boundary.left &&
+			(coor.second <= p.body->boundary.top || coor.second >= p.body->boundary.bottom) ) {
+			within = true;
+		}
+	}
+
+	return within;
+}
+
+// p1 is attacked by p2
+void Player::attackedBy(const Player& p)
+{
+	const float baseDamageX = 5.0;
+	const float baseDamageY = 5.0;
+
+	Direction flightDirection = p.direction;
+
+	if (flightDirection == RIGHT) {
+		this->velocity.x = baseDamageX * damageMultiplier;
+		this->velocity.y = baseDamageY * damageMultiplier;
+	}
+	else {
+		this->velocity.x = -baseDamageX * damageMultiplier;
+		this->velocity.y = baseDamageY * damageMultiplier;
+	}
+}
+
 /*Takes the width resolution and scales down to a factor controls reflection of character*/
 void Player::update_reflection_x()
 {
@@ -290,6 +330,7 @@ Ball::Ball() : Player()
 	speed_x = 10.0f;
 	speed_y = 5.0f;
 	jumpMax = 4;
+	damageMultiplier = 1.5f;
 
 	body = unique_ptr<Circle>(
 		new Circle(
@@ -382,6 +423,7 @@ Boxy::Boxy() : Player()
 	jumpMax = 2;
 	speed_x = 15.0f;
 	speed_y = 5.0f;
+	damageMultiplier = 2.0f;
 
 	body = unique_ptr<Shape>(
 		new Quad(

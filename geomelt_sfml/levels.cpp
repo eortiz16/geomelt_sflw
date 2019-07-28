@@ -29,6 +29,23 @@ void Level::phys_handler()
 	Camera::set_edges();
 }
 
+void Level::event_handler()
+{
+	// Check all players that are attacking
+	for (auto itr = _players._map.begin(); itr != _players._map.end(); itr++) {
+		if (itr->second->toggle.attacking) {
+			//Check is arm is within the boundaries of other players
+			for (auto jtr = _players._map.begin(); jtr != _players._map.end(); jtr++) {
+				if (itr != jtr) {
+					if (itr->second->isAttacking(*jtr->second)) {
+						jtr->second->attackedBy(*itr->second);
+					}
+				}
+			}
+		}
+	}
+}
+
 void Level::setScenery(SceneryGroup scenery)
 {
 	this->_scenery = unique_ptr<SceneryGroup>(&scenery);
