@@ -13,8 +13,14 @@ enum SelectColor{NEXT, PREV, RANDOM};
 
 class Attributes {
 private:
+	float strength;
 	float health;
 	int lifeCount;
+	float speed_x; // speed
+	float speed_y; // jump
+	int jumpMax;
+	int jumpCount;
+	float damageMultiplier;
 	PlayerState lifeState;
 public:
 	Attributes();
@@ -55,11 +61,6 @@ protected:
 	static vector<int> availableIDs;
 	float weight;
 	Vec velocity;
-	float speed_x; // speed
-	float speed_y; // jump
-	int jumpMax;
-	int jumpCount;
-	float damageMultiplier;
 	Direction direction;
 	unsigned int myID;
 	Toggle toggle;
@@ -74,7 +75,7 @@ protected:
 	CharacterColorSet mColor;
 	float mDimension;
 public:
-	bool isAttacking(const Player&);
+	bool Attack(const Player&);
 	void attackedBy(const Player&);
 	void simple_update();
 	void simple_update_menu();

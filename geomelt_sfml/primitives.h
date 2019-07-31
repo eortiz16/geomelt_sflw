@@ -69,7 +69,6 @@ public:
 	float top, bottom, left, right;
 
 	bool isWithin(int x, int y); /* For mouse detection */
-	bool isWithin(Boundary); /* one boundary within another? */
 	bool isWithin(Boundary, float center);/* for use with player */
 
 	Boundary() {}
@@ -108,6 +107,7 @@ public:
 	friend class Background;
 	friend class LevelSelect;
 	friend class CharacterSelect;
+	friend class LevelSelect;
 };
 
 class Circle : public Shape {

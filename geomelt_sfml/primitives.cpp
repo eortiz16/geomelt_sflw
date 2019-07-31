@@ -79,16 +79,6 @@ bool Boundary::isWithin(int x, int y)
 	return false;
 }
 
-/* Will need modification */
-bool Boundary::isWithin(Boundary bnd)
-{
-	if (this->bottom <= bnd.top	&& this->bottom > bnd.bottom
-		&& this->left <= bnd.right	&& this->right > bnd.left)
-		return true;
-	else
-		return false;
-}
-
 bool Boundary::isWithin(Boundary bnd, float center)
 {
 	if (this->bottom <= bnd.top	&& this->bottom > bnd.bottom

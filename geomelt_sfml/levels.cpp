@@ -37,7 +37,7 @@ void Level::event_handler()
 			//Check is arm is within the boundaries of other players
 			for (auto jtr = _players._map.begin(); jtr != _players._map.end(); jtr++) {
 				if (itr != jtr) {
-					if (itr->second->isAttacking(*jtr->second)) {
+					if (itr->second->Attack(*jtr->second)) {
 						jtr->second->attackedBy(*itr->second);
 					}
 				}

@@ -51,7 +51,7 @@ void Player::physics(PlatformGroup plat)
 				&& velocity.y <= 0.0) {
 				//Reset attributes
 				toggle.on_ground = true;
-				jumpCount = 0;
+				stats.jumpCount = 0;
 				velocity.y *= -0.25f;
 				body->center.y = it->_body.boundary.top + body->height / 2;
 				break;
@@ -82,44 +82,42 @@ void Player::physics(PlatformGroup plat)
 }
 
 // p1 is attacking p2
-bool Player::isAttacking(const Player& p)
+bool Player::Attack(const Player& p)
 {
 	// GRAB (x,y) of arm corner coors
 	vector<pair<float, float>> coordinates; //attacking player coordinates
 
-	coordinates.push_back({ arm.center.x + arm.width / 2.0, arm.center.y });
-	coordinates.push_back({ arm.center.x + arm.width / 2.0, arm.center.y + (arm.height / 2.0) });
-	coordinates.push_back({ arm.center.x + arm.width / 2.0, arm.center.y - (arm.height / 2.0) });
-	coordinates.push_back({ arm.center.x - arm.width / 2.0, arm.center.y });
-	coordinates.push_back({ arm.center.x - arm.width / 2.0, arm.center.y + (arm.height / 2.0) });
-	coordinates.push_back({ arm.center.x - arm.width / 2.0, arm.center.y - (arm.height / 2.0) });
+	coordinates.push_back({ arm.center.x + arm.width / 2.0f, arm.center.y });
+	coordinates.push_back({ arm.center.x + arm.width / 2.0f, arm.center.y + (arm.height / 2.0f) });
+	coordinates.push_back({ arm.center.x + arm.width / 2.0f, arm.center.y - (arm.height / 2.0f) });
+	coordinates.push_back({ arm.center.x - arm.width / 2.0f, arm.center.y });
+	coordinates.push_back({ arm.center.x - arm.width / 2.0f, arm.center.y + (arm.height / 2.0f) });
+	coordinates.push_back({ arm.center.x - arm.width / 2.0f, arm.center.y - (arm.height / 2.0f) });
 
-	bool within = false;
 	for (auto coor : coordinates) {
 		if (coor.first <= p.body->boundary.right && coor.first >= p.body->boundary.left &&
 			(coor.second <= p.body->boundary.top && coor.second >= p.body->boundary.bottom) ) {
-			within = true;
+			return true;
 		}
 	}
 
-	return within;
+	return false;
 }
 
 // p1 is attacked by p2
 void Player::attackedBy(const Player& p)
 {
-	const float baseDamageX = 5.0;
-	const float baseDamageY = 5.0;
+	this->stats.health += p.stats.strength;
 
 	Direction flightDirection = p.direction;
 
 	if (flightDirection == RIGHT) {
-		this->velocity.x = baseDamageX * damageMultiplier;
-		this->velocity.y = baseDamageY * damageMultiplier;
+		this->velocity.x = this->stats.health * stats.damageMultiplier;
+		this->velocity.y = this->stats.health * stats.damageMultiplier;
 	}
 	else {
-		this->velocity.x = -baseDamageX * damageMultiplier;
-		this->velocity.y = baseDamageY * damageMultiplier;
+		this->velocity.x = -this->stats.health * stats.damageMultiplier;
+		this->velocity.y = this->stats.health * stats.damageMultiplier;
 	}
 }
 
@@ -221,7 +219,8 @@ void Player::reset_attributes()
 	stats.lifeState = ALIVE;
 	velocity.x = 0;
 	velocity.y = -25.0f;
-	jumpCount = 0;
+	stats.jumpCount = 0;
+	stats.health = 0.0f;
 	toggle.on_ground = false;
 	toggle.attacking = false;
 
@@ -233,13 +232,13 @@ void Player::move(Direction dir)
 	direction = dir;
 	//Horizontal Velocity
 	if (direction == LEFT)
-		velocity.x = -speed_x;
+		velocity.x = -stats.speed_x;
 	else
-		velocity.x = speed_x;
+		velocity.x = stats.speed_x;
 
 	//Small hop when on ground
 	if (toggle.on_ground)
-		velocity.y = speed_y;
+		velocity.y = stats.speed_y;
 }
 
 void Player::respawn()
@@ -292,8 +291,8 @@ Player::Player()
 {
 	myID = extract_lowest_ID();
 	weight = 0.0f;
-	jumpMax = 3;
-	jumpCount = 0;
+	stats.jumpMax = 3;
+	stats.jumpCount = 0;
 	velocity = Vec(0, 0, 0);
 	direction = RIGHT;
 	mDimension = 100;
@@ -329,10 +328,12 @@ Ball::Ball() : Player()
 {
 	// Movement Parameters
 	weight = 3.0f * GLfloat(GRAVITY) / 4.0f;
-	speed_x = 10.0f;
-	speed_y = 5.0f;
-	jumpMax = 4;
-	damageMultiplier = 1.5f;
+	stats.speed_x = 10.0f;
+	stats.speed_y = 5.0f;
+	stats.jumpMax = 4;
+	stats.damageMultiplier = 1.5f;
+
+	stats.strength = 0.25f;
 
 	body = unique_ptr<Circle>(
 		new Circle(
@@ -358,7 +359,7 @@ Ball::Ball() : Player()
 		new Circle(
 			mDimension,
 			mDimension,
-			body->radius - body->radius / 4.0f,
+			3.0f * body->radius / 4.0f,
 			mColor.reflection,
 			Vec(0, 0, 0)
 		)
@@ -406,10 +407,10 @@ void Ball::jump()
 {
 	toggle.on_ground = false;
 
-	if (jumpCount < jumpMax) {
+	if (stats.jumpCount < stats.jumpMax) {
 		exhale(); //Change character's size
 		velocity.y = JUMP_PARAM; //Vertical Velocity
-		jumpCount++;
+		stats.jumpCount++;
 	}
 }
 
@@ -422,10 +423,12 @@ Boxy::Boxy() : Player()
 {
 	direction = LEFT;
 	weight = GLfloat(GRAVITY * 0.5f);
-	jumpMax = 2;
-	speed_x = 15.0f;
-	speed_y = 5.0f;
-	damageMultiplier = 2.0f;
+	stats.jumpMax = 2;
+	stats.speed_x = 15.0f;
+	stats.speed_y = 5.0f;
+	stats.damageMultiplier = 2.0f;
+
+	stats.strength = 0.5f;
 
 	body = unique_ptr<Shape>(
 		new Quad(
@@ -472,9 +475,9 @@ void Boxy::jump()
 		toggle.on_ground = false;
 
 	//Check if jumpcount is less than jumpmax
-	if (jumpCount < jumpMax) {
+	if (stats.jumpCount < stats.jumpMax) {
 		velocity.y = JUMP_PARAM; // vertical velosity modification
-		jumpCount++; // add one to jumpcount
+		stats.jumpCount++; // add one to jumpcount
 	}
 }
 
