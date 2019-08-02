@@ -5,6 +5,7 @@ PlayerMap Level::_players;
 Level::Level()
 {
 	_scenery = move(SceneryGroup::create((LevelType)(rand() % 3)));
+	_overlay = Overlay(this->_players);
 }
 
 void Level::render()
@@ -12,6 +13,17 @@ void Level::render()
 	_scenery->render();
 	_platforms.render();
 	_players.render();
+
+	//extract X, Y from all players
+	std::vector<std::pair<int, int>> coordinates;
+	for (auto playerPair : this->_players._map) {
+		coordinates.push_back({
+			playerPair.second->body->center.x,
+			playerPair.second->body->center.y
+			});
+	}
+
+	_overlay.render(coordinates);
 }
 
 void Level::gfx_handler()
@@ -191,3 +203,84 @@ void Time_Level::transition_to(Color *clr)
 	}
 }
 */
+
+StatBox::StatBox(const shared_ptr<Player>& p)
+{
+	this->player = p;
+
+	// Set the box's attributes
+	body = Quad(
+		350,
+		350,
+		350 / 2.0f,
+		Color(255, 255, 255,75),
+		Vec(0, 0, 0)
+	);
+
+}
+
+void StatBox::update()
+{
+	//Todo: maintain aspect ratio of each char and adjust accordingly
+	this->player->stats.health; // to display damgae incurred
+
+	//obtain center of camera
+	float apectratio = 0.0f;
+	
+	//Scale the proportions
+	apectratio = 1.0f; // 1:1
+	
+	//update the position of the box (center)
+	body.height = (Camera::_edges.top - Camera::_edges.bottom) * 0.20f;
+	body.width = body.height * apectratio;
+
+	//Partition screen into n + 1 parts (since we want to display 4 players info, 5 parts)
+	float offset = (abs(Camera::_edges.left) + abs(Camera::_edges.right)) / 5.0f;
+
+	//incorporate offset from left edge
+	float centerX = Camera::_edges.left + (offset * (player->myID + 1));
+
+	//offset from the bottom
+	float centerY = Camera::_edges.bottom + body.height;
+	body.center = Vec(centerX, centerY, 0);
+	body.boundary_assignment();
+}
+
+void StatBox::render()
+{
+	this->update();
+	this->body.render();
+}
+
+Overlay::Overlay(PlayerMap players)
+{
+	// TODO: choose Default direction
+	for (auto itr = players._map.begin(); itr != players._map.end(); ++itr) {
+		statBox.push_back(StatBox(itr->second));
+	}
+}
+
+void Overlay::render(std::vector<std::pair<int, int>> coordinates)
+{
+	// TODO: if any player within any box, make that box disapear
+	for (auto &box : statBox) {
+		bool shouldRender = false;
+		
+		for (auto coor : coordinates) {
+			int x = coor.first, y = coor.second;
+			std::cout << "(" << x << ", " << y << ") - ";
+			std::cout << "(" << Input::translateX(x) << ", " << Input::translateY(y) << ")\n";
+			
+			//ToDo: write a function that allows the translation of real pixel position
+			//		to projected camera
+			box.body.boundary_assignment();
+			if (box.body.boundary.isWithin(Input::translateX(x), Input::translateX(y))) {
+				shouldRender = true;
+				break;
+			}
+		}
+
+		if (shouldRender)
+			box.render();
+	}
+}

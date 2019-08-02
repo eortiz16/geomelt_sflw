@@ -46,6 +46,31 @@ public:
 	friend class Player;
 };
 
+class StatBox {
+private:
+	shared_ptr<Player> player;
+	Quad body;
+	float _damage;
+public:
+	void update();
+	void render();
+
+	StatBox() {}
+	StatBox(const shared_ptr<Player>& p);
+
+	friend class Overlay;
+};
+
+class Overlay {
+private:
+	vector<StatBox> statBox;
+public:
+	void render(std::vector<std::pair<int, int>>);
+
+	Overlay() {}
+	Overlay(PlayerMap);
+};
+
 class RState;
 class NextColorCommand;
 
@@ -54,6 +79,7 @@ private:
 	PlatformGroup _platforms;
 	static PlayerMap _players;
 	unique_ptr<SceneryGroup> _scenery;
+	Overlay _overlay;
 public:
 	virtual void render();
 	virtual void gfx_handler();

@@ -1,5 +1,5 @@
 #include "player.h"
-map<unsigned int, unique_ptr<Player>> PlayerMap::_map;
+map<unsigned int, shared_ptr<Player>> PlayerMap::_map;
 
 vector<int> Player::availableIDs = {0,1,2,3,4,5,6,7};
 
@@ -145,9 +145,9 @@ void Player::attack()
 { 
 	// Extend arm in direction character is facing
 	if (direction == RIGHT)
-		arm.center.x = body->center.x + 3 * body->width / 4;
+		arm.center.x = body->center.x + 3.0f * body->width / 4.0f;
 	else if (direction == LEFT)
-		arm.center.x = body->center.x - 3 * body->width / 4;
+		arm.center.x = body->center.x - 3.0f * body->width / 4.0f;
 
 	arm.center.y = body->center.y;
 	armOutline.center.x = arm.center.x;
@@ -195,7 +195,7 @@ void Player::simple_update_menu()
 	outline->width = 2 * outline->radius;
 	outline->height = outline->width;
 
-	reflection->radius = body->radius - body->radius / 4;
+	reflection->radius = body->radius - body->radius / 4.0f;
 	reflection->width = 2 * reflection->radius;
 	reflection->height = reflection->width;
 
@@ -224,7 +224,7 @@ void Player::reset_attributes()
 	toggle.on_ground = false;
 	toggle.attacking = false;
 
-	body->radius = body->width / 2;
+	body->radius = body->width / 2.0f;
 }
 
 void Player::move(Direction dir)
@@ -502,7 +502,7 @@ void PlayerMap::add(unsigned int joyID)
 	bool is_created_already = false;
 
 	if (_map.size() >= 0 && _map.size() < 8) {
-		map<unsigned int, unique_ptr<Player>>::iterator it;
+		map<unsigned int, shared_ptr<Player>>::iterator it;
 
 		for (it = _map.begin(); it != _map.end(); ++it) {
 			if (it->first == joyID) // If map exists
@@ -595,7 +595,7 @@ unsigned int PlayerMap::size()
 
 void PlayerMap::render()
 {
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = _map.begin(); it != _map.end(); ++it) {
+	for (map<unsigned int, shared_ptr<Player>>::iterator it = _map.begin(); it != _map.end(); ++it) {
 		if (it->second->stats.lifeState == ALIVE)
 			it->second->render();
 	}
@@ -603,7 +603,7 @@ void PlayerMap::render()
 
 void PlayerMap::options_render(vector<CharSelBox> selectBox)
 {
-	map<unsigned int, unique_ptr<Player>>::iterator it = _map.begin();
+	map<unsigned int, shared_ptr<Player>>::iterator it = _map.begin();
 
 	while (it != _map.end()) {
 		it->second->mColor = Assets::characterPalette.colors.at(it->second->myColor);
@@ -617,7 +617,7 @@ void PlayerMap::options_render(vector<CharSelBox> selectBox)
 
 void PlayerMap::phys_handler(PlatformGroup plat)
 {
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = _map.begin(); it != _map.end(); ++it) {
+	for (map<unsigned int, shared_ptr<Player>>::iterator it = _map.begin(); it != _map.end(); ++it) {
 		if (it->second->stats.lifeState != ELIMINATED)
 			it->second->update(plat);
 		else
@@ -629,7 +629,7 @@ void PlayerMap::phys_handler(PlatformGroup plat)
 
 void PlayerMap::reset()
 {
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = _map.begin(); it != _map.end(); ++it) {
+	for (map<unsigned int, shared_ptr<Player>>::iterator it = _map.begin(); it != _map.end(); ++it) {
 		it->second->body->height = 100;
 		it->second->body->width = 100;
 		it->second->body->radius = 50;

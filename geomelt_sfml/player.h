@@ -30,6 +30,7 @@ public:
 	friend class Boxy;
 	friend class PlayerMap;
 	friend class Camera;
+	friend class StatBox;
 };
 
 class Toggle {
@@ -101,6 +102,8 @@ public:
 	friend class PlayerMap;
 	friend class Camera;
 	friend class Level;
+	friend class StatBox;
+	friend class Overlay;
 };
 
 class Ball : public Player {
@@ -130,7 +133,7 @@ public:
 
 class PlayerMap {
 private:
-	static map<unsigned int, unique_ptr<Player>> _map;
+	static map<unsigned int, shared_ptr<Player>> _map;
 public:
 	void add(unsigned int id);
 	void purge(unsigned int id);
@@ -149,4 +152,5 @@ public:
 
 	friend class Camera;
 	friend class Level;
+	friend class Overlay;
 };

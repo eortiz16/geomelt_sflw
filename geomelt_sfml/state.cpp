@@ -408,6 +408,7 @@ LevelState::LevelState(GFXNet* context)
 { 
 	this->_context = context; 
 	this->_context->command = Command::create(this);
+	this->_context->level->_overlay = Overlay(this->_context->level->_players);
 }
 
 void LevelState::next()
