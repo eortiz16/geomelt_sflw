@@ -16,6 +16,9 @@ constexpr auto TRANSITION_RATE_TOD = 0.25f;
 constexpr auto MAX_STROKE = 4;
 constexpr auto THICKNESS = 8;
 
+class Player;
+class PlayerMap;
+
 enum TOD { DAY, AFTERNOON, EVENING, NITE, DNITE, MORNING };
 
 inline void operator++(TOD &ti, int)

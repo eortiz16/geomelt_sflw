@@ -1,0 +1,3 @@
+/home/pi/geomelt_sfml/geomelt_sfml/build/CMakeFiles/rebuild_cache.dir
+/home/pi/geomelt_sfml/geomelt_sfml/build/CMakeFiles/myproject.dir
+/home/pi/geomelt_sfml/geomelt_sfml/build/CMakeFiles/edit_cache.dir

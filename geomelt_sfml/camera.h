@@ -40,5 +40,6 @@ public:
 	friend class MainMenu;
 	friend class CharacterSelect;
 	friend class LevelSelect;
+	friend class StatBox;
 	friend class Pause;
 };
