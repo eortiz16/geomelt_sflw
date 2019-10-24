@@ -6,6 +6,7 @@
 #include "input.h"
 #include "scenery.h"
 #include "player.h"
+#include "levels.h"
 
 constexpr auto SELECTED_CARDINALITY = 3;
 enum Selected { PLAY, OPTIONS, EXIT };
@@ -113,6 +114,8 @@ public:
 	friend class DenyCommand;
 	friend class RemoveCharacterCommand;
 };
+
+class PlayerMap;
 
 class CharacterSelect : public Menu {
 private:

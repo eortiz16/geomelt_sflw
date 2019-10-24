@@ -13,17 +13,7 @@ void Level::render()
 	_scenery->render();
 	_platforms.render();
 	_players.render();
-
-	//extract X, Y from all players
-	std::vector<std::pair<int, int>> coordinates;
-	for (auto playerPair : this->_players._map) {
-		coordinates.push_back({
-			playerPair.second->body->center.x,
-			playerPair.second->body->center.y
-			});
-	}
-
-	_overlay.render(coordinates);
+	_overlay.render(_players);
 }
 
 void Level::gfx_handler()
@@ -260,27 +250,46 @@ Overlay::Overlay(PlayerMap players)
 	}
 }
 
-void Overlay::render(std::vector<std::pair<int, int>> coordinates)
+std::pair<int, int> Overlay::translate(int x, int y)
+{
+	//obtain center of camera
+	float apectratio = 1.0f; // 1:1
+
+	//update the position (center)
+	x = (Camera::_edges.top - Camera::_edges.bottom) * 0.20f;
+	y = x * apectratio;
+
+	//Partition screen into n + 1 parts (since we want to display 4 players info, 5 parts)
+	float offset = (abs(Camera::_edges.left) + abs(Camera::_edges.right)) / 5.0f;
+
+	return std::make_pair(x,y);
+}
+
+void Overlay::render(PlayerMap players)
 {
 	// TODO: if any player within any box, make that box disapear
 	for (auto &box : statBox) {
-		bool shouldRender = false;
-		
-		for (auto coor : coordinates) {
-			int x = coor.first, y = coor.second;
-			std::cout << "(" << x << ", " << y << ") - ";
-			std::cout << "(" << Input::translateX(x) << ", " << Input::translateY(y) << ")\n";
-			
-			//ToDo: write a function that allows the translation of real pixel position
-			//		to projected camera
-			box.body.boundary_assignment();
-			if (box.body.boundary.isWithin(Input::translateX(x), Input::translateX(y))) {
-				shouldRender = true;
+		bool changeOpacity = true;
+
+		for (auto &player : players._map) {
+			int x = player.second->body->center.x, y = player.second->body->center.y;
+
+			bool cond = false;
+			if ((x <= box.body.center.x + box.body.width / 2) &&
+				(x >= box.body.center.x - box.body.width / 2) &&
+				(y <= box.body.center.y + box.body.width / 2) &&
+				(y >= box.body.center.y - box.body.width / 2)) {
+				changeOpacity = false;
 				break;
 			}
 		}
+		
+		//TODO: transition to opacity do not instantly change it
+		if (changeOpacity) 
+			box.body.color = Color(255, 255, 255, 75);
+		else 
+			box.body.color = Color(255, 255, 255, 0);
 
-		if (shouldRender)
-			box.render();
+		box.render();
 	}
 }

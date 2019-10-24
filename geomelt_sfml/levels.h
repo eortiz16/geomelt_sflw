@@ -65,7 +65,8 @@ class Overlay {
 private:
 	vector<StatBox> statBox;
 public:
-	void render(std::vector<std::pair<int, int>>);
+	void render(PlayerMap);
+	std::pair<int, int> translate(int x, int y);
 
 	Overlay() {}
 	Overlay(PlayerMap);

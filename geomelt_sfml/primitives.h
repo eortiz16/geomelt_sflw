@@ -98,6 +98,7 @@ public:
 	void boundary_assignment();
 	virtual void render() = 0;
 	Shape() {}
+	Shape(const Shape&);
 	Shape(float w, float h, float r, Vec v, Color clr = Color(0, 0, 0, 255));
 	virtual ~Shape() {}
 

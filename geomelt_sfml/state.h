@@ -10,6 +10,7 @@
 
 class RState;
 class Command;
+class Level;
 
 class GFXNet {
 private:

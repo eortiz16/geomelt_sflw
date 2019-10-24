@@ -37,6 +37,18 @@ Shape::Shape(float w, float h, float r, Vec v, Color clr)
 	boundary_assignment();
 }
 
+//Copy constructor
+Shape::Shape(const Shape& s)
+{
+	this->width = s.width;
+	this->height = s.height;
+	this->radius = s.radius;
+	this->color = s.color;
+	this->center = s.center;
+
+	this->boundary_assignment();
+}
+
 void Circle::render()
 {
 	GLfloat arg1, arg2;

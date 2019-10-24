@@ -30,6 +30,8 @@ public:
 	static void set_center();
 	static void set_edges();
 	static void transition();
+	static int translateX(int);
+	static int translatey(int);
 
 	Camera() {}
 
@@ -41,4 +43,6 @@ public:
 	friend class CharacterSelect;
 	friend class LevelSelect;
 	friend class Pause;
+	friend class StatBox;
+	friend class Overlay;
 };

@@ -22,7 +22,7 @@ void Camera::set_center()
 	_yMax = (float)INT_MIN;
 
 	// obtain center (x,y) between ALL players
-	for (map<unsigned int, unique_ptr<Player>>::iterator it = PlayerMap::_map.begin(); it != PlayerMap::_map.end(); ++it)
+	for (map<unsigned int, shared_ptr<Player>>::iterator it = PlayerMap::_map.begin(); it != PlayerMap::_map.end(); ++it)
 	{
 		if (it->second->stats.lifeState == ALIVE)	{
 			//Set all min and max
@@ -142,4 +142,15 @@ void Camera::transition()
 	}
 
 	_ortho = Boundary(top, bottom, left, right);
+}
+
+int Camera::translateX(int x)
+{
+	int range = abs(_edges.left) + abs(_edges.right);
+	
+}
+
+int Camera::translatey(int x)
+{
+	int range = abs(_edges.top) + abs(_edges.bottom);
 }
