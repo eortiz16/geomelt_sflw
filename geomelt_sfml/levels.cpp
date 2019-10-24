@@ -250,21 +250,6 @@ Overlay::Overlay(PlayerMap players)
 	}
 }
 
-std::pair<int, int> Overlay::translate(int x, int y)
-{
-	//obtain center of camera
-	float apectratio = 1.0f; // 1:1
-
-	//update the position (center)
-	x = (Camera::_edges.top - Camera::_edges.bottom) * 0.20f;
-	y = x * apectratio;
-
-	//Partition screen into n + 1 parts (since we want to display 4 players info, 5 parts)
-	float offset = (abs(Camera::_edges.left) + abs(Camera::_edges.right)) / 5.0f;
-
-	return std::make_pair(x,y);
-}
-
 void Overlay::render(PlayerMap players)
 {
 	// TODO: if any player within any box, make that box disapear

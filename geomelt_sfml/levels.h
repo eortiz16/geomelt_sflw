@@ -69,7 +69,6 @@ private:
 	vector<StatBox> statBox;
 public:
 	void render(PlayerMap);
-	std::pair<int, int> translate(int x, int y);
 
 	Overlay() {}
 	Overlay(PlayerMap);
